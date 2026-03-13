@@ -1,14 +1,13 @@
 """
 app.py
 ------
-Main Streamlit application — AI Notes Summarizer & Knowledge Extraction System.
-Uses Groq API (completely free, no credit card needed).
-
-Run with:
-    streamlit run app.py
+AI Notes Summarizer & Knowledge Extraction System
+Dark & Modern UI — glowing cards, purple gradients, smooth animations.
+Powered by Groq API (100% free).
 """
 
 import os
+import time
 import datetime
 import streamlit as st
 from groq import Groq
@@ -20,7 +19,6 @@ from extractor          import run_full_extraction
 from question_generator import generate_all_questions
 
 
-# ── Page config ───────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="AI Notes Summarizer",
     page_icon="🧠",
@@ -28,264 +26,711 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ── Custom CSS ────────────────────────────────────────────────────────────────
+# ── Dark Modern CSS ────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 
-html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+/* ── Base ── */
+html, body, [class*="css"] {
+    font-family: 'Outfit', sans-serif !important;
+    background-color: #080b14 !important;
+    color: #e2e8f0 !important;
+}
+.main { background-color: #080b14 !important; }
+.block-container { padding-top: 1.5rem !important; padding-bottom: 3rem !important; }
+#MainMenu, footer, header { visibility: hidden; }
 
-.main-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 2.6rem; font-weight: 700;
-    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #A855F7 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text; line-height: 1.2; margin-bottom: 0.2rem;
+/* ── Keyframes ── */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
-.subtitle { font-size: 1rem; color: #6B7280; margin-top: 0; }
-.author-badge {
-    display: inline-block;
-    background: linear-gradient(135deg, #4F46E5, #7C3AED);
-    color: white; padding: 0.3rem 1rem; border-radius: 20px;
-    font-size: 0.85rem; font-weight: 600; margin-top: 0.6rem;
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
+@keyframes glowPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(139,92,246,0.3), 0 0 40px rgba(139,92,246,0.1); }
+    50%       { box-shadow: 0 0 30px rgba(139,92,246,0.5), 0 0 60px rgba(139,92,246,0.2); }
+}
+@keyframes shimmer {
+    0%   { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+@keyframes bounceIn {
+    0%   { transform: scale(0.85); opacity: 0; }
+    65%  { transform: scale(1.04); }
+    100% { transform: scale(1); opacity: 1; }
+}
+@keyframes gradientMove {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+@keyframes borderGlow {
+    0%, 100% { border-color: rgba(139,92,246,0.4); }
+    50%       { border-color: rgba(167,139,250,0.8); }
+}
+@keyframes slideRight {
+    from { width: 0%; }
+    to   { width: 100%; }
+}
+
+/* ── Hero ── */
+.hero {
+    background: linear-gradient(135deg, #0d0a1f 0%, #130d35 40%, #1a0a2e 100%);
+    border: 1px solid rgba(139,92,246,0.35);
+    border-radius: 24px;
+    padding: 3rem 2.8rem 2.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.7s ease both;
+    animation: glowPulse 4s ease-in-out infinite;
+    box-shadow: 0 0 60px rgba(139,92,246,0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.hero::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background:
+        radial-gradient(ellipse at 15% 40%, rgba(99,102,241,0.18) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 60%, rgba(139,92,246,0.14) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 100%, rgba(168,85,247,0.08) 0%, transparent 50%);
+    pointer-events: none;
+}
+.hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(139,92,246,0.15);
+    border: 1px solid rgba(139,92,246,0.4);
+    color: #c4b5fd;
+    padding: 0.3rem 1rem;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+    animation: fadeIn 0.8s ease 0.2s both;
+}
+.hero-title {
+    font-size: 3.2rem;
+    font-weight: 900;
+    line-height: 1.05;
+    background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 40%, #a78bfa 70%, #e879f9 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fadeInUp 0.7s ease 0.1s both, gradientMove 5s ease infinite;
+    margin-bottom: 0.6rem;
+}
+.hero-sub {
+    font-size: 1.05rem;
+    color: #94a3b8;
+    font-weight: 400;
+    margin-bottom: 1.8rem;
+    animation: fadeInUp 0.7s ease 0.25s both;
+    line-height: 1.6;
+}
+.hero-author {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed, #a855f7);
+    background-size: 200% 200%;
+    animation: fadeInUp 0.7s ease 0.4s both, gradientMove 4s ease infinite;
+    color: white;
+    padding: 0.5rem 1.4rem;
+    border-radius: 100px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    box-shadow: 0 4px 24px rgba(139,92,246,0.5);
+}
+.hero-corner-dots {
+    position: absolute; top: 20px; right: 24px;
+    display: flex; gap: 7px; align-items: center;
+}
+.hero-corner-dot {
+    width: 11px; height: 11px; border-radius: 50%;
+}
+.hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(139,92,246,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(139,92,246,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+}
+
+/* ── Section headers ── */
+.sec-head {
+    display: flex; align-items: center; gap: 12px;
+    margin: 2.2rem 0 1.2rem;
+    animation: fadeInUp 0.5s ease both;
+}
+.sec-icon {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+    box-shadow: 0 4px 16px rgba(99,102,241,0.4);
+    flex-shrink: 0;
+}
+.sec-title {
+    font-size: 1.15rem; font-weight: 700; color: #f1f5f9;
+}
+.sec-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, rgba(139,92,246,0.4), transparent);
+    margin-left: 4px;
+}
+
+/* ── Stat Cards ── */
+.stat-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
 .stat-card {
-    background: #F9FAFB; border: 1px solid #E5E7EB;
-    border-radius: 12px; padding: 1rem 1.2rem; text-align: center;
+    background: linear-gradient(135deg, #0f0c2a, #140e33);
+    border: 1px solid rgba(139,92,246,0.3);
+    border-radius: 18px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    animation: fadeInUp 0.5s ease both;
+    position: relative; overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
 }
-.stat-number { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 700; color: #4F46E5; }
-.stat-label { font-size: 0.78rem; color: #6B7280; text-transform: uppercase; letter-spacing: 0.06em; }
-.section-header {
-    font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700;
-    color: #1F2937; padding: 0.5rem 0; border-bottom: 3px solid #4F46E5; margin-bottom: 1rem;
+.stat-card::after {
+    content: '';
+    position: absolute; bottom: 0; left: 10%; right: 10%; height: 2px;
+    background: linear-gradient(90deg, transparent, #7c3aed, transparent);
+    border-radius: 2px;
 }
-.output-box {
-    background: #FAFAFA; border: 1px solid #E5E7EB; border-left: 4px solid #4F46E5;
-    border-radius: 8px; padding: 1.2rem 1.4rem; line-height: 1.75;
-    font-size: 0.95rem; color: #374151; white-space: pre-wrap; word-wrap: break-word;
+.stat-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(139,92,246,0.65);
+    box-shadow: 0 8px 32px rgba(139,92,246,0.25), inset 0 1px 0 rgba(255,255,255,0.06);
 }
-.output-box-green { border-left-color: #10B981; }
-.output-box-amber { border-left-color: #F59E0B; }
-.output-box-rose  { border-left-color: #F43F5E; }
-.keyword-container { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
-.keyword-chip {
-    background: #EEF2FF; color: #4338CA; border: 1px solid #C7D2FE;
-    border-radius: 20px; padding: 0.25rem 0.75rem; font-size: 0.82rem; font-weight: 500;
+.stat-num {
+    font-size: 2.1rem; font-weight: 800;
+    background: linear-gradient(135deg, #a78bfa, #c084fc);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1; margin-bottom: 0.35rem;
 }
-.custom-divider {
-    height: 1px; background: linear-gradient(90deg, #4F46E5 0%, transparent 100%);
-    margin: 1.5rem 0; border: none;
+.stat-lbl {
+    font-size: 0.7rem; font-weight: 700;
+    color: #64748b; text-transform: uppercase; letter-spacing: 0.12em;
 }
-.footer { text-align: center; color: #9CA3AF; font-size: 0.8rem; padding: 1.5rem 0 0.5rem; }
+
+/* ── Output Cards ── */
+.out-card {
+    background: linear-gradient(145deg, #0d0b22, #100d2a);
+    border: 1px solid rgba(139,92,246,0.25);
+    border-radius: 18px;
+    padding: 1.6rem 1.8rem;
+    line-height: 1.85;
+    font-size: 0.93rem;
+    color: #cbd5e1;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    animation: fadeInUp 0.5s ease both;
+    transition: all 0.3s ease;
+    position: relative; overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03);
+}
+.out-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 4px; height: 100%;
+    border-radius: 4px 0 0 4px;
+}
+.out-card.purple::before { background: linear-gradient(180deg, #4f46e5, #7c3aed, #a855f7); }
+.out-card.green::before  { background: linear-gradient(180deg, #10b981, #059669); }
+.out-card.amber::before  { background: linear-gradient(180deg, #f59e0b, #d97706); }
+.out-card.rose::before   { background: linear-gradient(180deg, #f43f5e, #e11d48); }
+.out-card.blue::before   { background: linear-gradient(180deg, #3b82f6, #2563eb); }
+.out-card:hover {
+    border-color: rgba(139,92,246,0.5);
+    box-shadow: 0 8px 32px rgba(139,92,246,0.18), inset 0 1px 0 rgba(255,255,255,0.05);
+    transform: translateY(-2px);
+}
+
+/* ── Progress ── */
+.prog-box {
+    background: linear-gradient(145deg, #0d0b22, #100d2a);
+    border: 1px solid rgba(139,92,246,0.3);
+    border-radius: 18px;
+    padding: 1.6rem 2rem;
+    animation: fadeInUp 0.4s ease;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
+.prog-label {
+    font-size: 0.72rem; font-weight: 700;
+    color: #6366f1; text-transform: uppercase;
+    letter-spacing: 0.1em; margin-bottom: 1rem;
+}
+.prog-step {
+    display: flex; align-items: center; gap: 12px;
+    padding: 0.55rem 0;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.prog-step:last-child { border-bottom: none; }
+.prog-step.done   { color: #34d399; }
+.prog-step.active { color: #a78bfa; font-weight: 600; }
+.prog-step.wait   { color: #334155; }
+.prog-dot {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; flex-shrink: 0; font-weight: 700;
+}
+.prog-dot.done   { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.4); }
+.prog-dot.active { background: rgba(139,92,246,0.15); color: #a78bfa; border: 1px solid rgba(139,92,246,0.5);
+                   animation: glowPulse 1.5s ease infinite; }
+.prog-dot.wait   { background: rgba(255,255,255,0.03); color: #334155; border: 1px solid rgba(255,255,255,0.07); }
+.prog-bar-track {
+    height: 3px; background: rgba(255,255,255,0.06);
+    border-radius: 3px; margin-top: 1.2rem; overflow: hidden;
+}
+.prog-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4f46e5, #7c3aed, #a855f7, #4f46e5);
+    background-size: 300% 100%;
+    border-radius: 3px;
+    animation: gradientMove 2s ease infinite;
+}
+
+/* ── Chips ── */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 0.6rem; }
+.chip {
+    background: rgba(99,102,241,0.12);
+    color: #a5b4fc;
+    border: 1px solid rgba(99,102,241,0.3);
+    border-radius: 100px;
+    padding: 0.28rem 0.9rem;
+    font-size: 0.8rem; font-weight: 600;
+    transition: all 0.25s ease;
+    animation: bounceIn 0.4s ease both;
+    cursor: default;
+}
+.chip:hover {
+    background: rgba(99,102,241,0.28);
+    border-color: rgba(139,92,246,0.7);
+    color: #c4b5fd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(99,102,241,0.3);
+}
+
+/* ── Know labels ── */
+.know-lbl {
+    font-size: 0.78rem; font-weight: 700;
+    color: #64748b; text-transform: uppercase;
+    letter-spacing: 0.09em; margin-bottom: 0.6rem;
+    display: flex; align-items: center; gap: 6px;
+}
+
+/* ── Success banner ── */
+.success-box {
+    background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(5,150,105,0.08));
+    border: 1px solid rgba(16,185,129,0.35);
+    border-radius: 14px;
+    padding: 1rem 1.5rem;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.92rem; font-weight: 600; color: #34d399;
+    animation: bounceIn 0.5s ease;
+    box-shadow: 0 4px 20px rgba(16,185,129,0.1);
+}
+
+/* ── Divider ── */
+.div { height: 1px; background: rgba(139,92,246,0.12); margin: 1.8rem 0; }
+
+/* ── Tabs ── */
+.stTabs [data-baseweb="tab-list"] {
+    background: rgba(255,255,255,0.03) !important;
+    border-radius: 14px !important;
+    padding: 5px !important;
+    gap: 4px !important;
+    border: 1px solid rgba(139,92,246,0.2) !important;
+}
+.stTabs [data-baseweb="tab"] {
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: 0.84rem !important;
+    color: #64748b !important;
+    font-family: 'Outfit', sans-serif !important;
+    padding: 0.5rem 1.2rem !important;
+    transition: all 0.2s ease !important;
+}
+.stTabs [aria-selected="true"] {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+    color: white !important;
+    box-shadow: 0 4px 14px rgba(99,102,241,0.4) !important;
+}
+
+/* ── Textarea ── */
+.stTextArea textarea {
+    background: rgba(255,255,255,0.03) !important;
+    border: 1.5px solid rgba(139,92,246,0.25) !important;
+    border-radius: 16px !important;
+    color: #e2e8f0 !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 0.93rem !important;
+    resize: none !important;
+    transition: border-color 0.25s ease !important;
+}
+.stTextArea textarea:focus {
+    border-color: rgba(139,92,246,0.7) !important;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.12) !important;
+}
+.stTextArea textarea::placeholder { color: #334155 !important; }
+
+/* ── File uploader ── */
+[data-testid="stFileUploader"] section {
+    background: rgba(99,102,241,0.04) !important;
+    border: 2px dashed rgba(99,102,241,0.3) !important;
+    border-radius: 16px !important;
+    transition: all 0.2s ease !important;
+}
+[data-testid="stFileUploader"] section:hover {
+    border-color: rgba(139,92,246,0.65) !important;
+    background: rgba(99,102,241,0.08) !important;
+}
+
+/* ── Analyse button ── */
+div[data-testid="stButton"] > button[kind="primary"] {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed, #a855f7) !important;
+    background-size: 200% 200% !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 14px !important;
+    padding: 0.7rem 2.4rem !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+    font-family: 'Outfit', sans-serif !important;
+    box-shadow: 0 4px 24px rgba(99,102,241,0.45) !important;
+    transition: all 0.3s ease !important;
+    letter-spacing: 0.02em !important;
+    animation: gradientMove 3s ease infinite !important;
+}
+div[data-testid="stButton"] > button[kind="primary"]:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 32px rgba(99,102,241,0.6) !important;
+}
+
+/* ── Download button ── */
+div[data-testid="stDownloadButton"] > button {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 14px !important;
+    padding: 0.7rem 2.2rem !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    font-family: 'Outfit', sans-serif !important;
+    box-shadow: 0 4px 24px rgba(99,102,241,0.4) !important;
+    transition: all 0.3s ease !important;
+}
+div[data-testid="stDownloadButton"] > button:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 32px rgba(99,102,241,0.55) !important;
+}
+
+/* ── Sidebar ── */
+[data-testid="stSidebar"] {
+    background: #07091200 !important;
+    border-right: 1px solid rgba(139,92,246,0.18) !important;
+}
+[data-testid="stSidebar"] > div {
+    background: linear-gradient(180deg, #0a0815, #0d0b1e) !important;
+}
+
+/* ── Radio ── */
+[data-testid="stRadio"] label {
+    color: #94a3b8 !important;
+    font-family: 'Outfit', sans-serif !important;
+}
+
+/* ── Footer ── */
+.app-footer {
+    background: linear-gradient(135deg, #0d0b22, #100d2a);
+    border: 1px solid rgba(139,92,246,0.2);
+    border-radius: 16px;
+    padding: 1.2rem 2rem;
+    text-align: center;
+    margin-top: 2.5rem;
+    font-size: 0.82rem;
+    color: #475569;
+    animation: fadeIn 0.5s ease;
+}
+.app-footer strong { color: #7c3aed; }
 </style>
 """, unsafe_allow_html=True)
 
 
-# ── Groq client setup ─────────────────────────────────────────────────────────
-def get_groq_client(sidebar_key: str = ""):
-    # 1. Streamlit secrets
+# ── Groq client ───────────────────────────────────────────────────────────────
+def get_groq_client(sidebar_key=""):
     try:
         key = st.secrets["GROQ_API_KEY"]
-        if key:
-            return Groq(api_key=key)
+        if key: return Groq(api_key=key)
     except (KeyError, FileNotFoundError):
         pass
-    # 2. Environment variable
     key = os.environ.get("GROQ_API_KEY", "")
-    if key:
-        return Groq(api_key=key)
-    # 3. Sidebar input
-    if sidebar_key.strip():
-        return Groq(api_key=sidebar_key.strip())
+    if key: return Groq(api_key=key)
+    if sidebar_key.strip(): return Groq(api_key=sidebar_key.strip())
     return None
 
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("## ⚙️ Configuration")
+    st.markdown("""
+    <div style='text-align:center;padding:1.2rem 0 0.8rem;'>
+        <div style='width:52px;height:52px;
+                    background:linear-gradient(135deg,#4f46e5,#7c3aed,#a855f7);
+                    border-radius:15px;display:flex;align-items:center;
+                    justify-content:center;margin:0 auto 0.8rem;
+                    font-size:26px;box-shadow:0 4px 20px rgba(99,102,241,0.5);'>
+            🧠
+        </div>
+        <div style='font-size:0.95rem;font-weight:700;color:#e2e8f0;'>AI Notes Summarizer</div>
+        <div style='font-size:0.75rem;color:#475569;margin-top:3px;'>by Zainab Gondal</div>
+    </div>
+    """, unsafe_allow_html=True)
+
     st.divider()
-    sidebar_key = st.text_input(
-        "Groq API Key (Free)",
-        type="password",
-        placeholder="gsk_...",
-        help="Get your FREE key from console.groq.com",
-    )
+
+    st.markdown("<div style='font-size:0.8rem;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;'>API Key</div>", unsafe_allow_html=True)
+    sidebar_key = st.text_input("key", type="password", placeholder="gsk_...",
+                                label_visibility="collapsed",
+                                help="Free key at console.groq.com")
+    st.markdown("<div style='font-size:0.75rem;color:#334155;margin-top:4px;'>🔑 Get free key at console.groq.com</div>", unsafe_allow_html=True)
+
     st.divider()
-    st.markdown("### 📂 Input Method")
-    input_mode = st.radio(
-        "Choose how to provide notes:",
-        ["📋 Paste Text", "📁 Upload File"],
-        index=0,
-    )
+
+    st.markdown("<div style='font-size:0.8rem;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;'>Input Method</div>", unsafe_allow_html=True)
+    input_mode = st.radio("", ["📋 Paste Text", "📁 Upload File"], label_visibility="collapsed")
+
     st.divider()
-    st.markdown("### ℹ️ About")
-    st.markdown(
-        "**AI Notes Summarizer** uses Llama3 (via Groq) to transform raw "
-        "lecture notes into structured summaries, knowledge extractions, "
-        "and study questions — completely free!"
-    )
-    st.markdown(
-        "<div style='font-size:0.8rem;color:#9CA3AF;margin-top:1rem;'>"
-        "Supports PDF · DOCX · TXT · Plain text</div>",
-        unsafe_allow_html=True,
-    )
+
+    st.markdown("""
+    <div style='background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);
+                border-radius:14px;padding:1rem;'>
+        <div style='font-size:0.75rem;font-weight:700;color:#6366f1;
+                    text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;'>
+            Supported Formats
+        </div>
+        <div style='display:flex;flex-wrap:wrap;gap:6px;'>
+            <span style='background:rgba(99,102,241,0.15);color:#a5b4fc;
+                         border:1px solid rgba(99,102,241,0.3);border-radius:100px;
+                         padding:2px 10px;font-size:0.72rem;font-weight:600;'>PDF</span>
+            <span style='background:rgba(99,102,241,0.15);color:#a5b4fc;
+                         border:1px solid rgba(99,102,241,0.3);border-radius:100px;
+                         padding:2px 10px;font-size:0.72rem;font-weight:600;'>DOCX</span>
+            <span style='background:rgba(99,102,241,0.15);color:#a5b4fc;
+                         border:1px solid rgba(99,102,241,0.3);border-radius:100px;
+                         padding:2px 10px;font-size:0.72rem;font-weight:600;'>TXT</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 
-# ── Header ────────────────────────────────────────────────────────────────────
-st.markdown(
-    '<p class="main-title">🧠 AI Notes Summarizer</p>'
-    '<p class="main-title" style="font-size:1.5rem;">& Knowledge Extraction System</p>',
-    unsafe_allow_html=True,
-)
-st.markdown(
-    '<p class="subtitle">Transform raw lecture notes into structured summaries, '
-    'key concepts & study questions — instantly.</p>',
-    unsafe_allow_html=True,
-)
-st.markdown(
-    '<span class="author-badge">✨ Created by Zainab Gondal</span>',
-    unsafe_allow_html=True,
-)
-st.markdown("<div class='custom-divider'></div>", unsafe_allow_html=True)
+# ── Hero ──────────────────────────────────────────────────────────────────────
+st.markdown("""
+<div class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-corner-dots">
+        <div class="hero-corner-dot" style="background:#ef4444;opacity:0.8;"></div>
+        <div class="hero-corner-dot" style="background:#f59e0b;opacity:0.8;"></div>
+        <div class="hero-corner-dot" style="background:#10b981;opacity:0.8;"></div>
+    </div>
+    <div class="hero-eyebrow">✦ Powered by Groq + Llama3 &nbsp;·&nbsp; 100% Free</div>
+    <div class="hero-title">🧠 AI Notes Summarizer<br><span style="font-size:65%;">& Knowledge Extraction System</span></div>
+    <div class="hero-sub">
+        Transform raw lecture notes into structured summaries, key concepts<br>
+        and study questions — intelligently, in seconds.
+    </div>
+    <div class="hero-author">✨ Created by Zainab Gondal</div>
+</div>
+""", unsafe_allow_html=True)
 
 
-# ── Input section ─────────────────────────────────────────────────────────────
+# ── Input ─────────────────────────────────────────────────────────────────────
 raw_text = ""
 
 if input_mode == "📋 Paste Text":
-    st.markdown("### 📝 Paste Your Lecture Notes")
-    raw_text = st.text_area(
-        label="",
-        placeholder="Paste your lecture notes here...",
-        height=300,
-        label_visibility="collapsed",
-    )
+    st.markdown("""
+    <div class="sec-head">
+        <div class="sec-icon">📝</div>
+        <div class="sec-title">Paste Your Lecture Notes</div>
+        <div class="sec-line"></div>
+    </div>
+    """, unsafe_allow_html=True)
+    raw_text = st.text_area("", placeholder="Paste your lecture notes here...",
+                            height=280, label_visibility="collapsed")
 else:
-    st.markdown("### 📁 Upload Your Notes File")
-    uploaded_file = st.file_uploader(
-        label="",
-        type=["pdf", "docx", "txt"],
-        label_visibility="collapsed",
-    )
-    if uploaded_file is not None:
-        with st.spinner("📖 Extracting text from your file…"):
+    st.markdown("""
+    <div class="sec-head">
+        <div class="sec-icon">📁</div>
+        <div class="sec-title">Upload Your Notes File</div>
+        <div class="sec-line"></div>
+    </div>
+    """, unsafe_allow_html=True)
+    uploaded_file = st.file_uploader("", type=["pdf","docx","txt"],
+                                     label_visibility="collapsed")
+    if uploaded_file:
+        with st.spinner("Extracting text..."):
             try:
                 raw_text = extract_text_from_file(uploaded_file)
-                st.success(f"✅ Extracted text from **{uploaded_file.name}**")
-                with st.expander("👀 Preview extracted text"):
-                    st.text(raw_text[:500] + ("…" if len(raw_text) > 500 else ""))
+                st.markdown(f'<div class="success-box">✅ Extracted text from <strong>{uploaded_file.name}</strong></div>',
+                            unsafe_allow_html=True)
+                with st.expander("👀 Preview"):
+                    st.code(raw_text[:600] + ("..." if len(raw_text)>600 else ""), language=None)
             except Exception as e:
-                st.error(f"⚠️ Could not read file: {e}")
+                st.error(f"Could not read file: {e}")
 
-st.markdown("")
+st.markdown("<div style='margin:1.2rem 0'></div>", unsafe_allow_html=True)
 analyse_clicked = st.button("🔍 Analyse Notes", type="primary")
-st.markdown("<div class='custom-divider'></div>", unsafe_allow_html=True)
+st.markdown("<div class='div'></div>", unsafe_allow_html=True)
 
 
-# ── Processing pipeline ───────────────────────────────────────────────────────
+# ── Pipeline ──────────────────────────────────────────────────────────────────
 if analyse_clicked:
 
     if not raw_text.strip():
-        st.warning("⚠️ Please paste some text or upload a file first.")
+        st.warning("Please paste some text or upload a file first.")
         st.stop()
 
     client = get_groq_client(sidebar_key)
     if client is None:
-        st.error(
-            "🔑 **Groq API key not found.**\n\n"
-            "Get your FREE key from **console.groq.com** → API Keys → Create Key\n\n"
-            "Then paste it in the sidebar."
-        )
+        st.error("Groq API key not found. Get your free key from console.groq.com")
         st.stop()
 
-    clean  = clean_text(raw_text)
+    clean      = clean_text(raw_text)
     word_count = count_words(clean)
     read_time  = estimate_read_time(clean)
     char_count = len(clean)
 
-    # Stats
-    st.markdown("### 📊 Document Statistics")
-    c1, c2, c3 = st.columns(3)
-    c1.markdown(f'<div class="stat-card"><div class="stat-number">{word_count:,}</div><div class="stat-label">Words</div></div>', unsafe_allow_html=True)
-    c2.markdown(f'<div class="stat-card"><div class="stat-number">{char_count:,}</div><div class="stat-label">Characters</div></div>', unsafe_allow_html=True)
-    c3.markdown(f'<div class="stat-card"><div class="stat-number">{read_time}</div><div class="stat-label">Est. Read Time</div></div>', unsafe_allow_html=True)
+    # Progress tracker
+    prog = st.empty()
 
-    st.markdown("<div class='custom-divider'></div>", unsafe_allow_html=True)
+    def show_step(n):
+        steps = [
+            ("Analysing document",       1),
+            ("Generating summaries",     2),
+            ("Extracting knowledge",     3),
+            ("Building study questions", 4),
+            ("Extracting keywords",      5),
+        ]
+        pct = int((n - 1) / len(steps) * 100)
+        rows = ""
+        for label, s in steps:
+            if s < n:   cls, dot, txt = "done",  "✓", f"{label} — done"
+            elif s == n: cls, dot, txt = "active", "●", f"{label}..."
+            else:        cls, dot, txt = "wait",  "○", label
+            rows += f'<div class="prog-step {cls}"><div class="prog-dot {cls}">{dot}</div>{txt}</div>'
+        prog.markdown(f"""
+        <div class="prog-box">
+            <div class="prog-label">⚡ Processing your notes</div>
+            {rows}
+            <div class="prog-bar-track">
+                <div class="prog-bar-fill" style="width:{pct}%"></div>
+            </div>
+        </div>""", unsafe_allow_html=True)
+
+    # Stats
+    show_step(1)
+    st.markdown("""<div class="sec-head">
+        <div class="sec-icon">📊</div><div class="sec-title">Document Statistics</div>
+        <div class="sec-line"></div></div>""", unsafe_allow_html=True)
+    c1, c2, c3 = st.columns(3)
+    c1.markdown(f'<div class="stat-card"><div class="stat-num">{word_count:,}</div><div class="stat-lbl">Words</div></div>', unsafe_allow_html=True)
+    c2.markdown(f'<div class="stat-card"><div class="stat-num">{char_count:,}</div><div class="stat-lbl">Characters</div></div>', unsafe_allow_html=True)
+    c3.markdown(f'<div class="stat-card"><div class="stat-num">{read_time}</div><div class="stat-lbl">Read Time</div></div>', unsafe_allow_html=True)
 
     # Summaries
-    st.markdown('<p class="section-header">📝 Summaries</p>', unsafe_allow_html=True)
-    tab1, tab2, tab3 = st.tabs(["⚡ Quick Summary", "📖 Detailed Summary", "🎯 Key Points"])
+    show_step(2)
+    st.markdown("""<div class="sec-head">
+        <div class="sec-icon">📝</div><div class="sec-title">Summaries</div>
+        <div class="sec-line"></div></div>""", unsafe_allow_html=True)
 
+    tab1, tab2, tab3 = st.tabs(["⚡ Quick Summary","📖 Detailed Summary","🎯 Key Points"])
     with tab1:
-        with st.spinner("Generating quick summary…"):
+        with st.spinner(""):
             quick = generate_quick_summary(client, clean)
-        st.markdown(f'<div class="output-box">{quick}</div>', unsafe_allow_html=True)
-
+        st.markdown(f'<div class="out-card purple">{quick}</div>', unsafe_allow_html=True)
     with tab2:
-        with st.spinner("Generating detailed summary…"):
+        with st.spinner(""):
+            time.sleep(4)
             detailed = generate_detailed_summary(client, clean)
-        st.markdown(f'<div class="output-box output-box-green">{detailed}</div>', unsafe_allow_html=True)
-
+        st.markdown(f'<div class="out-card green">{detailed}</div>', unsafe_allow_html=True)
     with tab3:
-        with st.spinner("Extracting key points…"):
+        with st.spinner(""):
+            time.sleep(4)
             key_points = generate_key_points(client, clean)
-        st.markdown(f'<div class="output-box output-box-amber">{key_points}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="out-card amber">{key_points}</div>', unsafe_allow_html=True)
 
-    st.markdown("<div class='custom-divider'></div>", unsafe_allow_html=True)
-
-    # Knowledge extraction
-    st.markdown('<p class="section-header">🔬 Knowledge Extraction</p>', unsafe_allow_html=True)
-    with st.spinner("Extracting knowledge elements…"):
+    # Knowledge
+    show_step(3)
+    st.markdown("""<div class="sec-head">
+        <div class="sec-icon">🔬</div><div class="sec-title">Knowledge Extraction</div>
+        <div class="sec-line"></div></div>""", unsafe_allow_html=True)
+    with st.spinner(""):
+        time.sleep(5)
         knowledge = run_full_extraction(client, clean)
 
     ke1, ke2 = st.columns(2)
     with ke1:
-        st.markdown("**🧩 Important Concepts**")
-        st.markdown(f'<div class="output-box">{knowledge["concepts"]}</div>', unsafe_allow_html=True)
-        st.markdown("")
-        st.markdown("**🏷️ Key Terms**")
-        terms_html = "".join(
-            f'<span class="keyword-chip">{t.strip()}</span>'
-            for t in knowledge["key_terms"].split(",") if t.strip()
-        )
-        st.markdown(f'<div class="keyword-container">{terms_html}</div>', unsafe_allow_html=True)
-
+        st.markdown('<div class="know-lbl">🧩 Important Concepts</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="out-card purple">{knowledge["concepts"]}</div>', unsafe_allow_html=True)
+        st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
+        st.markdown('<div class="know-lbl">🏷️ Key Terms</div>', unsafe_allow_html=True)
+        chips = "".join(f'<span class="chip">{t.strip()}</span>' for t in knowledge["key_terms"].split(",") if t.strip())
+        st.markdown(f'<div class="chips">{chips}</div>', unsafe_allow_html=True)
     with ke2:
-        st.markdown("**📖 Definitions**")
-        st.markdown(f'<div class="output-box output-box-green">{knowledge["definitions"]}</div>', unsafe_allow_html=True)
-        st.markdown("")
-        st.markdown("**📌 Important Facts**")
-        st.markdown(f'<div class="output-box output-box-amber">{knowledge["important_facts"]}</div>', unsafe_allow_html=True)
+        st.markdown('<div class="know-lbl">📖 Definitions</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="out-card green">{knowledge["definitions"]}</div>', unsafe_allow_html=True)
+        st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
+        st.markdown('<div class="know-lbl">📌 Important Facts</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="out-card amber">{knowledge["important_facts"]}</div>', unsafe_allow_html=True)
 
-    st.markdown("<div class='custom-divider'></div>", unsafe_allow_html=True)
-
-    # Study questions
-    st.markdown('<p class="section-header">❓ Study Questions</p>', unsafe_allow_html=True)
-    with st.spinner("Generating study questions…"):
+    # Questions
+    show_step(4)
+    st.markdown("""<div class="sec-head">
+        <div class="sec-icon">❓</div><div class="sec-title">Study Questions</div>
+        <div class="sec-line"></div></div>""", unsafe_allow_html=True)
+    with st.spinner(""):
+        time.sleep(5)
         questions = generate_all_questions(client, clean)
 
-    qtab1, qtab2, qtab3 = st.tabs(["💭 Conceptual (5)", "🔢 Multiple Choice (5)", "✏️ Short Answer (3)"])
-    with qtab1:
-        st.markdown(f'<div class="output-box">{questions["conceptual"]}</div>', unsafe_allow_html=True)
-    with qtab2:
-        st.markdown(f'<div class="output-box output-box-green">{questions["mcq"]}</div>', unsafe_allow_html=True)
-    with qtab3:
-        st.markdown(f'<div class="output-box output-box-rose">{questions["short_answer"]}</div>', unsafe_allow_html=True)
+    qt1, qt2, qt3 = st.tabs(["💭 Conceptual (5)","🔢 Multiple Choice (5)","✏️ Short Answer (3)"])
+    with qt1:
+        st.markdown(f'<div class="out-card purple">{questions["conceptual"]}</div>', unsafe_allow_html=True)
+    with qt2:
+        st.markdown(f'<div class="out-card green">{questions["mcq"]}</div>', unsafe_allow_html=True)
+    with qt3:
+        st.markdown(f'<div class="out-card rose">{questions["short_answer"]}</div>', unsafe_allow_html=True)
 
-    st.markdown("<div class='custom-divider'></div>", unsafe_allow_html=True)
-
-    # NLP Keywords
-    st.markdown('<p class="section-header">🏷️ NLP Keyword Extraction</p>', unsafe_allow_html=True)
-    st.caption("Extracted using NLTK frequency analysis")
+    # Keywords
+    show_step(5)
+    st.markdown("""<div class="sec-head">
+        <div class="sec-icon">🏷️</div><div class="sec-title">NLP Keyword Extraction</div>
+        <div class="sec-line"></div></div>""", unsafe_allow_html=True)
+    st.caption("Extracted using NLTK frequency analysis · stop-words removed")
     keywords = extract_keywords(clean, top_n=25)
     if keywords:
-        chips = "".join(f'<span class="keyword-chip">{kw}</span>' for kw in keywords)
-        st.markdown(f'<div class="keyword-container">{chips}</div>', unsafe_allow_html=True)
+        kchips = "".join(f'<span class="chip">{kw}</span>' for kw in keywords)
+        st.markdown(f'<div class="chips">{kchips}</div>', unsafe_allow_html=True)
 
-    st.markdown("<div class='custom-divider'></div>", unsafe_allow_html=True)
+    # Done!
+    prog.markdown('<div class="success-box">✅ Analysis complete — all sections generated successfully!</div>',
+                  unsafe_allow_html=True)
 
     # Download
-    st.markdown('<p class="section-header">⬇️ Download Summary</p>', unsafe_allow_html=True)
+    st.markdown("""<div class="sec-head" style="margin-top:2rem;">
+        <div class="sec-icon">⬇️</div><div class="sec-title">Download Your Summary</div>
+        <div class="sec-line"></div></div>""", unsafe_allow_html=True)
+
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     download_content = f"""AI NOTES SUMMARIZER & KNOWLEDGE EXTRACTION SYSTEM
 Created by Zainab Gondal
@@ -360,11 +805,12 @@ AI Notes Summarizer  |  Created by Zainab Gondal
         file_name=f"notes_summary_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
         mime="text/plain",
     )
-    st.success("✅ Analysis complete!")
-
 
 # ── Footer ────────────────────────────────────────────────────────────────────
-st.markdown(
-    '<div class="footer">🧠 AI Notes Summarizer | Created by <strong>Zainab Gondal</strong> | Powered by Groq + Llama3 (Free)</div>',
-    unsafe_allow_html=True,
-)
+st.markdown("""
+<div class="app-footer">
+    🧠 AI Notes Summarizer &amp; Knowledge Extraction System &nbsp;·&nbsp;
+    Created by <strong>Zainab Gondal</strong> &nbsp;·&nbsp;
+    Powered by Groq + Llama3 &nbsp;·&nbsp; 100% Free
+</div>
+""", unsafe_allow_html=True)
