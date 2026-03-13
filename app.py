@@ -32,58 +32,71 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
 
 /* ════════════════════════════════════════════
-   FORCE DARK BACKGROUND — ALL STREAMLIT LAYERS
+   NUCLEAR BACKGROUND OVERRIDE — ALL LAYERS
 ════════════════════════════════════════════ */
-html, body,
-.stApp,
-[data-testid="stAppViewContainer"],
-[data-testid="stMain"],
-[data-testid="stMainBlockContainer"],
-section.main,
-.main,
-[class*="css"] {
-    background: transparent !important;
+
+/* Step 1: Kill white on every possible Streamlit wrapper */
+html { background: #02030d !important; }
+body { background: #02030d !important; }
+#root { background: #02030d !important; }
+.stApp { background: #02030d !important; }
+[data-testid="stAppViewContainer"] { background: #02030d !important; }
+[data-testid="stMain"]             { background: #02030d !important; }
+[data-testid="stMainBlockContainer"] { background: #02030d !important; }
+[data-testid="stHeader"]           { background: transparent !important; }
+[data-testid="stDecoration"]       { background: transparent !important; }
+section[data-testid="stSidebar"] + div { background: #02030d !important; }
+.main > div { background: transparent !important; }
+section.main { background: transparent !important; }
+.main       { background: transparent !important; }
+[class*="block-container"] { background: transparent !important; }
+[class*="appview"]   { background: #02030d !important; }
+[class*="stMarkdown"] { background: transparent !important; }
+[class*="element-container"] { background: transparent !important; }
+
+/* Step 2: Font + color on everything */
+html, body, [class*="css"], [data-testid] {
     font-family: 'Plus Jakarta Sans', sans-serif !important;
     color: #e2e8f0 !important;
 }
 
-/* THE REAL BACKGROUND — painted on stApp */
-.stApp {
+/* Step 3: THE REAL COSMIC BACKGROUND — fixed to viewport */
+body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: -1; pointer-events: none;
     background:
-        radial-gradient(ellipse 90% 55% at 0% 0%,   rgba(88,28,220,0.35)  0%, transparent 55%),
-        radial-gradient(ellipse 70% 50% at 100% 0%,  rgba(14,165,233,0.22) 0%, transparent 50%),
-        radial-gradient(ellipse 60% 55% at 100% 100%,rgba(236,72,153,0.2)  0%, transparent 55%),
-        radial-gradient(ellipse 80% 50% at 0%   100%,rgba(99,102,241,0.18) 0%, transparent 55%),
-        radial-gradient(ellipse 50% 40% at 50%  50%, rgba(139,92,246,0.1)  0%, transparent 60%),
-        linear-gradient(145deg, #02030d 0%, #06071a 30%, #0a0520 60%, #050210 100%) !important;
-    background-attachment: fixed !important;
-    min-height: 100vh !important;
+        radial-gradient(ellipse 90% 55% at 0%    0%,   rgba(88,28,220,0.4)   0%, transparent 52%),
+        radial-gradient(ellipse 70% 50% at 100%  0%,   rgba(14,165,233,0.22) 0%, transparent 50%),
+        radial-gradient(ellipse 65% 55% at 100% 100%,  rgba(236,72,153,0.22) 0%, transparent 52%),
+        radial-gradient(ellipse 80% 50% at 0%   100%,  rgba(99,102,241,0.2)  0%, transparent 52%),
+        radial-gradient(ellipse 50% 40% at 50%   50%,  rgba(139,92,246,0.12) 0%, transparent 60%),
+        linear-gradient(145deg, #02030d 0%, #06071a 30%, #0a0520 60%, #050210 100%);
+    background-attachment: fixed;
+    animation: orbDrift 20s ease-in-out infinite alternate;
 }
 
-/* Animated floating orbs layer */
-.stApp::before {
+/* Step 4: Floating animated orbs */
+body::after {
     content: '';
-    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    position: fixed; inset: 0; z-index: -1; pointer-events: none;
     background:
-        radial-gradient(circle 280px at 15% 25%,  rgba(99,102,241,0.12)  0%, transparent 70%),
-        radial-gradient(circle 380px at 85% 20%,  rgba(139,92,246,0.09)  0%, transparent 70%),
-        radial-gradient(circle 240px at 70% 75%,  rgba(236,72,153,0.1)   0%, transparent 70%),
-        radial-gradient(circle 320px at 25% 80%,  rgba(56,189,248,0.07)  0%, transparent 70%);
-    animation: orbDrift 18s ease-in-out infinite alternate;
+        radial-gradient(circle 300px at 15% 25%,  rgba(99,102,241,0.14)  0%, transparent 70%),
+        radial-gradient(circle 400px at 85% 20%,  rgba(139,92,246,0.1)   0%, transparent 70%),
+        radial-gradient(circle 260px at 70% 75%,  rgba(236,72,153,0.11)  0%, transparent 70%),
+        radial-gradient(circle 340px at 25% 80%,  rgba(56,189,248,0.08)  0%, transparent 70%);
+    animation: orbDrift2 25s ease-in-out infinite alternate;
 }
+
 @keyframes orbDrift {
-    0%   { transform: translate(0px, 0px) scale(1); }
-    33%  { transform: translate(30px, -20px) scale(1.05); }
-    66%  { transform: translate(-20px, 30px) scale(0.97); }
-    100% { transform: translate(15px, -10px) scale(1.02); }
+    0%   { transform: translate(0px,    0px)   scale(1);    }
+    33%  { transform: translate(35px,  -25px)  scale(1.06); }
+    66%  { transform: translate(-25px,  35px)  scale(0.96); }
+    100% { transform: translate(18px,  -12px)  scale(1.03); }
 }
-
-/* NOISE TEXTURE OVERLAY */
-.stApp::after {
-    content: '';
-    position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.025;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-    background-size: 200px 200px;
+@keyframes orbDrift2 {
+    0%   { transform: translate(0px,   0px)   scale(1);    }
+    50%  { transform: translate(-30px, 25px)  scale(1.04); }
+    100% { transform: translate(20px, -20px)  scale(0.98); }
 }
 
 [data-testid="stMainBlockContainer"] { position: relative; z-index: 1; }
@@ -767,9 +780,43 @@ div[data-testid="stDownloadButton"] > button:hover {
 </style>
 """, unsafe_allow_html=True)
 
-# ── Canvas Particle System ─────────────────────────────────────────────────────
+# ── Canvas Particle System + Background Enforcer ──────────────────────────────
 st.markdown("""
 <canvas id="cosmic-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
+<script>
+// ── BACKGROUND ENFORCER: override Streamlit's runtime white injection ─────────
+(function enforceBackground() {
+    const BG = 'linear-gradient(145deg,#02030d 0%,#06071a 30%,#0a0520 60%,#050210 100%)';
+    const DARK = '#02030d';
+    const selectors = [
+        'body','#root','.stApp',
+        '[data-testid="stAppViewContainer"]',
+        '[data-testid="stMain"]',
+        '[data-testid="stMainBlockContainer"]',
+        '[data-testid="stAppViewBlockContainer"]',
+        '[data-testid="stBottom"]',
+        'section.main','.main'
+    ];
+    function applyBg() {
+        document.body.style.setProperty('background', DARK, 'important');
+        document.body.style.setProperty('background-color', DARK, 'important');
+        selectors.forEach(sel => {
+            document.querySelectorAll(sel).forEach(el => {
+                el.style.setProperty('background', 'transparent', 'important');
+                el.style.setProperty('background-color', 'transparent', 'important');
+            });
+        });
+    }
+    applyBg();
+    // MutationObserver — re-apply whenever Streamlit re-renders
+    new MutationObserver(applyBg).observe(document.documentElement, {
+        childList: true, subtree: true, attributes: true,
+        attributeFilter: ['style','class']
+    });
+    // Also fire every 300ms for first 5s as safety net
+    let t = 0; const iv = setInterval(() => { applyBg(); if(++t > 16) clearInterval(iv); }, 300);
+})();
+</script>
 <script>
 (function() {
     const canvas = document.getElementById('cosmic-canvas');
