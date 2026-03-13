@@ -946,7 +946,7 @@ with st.sidebar:
         border-bottom: 1px solid rgba(139,92,246,0.2);
         margin-bottom: 1rem;
     '>
-        <!-- Glow blob behind icon -->
+        
         <div style='
             position:absolute; top:20px; left:50%; transform:translateX(-50%);
             width:80px; height:80px;
@@ -954,7 +954,7 @@ with st.sidebar:
             border-radius:50%; pointer-events:none;
         '></div>
 
-        <!-- App Icon -->
+        
         <div style='
             width:64px; height:64px;
             background: linear-gradient(135deg, #3730a3, #7c3aed, #a855f7, #ec4899);
@@ -964,7 +964,7 @@ with st.sidebar:
             position: relative; z-index:1;
         '>🧠</div>
 
-        <!-- App Name -->
+        
         <div style='
             font-size:1.05rem; font-weight:800; letter-spacing:-0.01em;
             background: linear-gradient(135deg, #e2e8f0, #c4b5fd);
@@ -972,7 +972,7 @@ with st.sidebar:
             background-clip:text; margin-bottom:0.3rem;
         '>AI Notes Summarizer</div>
 
-        <!-- Creator Badge -->
+        
         <div style='
             display:inline-flex; align-items:center; gap:6px;
             background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(236,72,153,0.15));
@@ -982,7 +982,7 @@ with st.sidebar:
             letter-spacing:0.04em;
         '>✨ by Zainab Gondal</div>
 
-        <!-- Version tag -->
+        
         <div style='
             margin-top:0.6rem;
             font-size:0.65rem; font-weight:600; color:#334155;
