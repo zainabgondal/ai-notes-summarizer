@@ -17,6 +17,59 @@ from utils              import clean_text, count_words, estimate_read_time, extr
 from summarizer         import generate_quick_summary, generate_detailed_summary, generate_key_points
 from extractor          import run_full_extraction
 from question_generator import generate_all_questions
+from flashcard_generator import generate_flashcards
+
+# ── Session state defaults ────────────────────────────────────────────────────
+if "theme"    not in st.session_state: st.session_state.theme    = "cosmic"
+if "language" not in st.session_state: st.session_state.language = "English"
+
+# ── Theme definitions ─────────────────────────────────────────────────────────
+THEMES = {
+    "cosmic":  {"emoji":"🌌","name":"Cosmic",  "p1":"#3730a3","p2":"#6d28d9","p3":"#9333ea","a":"99,102,241","b":"139,92,246","c":"168,85,247","bg":"#02030d","orbit":"88,28,220"},
+    "ocean":   {"emoji":"🌊","name":"Ocean",   "p1":"#0c4a6e","p2":"#0369a1","p3":"#0ea5e9","a":"14,165,233","b":"6,182,212", "c":"56,189,248", "bg":"#020810","orbit":"14,165,233"},
+    "emerald": {"emoji":"🌿","name":"Emerald", "p1":"#064e3b","p2":"#047857","p3":"#10b981","a":"16,185,129","b":"5,150,105", "c":"52,211,153", "bg":"#020e08","orbit":"16,185,129"},
+    "solar":   {"emoji":"🔥","name":"Solar",   "p1":"#78350f","p2":"#b45309","p3":"#f59e0b","a":"245,158,11","b":"217,119,6", "c":"251,146,60", "bg":"#0d0800","orbit":"245,158,11"},
+    "cherry":  {"emoji":"🌸","name":"Cherry",  "p1":"#831843","p2":"#be185d","p3":"#ec4899","a":"236,72,153","b":"219,39,119","c":"244,114,182","bg":"#0d0208","orbit":"236,72,153"},
+}
+
+LANGUAGES = [
+    "English","Urdu (اردو)","Turkish (Türkçe)","Arabic (العربية)",
+    "French (Français)","Spanish (Español)","German (Deutsch)",
+    "Chinese (中文)","Japanese (日本語)","Hindi (हिंदी)",
+    "Portuguese (Português)","Italian (Italiano)","Russian (Русский)",
+    "Korean (한국어)","Bengali (বাংলা)",
+]
+
+def get_theme_css():
+    k = st.session_state.theme
+    if k == "cosmic": return ""
+    t = THEMES[k]
+    a,b,c = t["a"],t["b"],t["c"]
+    p1,p2,p3 = t["p1"],t["p2"],t["p3"]
+    bg,orbit = t["bg"],t["orbit"]
+    return (
+        "<style>"
+        f"html,body,#root,.stApp,[data-testid='stAppViewContainer'],"
+        f"[data-testid='stMain'],[data-testid='stMainBlockContainer']{{background:{bg}!important;}}"
+        f".hero{{border-color:rgba({a},0.35)!important;}}"
+        f".hero-eyebrow{{background:linear-gradient(135deg,rgba({a},.2),rgba({b},.13))!important;border-color:rgba({b},.5)!important;color:rgb({c})!important;}}"
+        f".hero-author{{background:linear-gradient(135deg,{p1},{p2},{p3})!important;box-shadow:0 8px 35px rgba({a},.55)!important;}}"
+        f".sec-icon{{background:linear-gradient(135deg,{p1},{p2},{p3})!important;box-shadow:0 8px 24px rgba({a},.5)!important;}}"
+        f".stat-card::after{{background:linear-gradient(90deg,transparent,rgb({b}),rgb({c}),transparent)!important;}}"
+        f".stat-num{{background:linear-gradient(135deg,rgb({a}),rgb({b}),rgb({c}))!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;}}"
+        f".chip{{background:rgba({a},.1)!important;color:rgb({c})!important;border-color:rgba({a},.26)!important;}}"
+        f".prog-bar-fill{{background:linear-gradient(90deg,{p1},{p2},{p3},{p2},{p1})!important;background-size:400% 100%!important;}}"
+        f".prog-dot.active{{border-color:rgba({b},.55)!important;color:rgb({c})!important;background:rgba({a},.14)!important;}}"
+        f".stTabs [aria-selected='true']{{background:linear-gradient(135deg,{p1},{p2},{p3})!important;box-shadow:0 4px 20px rgba({a},.5)!important;}}"
+        f"div[data-testid='stButton']>button[kind='primary']{{background:linear-gradient(135deg,{p1},{p2},{p3})!important;background-size:300% 300%!important;box-shadow:0 8px 35px rgba({a},.55)!important;}}"
+        f"div[data-testid='stDownloadButton']>button{{background:linear-gradient(135deg,{p1},{p2},{p3})!important;box-shadow:0 6px 30px rgba({a},.4)!important;}}"
+        f"section[data-testid='stSidebar']{{background:radial-gradient(ellipse 120% 35% at 50% 0%,rgba({orbit},.6) 0%,transparent 50%),linear-gradient(160deg,#0d0a1f 0%,#120e2e 40%,#0a0818 100%)!important;}}"
+        f"[data-testid='stFileUploader'] section button{{background:linear-gradient(135deg,{p1},{p2})!important;}}"
+        f".fc-item{{border-color:rgba({a},.22)!important;}}"
+        f".fc-item:hover{{border-color:rgba({b},.5)!important;box-shadow:0 12px 35px rgba({a},.2)!important;}}"
+        f".copy-btn{{background:rgba({a},.15)!important;border-color:rgba({a},.3)!important;color:rgb({c})!important;}}"
+        "</style>"
+    )
 
 
 st.set_page_config(
@@ -1147,6 +1200,62 @@ section[data-testid="stSidebar"] > div > div {
 </style>
 """, unsafe_allow_html=True)
 
+# ── Inject active theme overrides ─────────────────────────────────────────────
+theme_css = get_theme_css()
+if theme_css:
+    st.markdown(theme_css, unsafe_allow_html=True)
+
+# ── New feature CSS (copy buttons, flashcards, theme selector, lang badge) ────
+st.markdown("""<style>
+/* COPY BUTTON */
+.out-card { position: relative !important; }
+.copy-btn {
+    position: absolute; top: 10px; right: 10px;
+    background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.32);
+    color: #a5b4fc; border-radius: 8px; padding: 3px 10px;
+    font-size: 0.68rem; font-weight: 700; cursor: pointer;
+    transition: all 0.2s ease; z-index: 10;
+    font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0.04em;
+}
+.copy-btn:hover { background: rgba(99,102,241,0.3); color: #c4b5fd; transform: translateY(-1px); }
+
+/* FLASHCARD GRID */
+.fc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-top: 1rem; }
+.fc-item {
+    background: linear-gradient(145deg, rgba(10,8,28,0.94), rgba(14,10,36,0.94));
+    border: 1px solid rgba(139,92,246,0.22); border-radius: 18px; overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03);
+    animation: fadeInUp 0.5s ease both;
+}
+.fc-item:hover { border-color: rgba(139,92,246,0.55); transform: translateY(-5px) scale(1.02); box-shadow: 0 16px 40px rgba(99,102,241,0.22); }
+.fc-q { padding: 1rem 1.2rem 0.9rem; font-size: 0.86rem; font-weight: 700; color: #e2e8f0; line-height: 1.55; border-bottom: 1px solid rgba(139,92,246,0.15); }
+.fc-q-lbl { font-size: 0.58rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #a78bfa; margin-bottom: 5px; display: block; }
+.fc-a { padding: 0.85rem 1.2rem 1rem; font-size: 0.82rem; color: #94a3b8; line-height: 1.65; }
+.fc-a-lbl { font-size: 0.58rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #34d399; margin-bottom: 5px; display: block; }
+
+/* THEME SELECTOR */
+.theme-row { display: flex; gap: 7px; flex-wrap: nowrap; margin-bottom: 0.8rem; }
+.theme-pill { flex: 1; background: rgba(255,255,255,0.03); border: 1.5px solid rgba(139,92,246,0.18); border-radius: 12px; padding: 0.55rem 0.2rem; text-align: center; cursor: pointer; font-size: 1.1rem; transition: all 0.22s ease; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.theme-pill span { font-size: 0.5rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em; }
+.theme-pill:hover { border-color: rgba(139,92,246,0.5); background: rgba(139,92,246,0.1); transform: translateY(-2px); }
+.theme-pill.active { border-color: rgba(139,92,246,0.75); background: rgba(139,92,246,0.2); box-shadow: 0 4px 16px rgba(99,102,241,0.3); }
+.theme-pill.active span { color: #c4b5fd; }
+
+/* LANG BADGE */
+.lang-pill { display: inline-flex; align-items: center; gap: 5px; background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.28); border-radius: 100px; padding: 0.2rem 0.75rem; font-size: 0.7rem; font-weight: 700; color: #a5b4fc; }
+
+/* DL ROW */
+.dl-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 0.5rem; }
+.dl-row > div[data-testid="stDownloadButton"] { flex: 1; min-width: 170px; }
+
+@media screen and (max-width: 600px) {
+    .fc-grid { grid-template-columns: 1fr !important; }
+    .theme-row { gap: 4px; }
+    .fc-item { border-radius: 14px; }
+}
+</style>""", unsafe_allow_html=True)
+
 # ── Canvas Particle System + Background Enforcer ──────────────────────────────
 st.markdown("""
 <canvas id="cosmic-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
@@ -1285,6 +1394,35 @@ st.markdown("""
     draw();
 })();
 </script>
+<script>
+/* ── COPY BUTTON INJECTOR ── */
+(function() {
+    const done = new WeakSet();
+    function inject() {
+        document.querySelectorAll('.out-card').forEach(function(card) {
+            if (done.has(card)) return;
+            done.add(card);
+            var btn = document.createElement('button');
+            btn.className = 'copy-btn';
+            btn.textContent = '📋 Copy';
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var txt = card.innerText.replace(/^📋 Copy$/mg,'').replace(/^✓ Copied!$/mg,'').trim();
+                navigator.clipboard.writeText(txt).then(function() {
+                    btn.textContent = '✓ Copied!';
+                    btn.classList.add('copied');
+                    setTimeout(function(){ btn.textContent = '📋 Copy'; btn.classList.remove('copied'); }, 2200);
+                }).catch(function(){
+                    btn.textContent = '✓'; setTimeout(function(){ btn.textContent = '📋 Copy'; }, 1500);
+                });
+            });
+            card.appendChild(btn);
+        });
+    }
+    new MutationObserver(inject).observe(document.body, {childList:true, subtree:true});
+    setInterval(inject, 800);
+})();
+</script>
 """, unsafe_allow_html=True)
 
 
@@ -1301,6 +1439,139 @@ def get_groq_client(visitor_key):
     key = os.environ.get("GROQ_API_KEY", "")
     if key: return Groq(api_key=key)
     return None
+
+
+# ── Language-aware AI wrappers ────────────────────────────────────────────────
+def _groq_call(client, system, user, max_tokens=700):
+    r = client.chat.completions.create(
+        model="llama-3.1-8b-instant", max_tokens=max_tokens,
+        messages=[{"role":"system","content":system},{"role":"user","content":user}]
+    )
+    return r.choices[0].message.content
+
+def lang_instruction(language):
+    return f" Always respond entirely in {language}. Do not use English." if language != "English" else ""
+
+def get_quick_summary(client, text, language):
+    if language == "English": return generate_quick_summary(client, text)
+    return _groq_call(client, f"You are an expert academic summarizer.{lang_instruction(language)}", f"Summarize these notes in 3-5 sentences:\n\n{text[:4000]}", 350)
+
+def get_detailed_summary(client, text, language):
+    if language == "English": return generate_detailed_summary(client, text)
+    return _groq_call(client, f"You are an expert academic summarizer.{lang_instruction(language)}", f"Write a detailed multi-paragraph summary covering all main topics:\n\n{text[:4000]}", 800)
+
+def get_key_points(client, text, language):
+    if language == "English": return generate_key_points(client, text)
+    return _groq_call(client, f"You are an expert study assistant.{lang_instruction(language)}", f"Extract 8-10 key points, each starting with '• ':\n\n{text[:4000]}", 500)
+
+def get_knowledge(client, text, language):
+    if language == "English": return run_full_extraction(client, text)
+    lang_note = lang_instruction(language)
+    concepts = _groq_call(client, f"Identify 5-6 important concepts.{lang_note}", f"Notes:\n{text[:3000]}", 400)
+    time.sleep(3)
+    definitions = _groq_call(client, f"List key term definitions.{lang_note}", f"Notes:\n{text[:3000]}", 400)
+    time.sleep(3)
+    key_terms = _groq_call(client, f"List 10 key terms as comma-separated values ONLY.{lang_note}", f"Notes:\n{text[:3000]}", 150)
+    time.sleep(3)
+    facts = _groq_call(client, f"List 5-6 important facts.{lang_note}", f"Notes:\n{text[:3000]}", 350)
+    return {"concepts": concepts, "definitions": definitions, "key_terms": key_terms, "important_facts": facts}
+
+def get_questions(client, text, language):
+    if language == "English": return generate_all_questions(client, text)
+    lang_note = lang_instruction(language)
+    conceptual   = _groq_call(client, f"Write 5 conceptual questions.{lang_note}", f"Notes:\n{text[:3000]}", 400)
+    time.sleep(3)
+    mcq          = _groq_call(client, f"Write 5 multiple-choice questions with 4 options each.{lang_note}", f"Notes:\n{text[:3000]}", 500)
+    time.sleep(3)
+    short_answer = _groq_call(client, f"Write 3 short-answer questions.{lang_note}", f"Notes:\n{text[:3000]}", 300)
+    return {"conceptual": conceptual, "mcq": mcq, "short_answer": short_answer}
+
+
+# ── PDF generator ─────────────────────────────────────────────────────────────
+def create_pdf(word_count, char_count, read_time, quick, key_points_txt,
+               knowledge, questions, keywords, timestamp):
+    try:
+        from fpdf import FPDF
+        pdf = FPDF()
+        pdf.set_auto_page_break(auto=True, margin=18)
+        pdf.add_page()
+        pdf.set_margins(18, 18, 18)
+
+        def safe(t):
+            return t.encode("latin-1", "replace").decode("latin-1") if t else ""
+
+        def heading(txt, size=13, color=(167,139,250)):
+            pdf.set_font("Helvetica","B", size)
+            pdf.set_text_color(*color)
+            pdf.cell(0, 8, safe(txt), ln=True)
+            pdf.set_text_color(180, 180, 200)
+
+        def body(txt, size=9):
+            pdf.set_font("Helvetica","", size)
+            pdf.set_text_color(200, 210, 230)
+            pdf.multi_cell(0, 5.5, safe(txt))
+            pdf.ln(2)
+
+        def divider():
+            pdf.set_draw_color(80, 60, 130)
+            pdf.line(18, pdf.get_y(), 192, pdf.get_y())
+            pdf.ln(4)
+
+        # Header
+        pdf.set_fill_color(10, 8, 28)
+        pdf.rect(0, 0, 210, 297, "F")
+        pdf.set_font("Helvetica","B", 20)
+        pdf.set_text_color(196, 181, 253)
+        pdf.cell(0, 14, "AI Notes Summarizer", ln=True, align="C")
+        pdf.set_font("Helvetica","", 9)
+        pdf.set_text_color(100, 100, 140)
+        pdf.cell(0, 6, f"Generated by Zainab Gondal  |  {timestamp}", ln=True, align="C")
+        pdf.ln(4)
+        divider()
+
+        # Stats
+        heading("Document Statistics", 11, (139, 92, 246))
+        body(f"Words: {word_count:,}   |   Characters: {char_count:,}   |   Read Time: {read_time}")
+        divider()
+
+        # Quick Summary
+        heading("Quick Summary")
+        body(quick)
+        divider()
+
+        # Key Points
+        heading("Key Points")
+        body(key_points_txt)
+        divider()
+
+        # Concepts
+        heading("Important Concepts")
+        body(knowledge.get("concepts",""))
+        divider()
+
+        # Definitions
+        heading("Definitions")
+        body(knowledge.get("definitions",""))
+        divider()
+
+        # Questions
+        heading("Conceptual Questions")
+        body(questions.get("conceptual",""))
+        divider()
+
+        # Keywords
+        heading("NLP Keywords")
+        body(", ".join(keywords))
+
+        # Footer
+        pdf.set_y(-18)
+        pdf.set_font("Helvetica","", 8)
+        pdf.set_text_color(80, 60, 120)
+        pdf.cell(0, 6, "AI Notes Summarizer  |  Created by Zainab Gondal  |  Powered by Groq + Llama3", align="C")
+
+        return bytes(pdf.output())
+    except Exception as e:
+        return None
 
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
@@ -1352,6 +1623,49 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
     st.markdown("<div style='height:0.8rem'></div>", unsafe_allow_html=True)
+
+    # ── Theme selector ────────────────────────────────────────────────────────
+    st.markdown("""
+    <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;
+                background:linear-gradient(90deg,#a78bfa,#e879f9);-webkit-background-clip:text;
+                -webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;">
+        🎨 Theme
+    </div>""", unsafe_allow_html=True)
+    theme_cols = st.columns(5)
+    for i, (tk, tv) in enumerate(THEMES.items()):
+        with theme_cols[i]:
+            active_cls = "active" if st.session_state.theme == tk else ""
+            if st.button(tv["emoji"], key=f"theme_{tk}", help=tv["name"],
+                         use_container_width=True):
+                st.session_state.theme = tk
+                st.rerun()
+    # Show active theme name
+    active_t = THEMES[st.session_state.theme]
+    st.markdown(
+        f"<div style='font-size:0.65rem;color:#6366f1;font-weight:700;text-align:center;"
+        f"margin-top:2px;margin-bottom:0.7rem;'>{active_t['emoji']} {active_t['name']} Theme</div>",
+        unsafe_allow_html=True,
+    )
+
+    # ── Language selector ─────────────────────────────────────────────────────
+    st.markdown("""
+    <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;
+                background:linear-gradient(90deg,#a78bfa,#e879f9);-webkit-background-clip:text;
+                -webkit-text-fill-color:transparent;background-clip:text;margin-bottom:5px;">
+        🌐 Output Language
+    </div>""", unsafe_allow_html=True)
+    selected_lang = st.selectbox(
+        "Language", LANGUAGES,
+        index=LANGUAGES.index(st.session_state.language) if st.session_state.language in LANGUAGES else 0,
+        label_visibility="collapsed",
+    )
+    if selected_lang != st.session_state.language:
+        st.session_state.language = selected_lang
+    st.markdown(
+        "<div style='font-size:0.68rem;color:#475569;margin-top:2px;margin-bottom:0.7rem;'>"
+        "AI will summarize &amp; answer in your chosen language 🌍</div>",
+        unsafe_allow_html=True,
+    )
 
     # ── Input method ─────────────────────────────────────────────────────────
     st.markdown("""
@@ -1539,35 +1853,38 @@ st.markdown("<div class='div'></div>", unsafe_allow_html=True)
 if analyse_clicked:
 
     if not raw_text.strip():
-        st.warning("Please paste some text or upload a file first.")
+        st.warning("⚠️ Please paste some text or upload a file first.")
         st.stop()
 
     client = get_groq_client(visitor_key)
     if client is None:
-        st.error("Groq API key not found. Get your free key from console.groq.com")
+        st.error("🔑 Groq API key not found. Get your free key at console.groq.com and paste it in the sidebar.")
         st.stop()
 
+    language   = st.session_state.language
     clean      = clean_text(raw_text)
     word_count = count_words(clean)
     read_time  = estimate_read_time(clean)
     char_count = len(clean)
 
-    # Progress tracker
+    # ── Progress tracker ──────────────────────────────────────────────────────
     prog = st.empty()
 
-    def show_step(n):
-        steps = [
-            ("Analysing document",       1),
-            ("Generating summaries",     2),
-            ("Extracting knowledge",     3),
-            ("Building study questions", 4),
-            ("Extracting keywords",      5),
+    def show_step(n, total=7):
+        labels = [
+            "Analysing document",
+            "Generating summaries",
+            "Extracting knowledge",
+            "Building study questions",
+            "Extracting keywords",
+            "Generating flashcards",
+            "Preparing downloads",
         ]
-        pct = int((n - 1) / len(steps) * 100)
+        pct = int((n - 1) / total * 100)
         rows = ""
-        for label, s in steps:
-            if s < n:   cls, dot, txt = "done",  "✓", f"{label} — done"
-            elif s == n: cls, dot, txt = "active", "●", f"{label}..."
+        for i, label in enumerate(labels, 1):
+            if i < n:    cls, dot, txt = "done",  "✓", f"{label} — done"
+            elif i == n: cls, dot, txt = "active", "●", f"{label}..."
             else:        cls, dot, txt = "wait",  "○", label
             rows += f'<div class="prog-step {cls}"><div class="prog-dot {cls}">{dot}</div>{txt}</div>'
         prog.markdown(f"""
@@ -1579,7 +1896,17 @@ if analyse_clicked:
             </div>
         </div>""", unsafe_allow_html=True)
 
-    # Stats
+    # ── Language badge ────────────────────────────────────────────────────────
+    lang_short = language.split(" ")[0]
+    if language != "English":
+        st.markdown(
+            f'<div style="margin-bottom:0.8rem;">'
+            f'<span class="lang-pill">🌐 Output Language: <strong>{lang_short}</strong></span>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+
+    # ── Stats ─────────────────────────────────────────────────────────────────
     show_step(1)
     st.markdown("""<div class="sec-head">
         <div class="sec-icon">📊</div><div class="sec-title">Document Statistics</div>
@@ -1589,36 +1916,36 @@ if analyse_clicked:
     c2.markdown(f'<div class="stat-card"><div class="stat-num">{char_count:,}</div><div class="stat-lbl">Characters</div></div>', unsafe_allow_html=True)
     c3.markdown(f'<div class="stat-card"><div class="stat-num">{read_time}</div><div class="stat-lbl">Read Time</div></div>', unsafe_allow_html=True)
 
-    # Summaries
+    # ── Summaries ─────────────────────────────────────────────────────────────
     show_step(2)
     st.markdown("""<div class="sec-head">
         <div class="sec-icon">📝</div><div class="sec-title">Summaries</div>
         <div class="sec-line"></div></div>""", unsafe_allow_html=True)
 
-    tab1, tab2, tab3 = st.tabs(["⚡ Quick Summary","📖 Detailed Summary","🎯 Key Points"])
+    tab1, tab2, tab3 = st.tabs(["⚡ Quick Summary", "📖 Detailed Summary", "🎯 Key Points"])
     with tab1:
-        with st.spinner(""):
-            quick = generate_quick_summary(client, clean)
+        with st.spinner("Generating quick summary..."):
+            quick = get_quick_summary(client, clean, language)
         st.markdown(f'<div class="out-card purple">{quick}</div>', unsafe_allow_html=True)
     with tab2:
-        with st.spinner(""):
+        with st.spinner("Writing detailed summary..."):
             time.sleep(4)
-            detailed = generate_detailed_summary(client, clean)
+            detailed = get_detailed_summary(client, clean, language)
         st.markdown(f'<div class="out-card green">{detailed}</div>', unsafe_allow_html=True)
     with tab3:
-        with st.spinner(""):
+        with st.spinner("Extracting key points..."):
             time.sleep(4)
-            key_points = generate_key_points(client, clean)
+            key_points = get_key_points(client, clean, language)
         st.markdown(f'<div class="out-card amber">{key_points}</div>', unsafe_allow_html=True)
 
-    # Knowledge
+    # ── Knowledge Extraction ──────────────────────────────────────────────────
     show_step(3)
     st.markdown("""<div class="sec-head">
         <div class="sec-icon">🔬</div><div class="sec-title">Knowledge Extraction</div>
         <div class="sec-line"></div></div>""", unsafe_allow_html=True)
-    with st.spinner(""):
+    with st.spinner("Extracting knowledge — takes ~15 seconds..."):
         time.sleep(5)
-        knowledge = run_full_extraction(client, clean)
+        knowledge = get_knowledge(client, clean, language)
 
     ke1, ke2 = st.columns(2)
     with ke1:
@@ -1635,16 +1962,16 @@ if analyse_clicked:
         st.markdown('<div class="know-lbl">📌 Important Facts</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="out-card amber">{knowledge["important_facts"]}</div>', unsafe_allow_html=True)
 
-    # Questions
+    # ── Study Questions ───────────────────────────────────────────────────────
     show_step(4)
     st.markdown("""<div class="sec-head">
         <div class="sec-icon">❓</div><div class="sec-title">Study Questions</div>
         <div class="sec-line"></div></div>""", unsafe_allow_html=True)
-    with st.spinner(""):
+    with st.spinner("Building study questions..."):
         time.sleep(5)
-        questions = generate_all_questions(client, clean)
+        questions = get_questions(client, clean, language)
 
-    qt1, qt2, qt3 = st.tabs(["💭 Conceptual (5)","🔢 Multiple Choice (5)","✏️ Short Answer (3)"])
+    qt1, qt2, qt3 = st.tabs(["💭 Conceptual (5)", "🔢 Multiple Choice (5)", "✏️ Short Answer (3)"])
     with qt1:
         st.markdown(f'<div class="out-card purple">{questions["conceptual"]}</div>', unsafe_allow_html=True)
     with qt2:
@@ -1652,7 +1979,7 @@ if analyse_clicked:
     with qt3:
         st.markdown(f'<div class="out-card rose">{questions["short_answer"]}</div>', unsafe_allow_html=True)
 
-    # Keywords
+    # ── NLP Keywords ──────────────────────────────────────────────────────────
     show_step(5)
     st.markdown("""<div class="sec-head">
         <div class="sec-icon">🏷️</div><div class="sec-title">NLP Keyword Extraction</div>
@@ -1663,18 +1990,45 @@ if analyse_clicked:
         kchips = "".join(f'<span class="chip">{kw}</span>' for kw in keywords)
         st.markdown(f'<div class="chips">{kchips}</div>', unsafe_allow_html=True)
 
-    # Done!
-    prog.markdown('<div class="success-box">✅ Analysis complete — all sections generated successfully!</div>',
-                  unsafe_allow_html=True)
+    # ── Flashcards ────────────────────────────────────────────────────────────
+    show_step(6)
+    st.markdown("""<div class="sec-head">
+        <div class="sec-icon">🃏</div><div class="sec-title">Flashcards</div>
+        <div class="sec-line"></div></div>""", unsafe_allow_html=True)
+    st.caption("Tap a card to study · Auto-generated from your notes")
+    with st.spinner("Generating flashcards..."):
+        time.sleep(4)
+        flashcards = generate_flashcards(client, clean, language)
 
-    # Download
+    cards_html = '<div class="fc-grid">'
+    for fc in flashcards:
+        cards_html += (
+            '<div class="fc-item">'
+            f'<div class="fc-q"><span class="fc-q-lbl">❓ Question</span>{fc["q"]}</div>'
+            f'<div class="fc-a"><span class="fc-a-lbl">✅ Answer</span>{fc["a"]}</div>'
+            '</div>'
+        )
+    cards_html += '</div>'
+    st.markdown(cards_html, unsafe_allow_html=True)
+
+    # ── Done! ─────────────────────────────────────────────────────────────────
+    show_step(7)
+    prog.markdown(
+        '<div class="success-box">✅ All done! Summaries, flashcards, questions &amp; keywords generated successfully.</div>',
+        unsafe_allow_html=True,
+    )
+
+    # ── Downloads ─────────────────────────────────────────────────────────────
     st.markdown("""<div class="sec-head" style="margin-top:2rem;">
         <div class="sec-icon">⬇️</div><div class="sec-title">Download Your Summary</div>
         <div class="sec-line"></div></div>""", unsafe_allow_html=True)
+    st.caption("Download your full study pack — TXT works everywhere, PDF looks great!")
 
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    ts_file   = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+
     download_content = f"""AI NOTES SUMMARIZER & KNOWLEDGE EXTRACTION SYSTEM
-Created by Zainab Gondal
+Created by Zainab Gondal  |  Language: {language}
 Generated on: {timestamp}
 {'='*70}
 
@@ -1733,19 +2087,42 @@ SHORT-ANSWER QUESTIONS
 {questions['short_answer']}
 
 {'='*70}
+FLASHCARDS
+{'='*70}
+""" + "\n".join([f"Q: {fc['q']}\nA: {fc['a']}\n" for fc in flashcards]) + f"""
+{'='*70}
 NLP KEYWORDS
 {'-'*40}
 {', '.join(keywords)}
 
 {'='*70}
-AI Notes Summarizer  |  Created by Zainab Gondal
+AI Notes Summarizer  |  Zainab Gondal  |  Powered by Groq + Llama3
 """
-    st.download_button(
-        label="⬇️ Download Full Summary (.txt)",
-        data=download_content.encode("utf-8"),
-        file_name=f"notes_summary_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
-        mime="text/plain",
-    )
+
+    dl1, dl2 = st.columns(2)
+    with dl1:
+        st.download_button(
+            label="📄 Download as TXT",
+            data=download_content.encode("utf-8"),
+            file_name=f"notes_summary_{ts_file}.txt",
+            mime="text/plain",
+            use_container_width=True,
+        )
+    with dl2:
+        pdf_bytes = create_pdf(
+            word_count, char_count, read_time, quick, key_points,
+            knowledge, questions, keywords, timestamp,
+        )
+        if pdf_bytes:
+            st.download_button(
+                label="📑 Download as PDF",
+                data=pdf_bytes,
+                file_name=f"notes_summary_{ts_file}.pdf",
+                mime="application/pdf",
+                use_container_width=True,
+            )
+        else:
+            st.info("💡 Install fpdf2 for PDF export: `pip install fpdf2`")
 
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.markdown("""
