@@ -922,7 +922,10 @@ st.markdown("""
 
 
 # ── Groq client ───────────────────────────────────────────────────────────────
-def get_groq_client(sidebar_key=""):
+def get_groq_client(visitor_key):
+    """Try visitor key first, then app owner key, then env var."""
+    if visitor_key.strip():
+        return Groq(api_key=visitor_key.strip())
     try:
         key = st.secrets["GROQ_API_KEY"]
         if key: return Groq(api_key=key)
@@ -930,158 +933,134 @@ def get_groq_client(sidebar_key=""):
         pass
     key = os.environ.get("GROQ_API_KEY", "")
     if key: return Groq(api_key=key)
-    if sidebar_key.strip(): return Groq(api_key=sidebar_key.strip())
     return None
 
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
 
-    # ── Brand Header ────────────────────────────────────────────
+    # Brand header — single clean string, double-quoted styles
     st.markdown(
-        "<div style=\"text-align:center;padding:2rem 1rem 1.4rem;position:relative;border-bottom:1px solid rgba(139,92,246,0.2);margin-bottom:1rem;\">"
-        "<div style=\"position:absolute;top:20px;left:50%;transform:translateX(-50%);width:80px;height:80px;background:radial-gradient(circle,rgba(139,92,246,0.45) 0%,transparent 70%);border-radius:50%;pointer-events:none;\"></div>"
-        "<div style=\"width:64px;height:64px;background:linear-gradient(135deg,#3730a3,#7c3aed,#a855f7,#ec4899);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:30px;box-shadow:0 8px 30px rgba(139,92,246,0.6),0 0 0 1px rgba(255,255,255,0.08) inset;position:relative;z-index:1;\">🧠</div>"
-        "<div style=\"font-size:1.05rem;font-weight:800;letter-spacing:-0.01em;background:linear-gradient(135deg,#e2e8f0,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.3rem;\">AI Notes Summarizer</div>"
-        "<div style=\"display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(139,92,246,0.2),rgba(236,72,153,0.15));border:1px solid rgba(139,92,246,0.4);border-radius:100px;padding:0.28rem 1rem;font-size:0.72rem;font-weight:700;color:#d8b4fe;letter-spacing:0.04em;\">✨ by Zainab Gondal</div>"
-        "<div style=\"margin-top:0.6rem;font-size:0.65rem;font-weight:600;color:#94a3b8;letter-spacing:0.08em;text-transform:uppercase;\">v2.0 · Groq + Llama3 · 100% Free</div>"
+        "<div style=\"text-align:center;padding:2rem 1rem 1.4rem;border-bottom:1px solid rgba(139,92,246,0.22);margin-bottom:1rem;\">"
+        "<div style=\"width:64px;height:64px;background:linear-gradient(135deg,#3730a3,#7c3aed,#a855f7,#ec4899);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:30px;box-shadow:0 8px 30px rgba(139,92,246,0.6)\">🧠</div>"
+        "<div style=\"font-size:1.05rem;font-weight:800;background:linear-gradient(135deg,#e2e8f0,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.4rem\">AI Notes Summarizer</div>"
+        "<div style=\"display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(139,92,246,0.2),rgba(236,72,153,0.15));border:1px solid rgba(139,92,246,0.4);border-radius:100px;padding:0.28rem 1rem;font-size:0.72rem;font-weight:700;color:#d8b4fe\">✨ by Zainab Gondal</div>"
+        "<div style=\"margin-top:0.6rem;font-size:0.65rem;font-weight:600;color:#64748b;letter-spacing:0.08em;text-transform:uppercase\">v2.0 · Groq + Llama3 · 100% Free</div>"
         "</div>",
         unsafe_allow_html=True,
     )
 
-    # ── API Key Section ──────────────────────────────────────────
-    st.markdown("""
-    <div class='sb-section'>
-        <span class='sb-label'>🔑 &nbsp;Groq API Key</span>
-    </div>
-    """, unsafe_allow_html=True)
-    sidebar_key = st.text_input(
-        "Groq API Key",
+    # FREE TO USE banner
+    st.markdown(
+        "<div style=\"background:linear-gradient(135deg,rgba(16,185,129,0.13),rgba(5,150,105,0.08));border:1.5px solid rgba(34,197,94,0.35);border-radius:16px;padding:1rem 1.2rem;text-align:center;margin-bottom:0.5rem\">"
+        "<div style=\"font-size:1.4rem;margin-bottom:0.3rem\">💚</div>"
+        "<div style=\"font-size:0.85rem;font-weight:800;color:#34d399;margin-bottom:0.4rem\">100% FREE TO USE</div>"
+        "<div style=\"font-size:0.73rem;color:#6ee7b7;line-height:1.6\">Just open the URL and start! No setup needed.</div>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("<div style=\"height:0.5rem\"></div>", unsafe_allow_html=True)
+
+    # Optional visitor key
+    st.markdown(
+        "<span style=\"font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.14em;background:linear-gradient(90deg,#a78bfa,#e879f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text\">🔑 &nbsp;Use Your Own Key (Optional)</span>",
+        unsafe_allow_html=True,
+    )
+    visitor_key = st.text_input(
+        "Visitor API Key",
         type="password",
-        placeholder="gsk_••••••••••••••",
+        placeholder="gsk_... (optional)",
         label_visibility="collapsed",
-        help="Get your free key at console.groq.com"
+        help="Leave empty to use the app owner's key for free",
     )
-    st.markdown("""
-    <div class='sb-tip'>
-        <strong>Free &amp; Unlimited</strong> — Get your key at
-        <span style='color:#a78bfa;'>console.groq.com</span><br>
-        <span style='color:#475569;font-size:0.72rem;'>Your key is never stored or shared.</span>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("<div style='height:0.8rem'></div>", unsafe_allow_html=True)
-
-    # ── Input Method ─────────────────────────────────────────────
-    st.markdown("<span class='sb-label'>📥 &nbsp;Input Method</span>", unsafe_allow_html=True)
-    input_mode = st.radio(
-        "Input Method",
-        ["📋 Paste Text", "📁 Upload File"],
-        label_visibility="collapsed"
+    st.markdown(
+        "<div style=\"font-size:0.71rem;color:#475569;margin-top:4px;padding:0 2px\">Leave empty to use the app for free. Or enter your own key from <span style=\"color:#a78bfa\">console.groq.com</span></div>",
+        unsafe_allow_html=True,
     )
 
-    st.markdown("<div style='height:0.6rem'></div>", unsafe_allow_html=True)
+    st.markdown("<div style=\"height:0.6rem\"></div>", unsafe_allow_html=True)
 
-    # ── Supported Formats ────────────────────────────────────────
-    st.markdown("""
-    <div class='sb-section'>
-        <span class='sb-label'>📂 &nbsp;Supported Formats</span>
-        <div style='display:flex; flex-wrap:wrap; gap:7px; margin-top:2px;'>
-            <span class='sb-format-chip'>📄 PDF</span>
-            <span class='sb-format-chip'>📝 DOCX</span>
-            <span class='sb-format-chip'>📃 TXT</span>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    # Input method
+    st.markdown(
+        "<span style=\"font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.14em;background:linear-gradient(90deg,#a78bfa,#e879f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text\">📥 &nbsp;Input Method</span>",
+        unsafe_allow_html=True,
+    )
+    input_mode = st.radio("Input Method", ["📋 Paste Text", "📁 Upload File"], label_visibility="collapsed")
 
-    # ── What This App Does ───────────────────────────────────────
-    st.markdown("""
-    <div class='sb-section'>
-        <span class='sb-label'>⚡ &nbsp;What You Get</span>
-        <div style='display:flex; flex-direction:column; gap:0;'>
-            <div class='sb-stat'><span class='sb-stat-label'>⚡ Quick Summary</span><span class='sb-stat-val'>✓</span></div>
-            <div class='sb-stat'><span class='sb-stat-label'>📖 Detailed Summary</span><span class='sb-stat-val'>✓</span></div>
-            <div class='sb-stat'><span class='sb-stat-label'>🎯 Key Points</span><span class='sb-stat-val'>✓</span></div>
-            <div class='sb-stat'><span class='sb-stat-label'>🔬 Knowledge Extract</span><span class='sb-stat-val'>✓</span></div>
-            <div class='sb-stat'><span class='sb-stat-label'>❓ Study Questions</span><span class='sb-stat-val'>✓</span></div>
-            <div class='sb-stat'><span class='sb-stat-label'>🏷️ NLP Keywords</span><span class='sb-stat-val'>✓</span></div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown("<div style=\"height:0.6rem\"></div>", unsafe_allow_html=True)
 
-    # ── How To Use ───────────────────────────────────────────────
-    st.markdown("""
-    <div class='sb-section'>
-        <span class='sb-label'>📖 &nbsp;How To Use</span>
-        <div style='display:flex; flex-direction:column; gap:6px; margin-top:2px;'>
-            <div style='display:flex; align-items:flex-start; gap:8px; font-size:0.78rem; color:#94a3b8;'>
-                <span style='color:#a78bfa; font-weight:800; min-width:18px;'>1.</span>
-                <span>Enter your <strong style='color:#c4b5fd;'>Groq API key</strong> above</span>
-            </div>
-            <div style='display:flex; align-items:flex-start; gap:8px; font-size:0.78rem; color:#94a3b8;'>
-                <span style='color:#a78bfa; font-weight:800; min-width:18px;'>2.</span>
-                <span>Choose <strong style='color:#c4b5fd;'>Paste Text</strong> or <strong style='color:#c4b5fd;'>Upload File</strong></span>
-            </div>
-            <div style='display:flex; align-items:flex-start; gap:8px; font-size:0.78rem; color:#94a3b8;'>
-                <span style='color:#a78bfa; font-weight:800; min-width:18px;'>3.</span>
-                <span>Hit <strong style='color:#c4b5fd;'>🔍 Analyse Notes</strong></span>
-            </div>
-            <div style='display:flex; align-items:flex-start; gap:8px; font-size:0.78rem; color:#94a3b8;'>
-                <span style='color:#a78bfa; font-weight:800; min-width:18px;'>4.</span>
-                <span>Download your <strong style='color:#c4b5fd;'>full summary</strong> as .txt</span>
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    # Supported formats
+    st.markdown(
+        "<div style=\"background:rgba(255,255,255,0.03);border:1px solid rgba(139,92,246,0.18);border-radius:14px;padding:0.9rem 1rem\">"
+        "<div style=\"font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.13em;background:linear-gradient(90deg,#a78bfa,#e879f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.6rem\">📂 &nbsp;Supported Formats</div>"
+        "<div style=\"display:flex;flex-wrap:wrap;gap:7px\">"
+        "<span style=\"background:linear-gradient(135deg,rgba(99,102,241,0.18),rgba(168,85,247,0.12));color:#c4b5fd;border:1px solid rgba(139,92,246,0.35);border-radius:100px;padding:4px 12px;font-size:0.72rem;font-weight:700\">📄 PDF</span>"
+        "<span style=\"background:linear-gradient(135deg,rgba(99,102,241,0.18),rgba(168,85,247,0.12));color:#c4b5fd;border:1px solid rgba(139,92,246,0.35);border-radius:100px;padding:4px 12px;font-size:0.72rem;font-weight:700\">📝 DOCX</span>"
+        "<span style=\"background:linear-gradient(135deg,rgba(99,102,241,0.18),rgba(168,85,247,0.12));color:#c4b5fd;border:1px solid rgba(139,92,246,0.35);border-radius:100px;padding:4px 12px;font-size:0.72rem;font-weight:700\">📃 TXT</span>"
+        "</div></div>",
+        unsafe_allow_html=True,
+    )
 
-    # ── Tech Stack ───────────────────────────────────────────────
-    st.markdown("""
-    <div class='sb-section'>
-        <span class='sb-label'>🛠 &nbsp;Tech Stack</span>
-        <div style='display:flex; flex-wrap:wrap; gap:6px; margin-top:2px;'>
-            <span class='sb-format-chip'>🐍 Python</span>
-            <span class='sb-format-chip'>🚀 Groq</span>
-            <span class='sb-format-chip'>🦙 Llama3</span>
-            <span class='sb-format-chip'>🌊 Streamlit</span>
-            <span class='sb-format-chip'>🔤 NLTK</span>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown("<div style=\"height:0.6rem\"></div>", unsafe_allow_html=True)
 
-    # ── Footer Credit ─────────────────────────────────────────────
-    st.markdown("""
-    <div style='
-        margin-top: 1rem;
-        padding: 1.1rem 1rem;
-        text-align: center;
-        border-top: 1px solid rgba(139,92,246,0.15);
-    '>
-        <div style='font-size:0.72rem; color:#334155; line-height:1.7;'>
-            Crafted with 💜 by<br>
-            <span style='
-                font-size:0.88rem; font-weight:800;
-                background: linear-gradient(135deg, #a78bfa, #f0abfc, #67e8f9);
-                -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-                background-clip:text;
-            '>Zainab Gondal</span><br>
-            <span style='color:#1e293b; font-size:0.68rem;'>Computer Engineering Student · Pakistan</span>
-        </div>
-        <div style='
-            margin-top: 0.7rem;
-            display: flex; justify-content:center; gap: 8px; flex-wrap:wrap;
-        '>
-            <a href="https://zainab-notes-summarizer.streamlit.app/" target="_blank" style='
-                display:inline-flex; align-items:center; gap:4px;
-                background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.15));
-                border: 1px solid rgba(139,92,246,0.4);
-                color:#c4b5fd; text-decoration:none;
-                padding:4px 12px; border-radius:100px;
-                font-size:0.68rem; font-weight:700;
-                transition: all 0.2s ease;
-            '>🌐 Live App</a>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    # What you get
+    st.markdown(
+        "<div style=\"background:rgba(255,255,255,0.03);border:1px solid rgba(139,92,246,0.18);border-radius:14px;padding:0.9rem 1rem\">"
+        "<div style=\"font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.13em;background:linear-gradient(90deg,#a78bfa,#e879f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.6rem\">⚡ &nbsp;What You Get</div>"
+        "<div style=\"display:flex;flex-direction:column;gap:0\">"
+        "<div style=\"display:flex;justify-content:space-between;padding:0.38rem 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.78rem\"><span style=\"color:#94a3b8\">⚡ Quick Summary</span><span style=\"color:#a78bfa;font-weight:700\">✓</span></div>"
+        "<div style=\"display:flex;justify-content:space-between;padding:0.38rem 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.78rem\"><span style=\"color:#94a3b8\">📖 Detailed Summary</span><span style=\"color:#a78bfa;font-weight:700\">✓</span></div>"
+        "<div style=\"display:flex;justify-content:space-between;padding:0.38rem 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.78rem\"><span style=\"color:#94a3b8\">🎯 Key Points</span><span style=\"color:#a78bfa;font-weight:700\">✓</span></div>"
+        "<div style=\"display:flex;justify-content:space-between;padding:0.38rem 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.78rem\"><span style=\"color:#94a3b8\">🔬 Knowledge Extract</span><span style=\"color:#a78bfa;font-weight:700\">✓</span></div>"
+        "<div style=\"display:flex;justify-content:space-between;padding:0.38rem 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.78rem\"><span style=\"color:#94a3b8\">❓ Study Questions</span><span style=\"color:#a78bfa;font-weight:700\">✓</span></div>"
+        "<div style=\"display:flex;justify-content:space-between;padding:0.38rem 0;font-size:0.78rem\"><span style=\"color:#94a3b8\">🏷️ NLP Keywords</span><span style=\"color:#a78bfa;font-weight:700\">✓</span></div>"
+        "</div></div>",
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("<div style=\"height:0.6rem\"></div>", unsafe_allow_html=True)
+
+    # How to use
+    st.markdown(
+        "<div style=\"background:rgba(255,255,255,0.03);border:1px solid rgba(139,92,246,0.18);border-radius:14px;padding:0.9rem 1rem\">"
+        "<div style=\"font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.13em;background:linear-gradient(90deg,#a78bfa,#e879f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.7rem\">📖 &nbsp;How To Use</div>"
+        "<div style=\"display:flex;flex-direction:column;gap:8px\">"
+        "<div style=\"display:flex;gap:8px;font-size:0.77rem;color:#94a3b8\"><span style=\"color:#a78bfa;font-weight:800;min-width:18px\">1.</span><span>Open the URL &amp; <strong style=\"color:#c4b5fd\">paste or upload</strong> your notes</span></div>"
+        "<div style=\"display:flex;gap:8px;font-size:0.77rem;color:#94a3b8\"><span style=\"color:#a78bfa;font-weight:800;min-width:18px\">2.</span><span>Choose <strong style=\"color:#c4b5fd\">Paste Text</strong> or <strong style=\"color:#c4b5fd\">Upload File</strong></span></div>"
+        "<div style=\"display:flex;gap:8px;font-size:0.77rem;color:#94a3b8\"><span style=\"color:#a78bfa;font-weight:800;min-width:18px\">3.</span><span>Hit <strong style=\"color:#c4b5fd\">🔍 Analyse Notes</strong></span></div>"
+        "<div style=\"display:flex;gap:8px;font-size:0.77rem;color:#94a3b8\"><span style=\"color:#a78bfa;font-weight:800;min-width:18px\">4.</span><span>Download your <strong style=\"color:#c4b5fd\">full summary</strong> as .txt</span></div>"
+        "</div></div>",
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("<div style=\"height:0.6rem\"></div>", unsafe_allow_html=True)
+
+    # Tech stack
+    st.markdown(
+        "<div style=\"background:rgba(255,255,255,0.03);border:1px solid rgba(139,92,246,0.18);border-radius:14px;padding:0.9rem 1rem\">"
+        "<div style=\"font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.13em;background:linear-gradient(90deg,#a78bfa,#e879f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.6rem\">🛠 &nbsp;Tech Stack</div>"
+        "<div style=\"display:flex;flex-wrap:wrap;gap:6px\">"
+        "<span style=\"background:linear-gradient(135deg,rgba(99,102,241,0.18),rgba(168,85,247,0.12));color:#c4b5fd;border:1px solid rgba(139,92,246,0.35);border-radius:100px;padding:4px 10px;font-size:0.7rem;font-weight:700\">🐍 Python</span>"
+        "<span style=\"background:linear-gradient(135deg,rgba(99,102,241,0.18),rgba(168,85,247,0.12));color:#c4b5fd;border:1px solid rgba(139,92,246,0.35);border-radius:100px;padding:4px 10px;font-size:0.7rem;font-weight:700\">🚀 Groq</span>"
+        "<span style=\"background:linear-gradient(135deg,rgba(99,102,241,0.18),rgba(168,85,247,0.12));color:#c4b5fd;border:1px solid rgba(139,92,246,0.35);border-radius:100px;padding:4px 10px;font-size:0.7rem;font-weight:700\">🦙 Llama3</span>"
+        "<span style=\"background:linear-gradient(135deg,rgba(99,102,241,0.18),rgba(168,85,247,0.12));color:#c4b5fd;border:1px solid rgba(139,92,246,0.35);border-radius:100px;padding:4px 10px;font-size:0.7rem;font-weight:700\">🌊 Streamlit</span>"
+        "<span style=\"background:linear-gradient(135deg,rgba(99,102,241,0.18),rgba(168,85,247,0.12));color:#c4b5fd;border:1px solid rgba(139,92,246,0.35);border-radius:100px;padding:4px 10px;font-size:0.7rem;font-weight:700\">🔤 NLTK</span>"
+        "</div></div>",
+        unsafe_allow_html=True,
+    )
+
+    # Footer credit
+    st.markdown(
+        "<div style=\"margin-top:1.2rem;padding:1rem;text-align:center;border-top:1px solid rgba(139,92,246,0.15)\">"
+        "<div style=\"font-size:0.7rem;color:#334155;line-height:1.7\">Crafted with 💜 by<br>"
+        "<span style=\"font-size:0.9rem;font-weight:800;background:linear-gradient(135deg,#a78bfa,#f0abfc,#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text\">Zainab Gondal</span><br>"
+        "<span style=\"color:#1e293b;font-size:0.67rem\">Computer Engineering Student · Pakistan</span></div>"
+        "<div style=\"margin-top:0.8rem\">"
+        "<a href=\"https://zainab-notes-summarizer.streamlit.app/\" target=\"_blank\" style=\"display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(168,85,247,0.15));border:1px solid rgba(139,92,246,0.4);color:#c4b5fd;text-decoration:none;padding:5px 14px;border-radius:100px;font-size:0.69rem;font-weight:700\">🌐 Live App</a>"
+        "</div></div>",
+        unsafe_allow_html=True,
+    )
 
 
 # ── Hero ──────────────────────────────────────────────────────────────────────
@@ -1150,7 +1129,7 @@ if analyse_clicked:
         st.warning("Please paste some text or upload a file first.")
         st.stop()
 
-    client = get_groq_client(sidebar_key)
+    client = get_groq_client(visitor_key)
     if client is None:
         st.error("Groq API key not found. Get your free key from console.groq.com")
         st.stop()
