@@ -11,7 +11,7 @@ from utils import truncate_text
 def _chat(client: Groq, system_prompt: str, user_prompt: str,
           temperature: float = 0.4) -> str:
     response = client.chat.completions.create(
-        model="llama3-8b-8192",
+        model="llama-3.1-8b-instant",
         temperature=temperature,
         messages=[
             {"role": "system", "content": system_prompt},
