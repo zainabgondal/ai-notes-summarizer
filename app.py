@@ -100,6 +100,13 @@ body::after {
 }
 
 [data-testid="stMainBlockContainer"] { position: relative; z-index: 1; }
+/* Re-assert sidebar AFTER nuclear reset */
+section[data-testid="stSidebar"] {
+    background:
+        radial-gradient(ellipse 120% 35% at 50% 0%,  rgba(109,40,217,0.6)  0%, transparent 50%),
+        radial-gradient(ellipse 90%  50% at 0%   80%, rgba(168,85,247,0.3)  0%, transparent 60%),
+        linear-gradient(160deg, #0d0a1f 0%, #120e2e 40%, #0a0818 100%) !important;
+}
 .block-container { padding-top: 1.8rem !important; padding-bottom: 4rem !important; max-width: 1100px !important; }
 #MainMenu, footer, header { visibility: hidden; }
 
@@ -611,17 +618,18 @@ div[data-testid="stDownloadButton"] > button:hover {
 /* ════════════════════════════════════════════
    SIDEBAR — FULLY VISIBLE & STYLED
 ════════════════════════════════════════════ */
-[data-testid="stSidebar"] {
-    background: transparent !important;
-    border-right: 1px solid rgba(139,92,246,0.3) !important;
+/* SIDEBAR — visible, rich dark purple background */
+section[data-testid="stSidebar"] {
+    background:
+        radial-gradient(ellipse 120% 35% at 50% 0%,  rgba(109,40,217,0.6)  0%, transparent 50%),
+        radial-gradient(ellipse 90%  50% at 0%   80%, rgba(168,85,247,0.3)  0%, transparent 60%),
+        radial-gradient(ellipse 70%  40% at 100% 50%, rgba(56,189,248,0.15) 0%, transparent 55%),
+        linear-gradient(160deg, #0d0a1f 0%, #120e2e 40%, #0a0818 100%) !important;
+    border-right: 1px solid rgba(139,92,246,0.35) !important;
     min-width: 280px !important;
 }
-[data-testid="stSidebar"] > div {
-    background:
-        radial-gradient(ellipse 120% 35% at 50% 0%,  rgba(109,40,217,0.55)  0%, transparent 50%),
-        radial-gradient(ellipse 90%  50% at 0%   80%, rgba(168,85,247,0.25)  0%, transparent 60%),
-        radial-gradient(ellipse 70%  40% at 100% 50%, rgba(56,189,248,0.12)  0%, transparent 55%),
-        linear-gradient(160deg, #0d0a1f 0%, #120e2e 40%, #0a0818 100%) !important;
+section[data-testid="stSidebar"] > div {
+    background: transparent !important;
     backdrop-filter: blur(30px) !important;
     padding: 0 !important;
 }
