@@ -580,17 +580,253 @@ div[class*="stTextArea"] textarea {
 }
 
 /* ════════════════════════════════════════════
-   FILE UPLOADER
+   FILE UPLOADER — full dark theme
 ════════════════════════════════════════════ */
+[data-testid="stFileUploader"] {
+    background: transparent !important;
+}
 [data-testid="stFileUploader"] section {
-    background: linear-gradient(135deg, rgba(99,102,241,0.04), rgba(168,85,247,0.03)) !important;
-    border: 2px dashed rgba(99,102,241,0.26) !important; border-radius: 20px !important;
-    transition: all 0.3s ease !important; backdrop-filter: blur(8px) !important;
+    background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(168,85,247,0.04)) !important;
+    border: 2px dashed rgba(99,102,241,0.32) !important;
+    border-radius: 20px !important;
+    transition: all 0.3s ease !important;
 }
 [data-testid="stFileUploader"] section:hover {
-    border-color: rgba(168,85,247,0.6) !important;
+    border-color: rgba(168,85,247,0.65) !important;
     background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(168,85,247,0.07)) !important;
     box-shadow: 0 0 40px rgba(99,102,241,0.15) !important;
+}
+/* Upload area label text */
+[data-testid="stFileUploader"] span,
+[data-testid="stFileUploader"] p,
+[data-testid="stFileUploader"] small,
+[data-testid="stFileUploadDropzone"] span {
+    color: #94a3b8 !important;
+}
+/* BROWSE FILES button — was white */
+[data-testid="stFileUploader"] button,
+[data-testid="stFileUploadDropzone"] button,
+[data-testid="stFileUploader"] section button {
+    background: linear-gradient(135deg, #3730a3, #6d28d9) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(139,92,246,0.5) !important;
+    border-radius: 12px !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 0.82rem !important;
+    padding: 0.4rem 1.1rem !important;
+    transition: all 0.25s ease !important;
+    box-shadow: 0 4px 16px rgba(99,102,241,0.4) !important;
+}
+[data-testid="stFileUploader"] section button:hover {
+    background: linear-gradient(135deg, #4338ca, #7c3aed) !important;
+    box-shadow: 0 6px 22px rgba(99,102,241,0.55) !important;
+    transform: translateY(-2px) !important;
+}
+/* Uploaded file name pill */
+[data-testid="stFileUploader"] [data-testid="stUploadedFile"] {
+    background: rgba(99,102,241,0.1) !important;
+    border: 1px solid rgba(99,102,241,0.3) !important;
+    border-radius: 10px !important;
+    color: #c4b5fd !important;
+}
+[data-testid="stFileUploader"] [data-testid="stUploadedFile"] span {
+    color: #c4b5fd !important;
+}
+/* Delete (×) button on uploaded file */
+[data-testid="stFileUploader"] [data-testid="stUploadedFile"] button {
+    background: rgba(244,63,94,0.15) !important;
+    border: 1px solid rgba(244,63,94,0.3) !important;
+    color: #fda4af !important;
+    border-radius: 6px !important;
+    padding: 0.2rem 0.4rem !important;
+    box-shadow: none !important;
+}
+
+/* ════════════════════════════════════════════
+   SPINNER
+════════════════════════════════════════════ */
+[data-testid="stSpinner"] > div,
+.stSpinner > div {
+    border-top-color: #7c3aed !important;
+    border-color: rgba(139,92,246,0.2) !important;
+}
+[data-testid="stSpinner"] p,
+.stSpinner p {
+    color: #94a3b8 !important;
+}
+
+/* ════════════════════════════════════════════
+   CAPTION
+════════════════════════════════════════════ */
+[data-testid="stCaptionContainer"] p,
+.stCaption, caption, small {
+    color: #4a5568 !important;
+    font-size: 0.78rem !important;
+}
+
+/* ════════════════════════════════════════════
+   CODE BLOCK — dark background
+════════════════════════════════════════════ */
+[data-testid="stCode"],
+.stCode,
+[data-testid="stCodeBlock"],
+pre, code {
+    background: #0a0818 !important;
+    background-color: #0a0818 !important;
+    color: #c4b5fd !important;
+    border: 1px solid rgba(139,92,246,0.2) !important;
+    border-radius: 12px !important;
+}
+[data-testid="stCode"] code,
+pre code {
+    background: transparent !important;
+    color: #c4b5fd !important;
+}
+/* Copy button on code block */
+[data-testid="stCode"] button {
+    background: rgba(99,102,241,0.15) !important;
+    color: #a5b4fc !important;
+    border: 1px solid rgba(99,102,241,0.25) !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    padding: 0.25rem 0.5rem !important;
+}
+
+/* ════════════════════════════════════════════
+   WARNING / ERROR / INFO / SUCCESS ALERTS
+════════════════════════════════════════════ */
+[data-testid="stAlert"] {
+    background: rgba(99,102,241,0.08) !important;
+    border: 1px solid rgba(99,102,241,0.28) !important;
+    border-radius: 14px !important;
+    color: #c4b5fd !important;
+}
+[data-testid="stAlert"] p,
+[data-testid="stAlert"] span {
+    color: #c4b5fd !important;
+}
+/* Warning — amber tint */
+div[data-baseweb="notification"][kind="warning"],
+[data-testid="stAlert"][data-type="warning"] {
+    background: rgba(245,158,11,0.1) !important;
+    border-color: rgba(245,158,11,0.35) !important;
+}
+[data-testid="stAlert"][data-type="warning"] p,
+[data-testid="stAlert"][data-type="warning"] span {
+    color: #fcd34d !important;
+}
+/* Error — red tint */
+[data-testid="stAlert"][data-type="error"],
+div[data-baseweb="notification"][kind="error"] {
+    background: rgba(244,63,94,0.1) !important;
+    border-color: rgba(244,63,94,0.35) !important;
+}
+[data-testid="stAlert"][data-type="error"] p,
+[data-testid="stAlert"][data-type="error"] span {
+    color: #fda4af !important;
+}
+/* Success — green tint */
+[data-testid="stAlert"][data-type="success"] {
+    background: rgba(16,185,129,0.08) !important;
+    border-color: rgba(16,185,129,0.3) !important;
+}
+[data-testid="stAlert"][data-type="success"] p,
+[data-testid="stAlert"][data-type="success"] span {
+    color: #6ee7b7 !important;
+}
+
+/* ════════════════════════════════════════════
+   EXPANDER — dark bg + visible header text
+════════════════════════════════════════════ */
+[data-testid="stExpander"] {
+    background: rgba(13,11,34,0.85) !important;
+    border: 1px solid rgba(139,92,246,0.2) !important;
+    border-radius: 16px !important;
+}
+[data-testid="stExpander"]:hover {
+    border-color: rgba(139,92,246,0.4) !important;
+}
+[data-testid="stExpander"] summary,
+[data-testid="stExpander"] summary span,
+[data-testid="stExpander"] summary p {
+    color: #a5b4fc !important;
+    font-weight: 600 !important;
+}
+[data-testid="stExpander"] summary svg {
+    fill: #7c3aed !important;
+    color: #7c3aed !important;
+}
+/* Content inside expander */
+[data-testid="stExpander"] > div > div {
+    background: transparent !important;
+    color: #cbd5e1 !important;
+}
+
+/* ════════════════════════════════════════════
+   ALL SECONDARY / GHOST BUTTONS (non-primary)
+════════════════════════════════════════════ */
+div[data-testid="stButton"] > button:not([kind="primary"]) {
+    background: rgba(99,102,241,0.1) !important;
+    color: #a5b4fc !important;
+    border: 1px solid rgba(99,102,241,0.3) !important;
+    border-radius: 12px !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-weight: 700 !important;
+    transition: all 0.25s ease !important;
+}
+div[data-testid="stButton"] > button:not([kind="primary"]):hover {
+    background: rgba(99,102,241,0.2) !important;
+    border-color: rgba(139,92,246,0.55) !important;
+    color: #c4b5fd !important;
+}
+
+/* ════════════════════════════════════════════
+   GENERAL TEXT INPUTS (non-sidebar)
+════════════════════════════════════════════ */
+[data-testid="stTextInput"] input {
+    background: #0d0b22 !important;
+    background-color: #0d0b22 !important;
+    color: #e2e8f0 !important;
+    border: 1.5px solid rgba(139,92,246,0.28) !important;
+    border-radius: 14px !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    caret-color: #a78bfa !important;
+}
+[data-testid="stTextInput"] input:focus {
+    border-color: rgba(139,92,246,0.65) !important;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.12) !important;
+    background: #100e28 !important;
+}
+[data-testid="stTextInput"] input::placeholder { color: #334155 !important; }
+
+/* ════════════════════════════════════════════
+   RADIO BUTTONS — main content area
+════════════════════════════════════════════ */
+[data-testid="stRadio"] label {
+    color: #94a3b8 !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-weight: 600 !important;
+}
+[data-testid="stRadio"] label:hover { color: #a78bfa !important; }
+[data-testid="stRadio"] [data-baseweb="radio"] div {
+    border-color: rgba(139,92,246,0.5) !important;
+    background: transparent !important;
+}
+
+/* ════════════════════════════════════════════
+   DIVIDER LINE
+════════════════════════════════════════════ */
+hr {
+    border-color: rgba(139,92,246,0.15) !important;
+}
+
+/* ════════════════════════════════════════════
+   TOOLTIP
+════════════════════════════════════════════ */
+[data-testid="stTooltipIcon"] svg {
+    color: #6366f1 !important;
+    fill: #6366f1 !important;
 }
 
 /* ════════════════════════════════════════════
@@ -785,22 +1021,7 @@ section[data-testid="stSidebar"] > div {
 }
 .app-footer strong { color: #9333ea; }
 
-/* ════════════════════════════════════════════
-   EXPANDER / OTHER STREAMLIT BITS
-════════════════════════════════════════════ */
-[data-testid="stExpander"] {
-    background: rgba(255,255,255,0.02) !important;
-    border: 1px solid rgba(139,92,246,0.16) !important;
-    border-radius: 16px !important; backdrop-filter: blur(8px) !important;
-}
-[data-testid="stExpander"]:hover {
-    border-color: rgba(139,92,246,0.35) !important;
-}
-.stAlert {
-    background: rgba(99,102,241,0.08) !important;
-    border: 1px solid rgba(99,102,241,0.25) !important;
-    border-radius: 14px !important; backdrop-filter: blur(8px) !important;
-}
+/* old stAlert + expander replaced below */
 
 /* ════════════════════════════════════════════
    HIDE SIDEBAR COLLAPSE ARROW — PERMANENTLY
