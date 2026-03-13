@@ -549,19 +549,35 @@ section[data-testid="stSidebar"] {
    TEXTAREA
 ════════════════════════════════════════════ */
 .stTextArea textarea {
-    background: rgba(255,255,255,0.022) !important;
-    border: 1.5px solid rgba(139,92,246,0.2) !important; border-radius: 18px !important;
-    color: #d8e0ec !important; font-family: 'Plus Jakarta Sans', sans-serif !important;
-    font-size: 0.92rem !important; resize: none !important;
-    transition: all 0.3s ease !important; backdrop-filter: blur(10px) !important; line-height: 1.75 !important;
-    box-shadow: inset 0 2px 8px rgba(0,0,0,0.2) !important;
+    background: #0d0b22 !important;
+    background-color: #0d0b22 !important;
+    border: 1.5px solid rgba(139,92,246,0.35) !important;
+    border-radius: 18px !important;
+    color: #e2e8f0 !important;
+    caret-color: #a78bfa !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 0.92rem !important;
+    resize: none !important;
+    transition: all 0.3s ease !important;
+    line-height: 1.75 !important;
+    box-shadow: inset 0 2px 12px rgba(0,0,0,0.4) !important;
 }
 .stTextArea textarea:focus {
-    border-color: rgba(139,92,246,0.6) !important;
-    box-shadow: 0 0 0 4px rgba(99,102,241,0.1), 0 10px 40px rgba(0,0,0,0.35), inset 0 2px 8px rgba(0,0,0,0.2) !important;
-    background: rgba(255,255,255,0.032) !important;
+    background: #100e28 !important;
+    background-color: #100e28 !important;
+    color: #f1f5f9 !important;
+    border-color: rgba(139,92,246,0.7) !important;
+    box-shadow: 0 0 0 4px rgba(99,102,241,0.12), inset 0 2px 12px rgba(0,0,0,0.4) !important;
 }
-.stTextArea textarea::placeholder { color: #1e293b !important; }
+.stTextArea textarea::placeholder { color: #3d4f66 !important; }
+/* Force dark on every possible Streamlit textarea wrapper */
+[data-testid="stTextArea"] textarea,
+[data-baseweb="textarea"] textarea,
+div[class*="stTextArea"] textarea {
+    background: #0d0b22 !important;
+    background-color: #0d0b22 !important;
+    color: #e2e8f0 !important;
+}
 
 /* ════════════════════════════════════════════
    FILE UPLOADER
