@@ -938,58 +938,16 @@ def get_groq_client(sidebar_key=""):
 with st.sidebar:
 
     # ── Brand Header ────────────────────────────────────────────
-    st.markdown("""
-    <div style='
-        text-align:center;
-        padding: 2rem 1rem 1.4rem;
-        position: relative;
-        border-bottom: 1px solid rgba(139,92,246,0.2);
-        margin-bottom: 1rem;
-    '>
-        
-        <div style='
-            position:absolute; top:20px; left:50%; transform:translateX(-50%);
-            width:80px; height:80px;
-            background: radial-gradient(circle, rgba(139,92,246,0.45) 0%, transparent 70%);
-            border-radius:50%; pointer-events:none;
-        '></div>
-
-        
-        <div style='
-            width:64px; height:64px;
-            background: linear-gradient(135deg, #3730a3, #7c3aed, #a855f7, #ec4899);
-            border-radius:20px; display:flex; align-items:center; justify-content:center;
-            margin: 0 auto 1rem; font-size:30px;
-            box-shadow: 0 8px 30px rgba(139,92,246,0.6), 0 0 0 1px rgba(255,255,255,0.08) inset;
-            position: relative; z-index:1;
-        '>🧠</div>
-
-        
-        <div style='
-            font-size:1.05rem; font-weight:800; letter-spacing:-0.01em;
-            background: linear-gradient(135deg, #e2e8f0, #c4b5fd);
-            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-            background-clip:text; margin-bottom:0.3rem;
-        '>AI Notes Summarizer</div>
-
-        
-        <div style='
-            display:inline-flex; align-items:center; gap:6px;
-            background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(236,72,153,0.15));
-            border: 1px solid rgba(139,92,246,0.4);
-            border-radius:100px; padding:0.28rem 1rem;
-            font-size:0.72rem; font-weight:700; color:#d8b4fe;
-            letter-spacing:0.04em;
-        '>✨ by Zainab Gondal</div>
-
-        
-        <div style='
-            margin-top:0.6rem;
-            font-size:0.65rem; font-weight:600; color:#334155;
-            letter-spacing:0.08em; text-transform:uppercase;
-        '>v2.0 · Powered by Groq + Llama3</div>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown(
+        "<div style=\"text-align:center;padding:2rem 1rem 1.4rem;position:relative;border-bottom:1px solid rgba(139,92,246,0.2);margin-bottom:1rem;\">"
+        "<div style=\"position:absolute;top:20px;left:50%;transform:translateX(-50%);width:80px;height:80px;background:radial-gradient(circle,rgba(139,92,246,0.45) 0%,transparent 70%);border-radius:50%;pointer-events:none;\"></div>"
+        "<div style=\"width:64px;height:64px;background:linear-gradient(135deg,#3730a3,#7c3aed,#a855f7,#ec4899);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:30px;box-shadow:0 8px 30px rgba(139,92,246,0.6),0 0 0 1px rgba(255,255,255,0.08) inset;position:relative;z-index:1;\">🧠</div>"
+        "<div style=\"font-size:1.05rem;font-weight:800;letter-spacing:-0.01em;background:linear-gradient(135deg,#e2e8f0,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.3rem;\">AI Notes Summarizer</div>"
+        "<div style=\"display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(139,92,246,0.2),rgba(236,72,153,0.15));border:1px solid rgba(139,92,246,0.4);border-radius:100px;padding:0.28rem 1rem;font-size:0.72rem;font-weight:700;color:#d8b4fe;letter-spacing:0.04em;\">✨ by Zainab Gondal</div>"
+        "<div style=\"margin-top:0.6rem;font-size:0.65rem;font-weight:600;color:#94a3b8;letter-spacing:0.08em;text-transform:uppercase;\">v2.0 · Groq + Llama3 · 100% Free</div>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
 
     # ── API Key Section ──────────────────────────────────────────
     st.markdown("""
