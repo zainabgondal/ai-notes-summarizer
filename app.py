@@ -1073,25 +1073,22 @@ section[data-testid="stSidebar"] > div {
 /* ════════════════════════════════════════════
    HIDE SIDEBAR COLLAPSE ARROW — PERMANENTLY
 ════════════════════════════════════════════ */
-[data-testid="collapsedControl"]                { display: none !important; visibility: hidden !important; }
-[data-testid="stSidebarCollapseButton"]         { display: none !important; visibility: hidden !important; }
-[data-testid="stSidebarNavCollapseIcon"]        { display: none !important; visibility: hidden !important; }
-button[data-testid="baseButton-headerNoPadding"]{ display: none !important; visibility: hidden !important; }
-section[data-testid="stSidebar"] > div:first-child button { display: none !important; }
+/* Keep collapse button visible on mobile so users can toggle sidebar */
+[data-testid="stSidebarCollapseButton"]         { display: none !important; }
 .st-emotion-cache-1rtdyuf, .st-emotion-cache-pkbazv { display: none !important; }
 
 /* ════════════════════════════════════════════
    SIDEBAR — MINIMAL, NEVER SCROLLS SEPARATELY
 ════════════════════════════════════════════ */
 section[data-testid="stSidebar"] {
-    width: 260px !important;
-    min-width: 260px !important;
-    max-width: 260px !important;
+    width: 280px !important;
+    min-width: 280px !important;
 }
 section[data-testid="stSidebar"] > div {
-    height: auto !important;
     overflow-y: auto !important;
-    padding-bottom: 1rem !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding-bottom: 2rem !important;
 }
 section[data-testid="stSidebar"] > div > div[data-testid="stVerticalBlock"] {
     padding: 0 0.6rem 1rem !important;
