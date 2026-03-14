@@ -37,6 +37,14 @@ html, body, [class*="css"] {
     background-color: #080b14 !important;
     color: #e2e8f0 !important;
 }
+html { background: #080b14 !important; }
+body { background: #080b14 !important; }
+#root { background: #080b14 !important; }
+.stApp { background: #080b14 !important; }
+[data-testid="stAppViewContainer"] { background: #080b14 !important; }
+[data-testid="stMain"] { background: #080b14 !important; }
+[data-testid="stMainBlockContainer"] { background: #080b14 !important; }
+[data-testid="stBottom"] { background: #080b14 !important; }
 .main { background-color: #080b14 !important; }
 .block-container { padding-top: 1.5rem !important; padding-bottom: 3rem !important; }
 #MainMenu, footer, header { visibility: hidden; }
@@ -437,64 +445,19 @@ div[data-testid="stDownloadButton"] > button:hover {
     box-shadow: 0 8px 32px rgba(99,102,241,0.55) !important;
 }
 
-/* ── Sidebar — solid dark, always visible on desktop + mobile ── */
-section[data-testid="stSidebar"] {
-    background-color: #0d0a1f !important;
-    background-image:
-        radial-gradient(ellipse 150% 40% at 50% 0%,  rgba(109,40,217,0.75) 0%, transparent 48%),
-        radial-gradient(ellipse 110% 60% at 0%  90%,  rgba(168,85,247,0.4)  0%, transparent 58%),
-        radial-gradient(ellipse 90%  50% at 100% 50%, rgba(56,189,248,0.15) 0%, transparent 55%) !important;
-    border-right: 1px solid rgba(139,92,246,0.35) !important;
-    min-width: 268px !important;
-    max-width: 268px !important;
+/* ── Sidebar ── */
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #0a0815, #0d0b1e) !important;
+    border-right: 1px solid rgba(139,92,246,0.18) !important;
 }
-section[data-testid="stSidebar"] > div {
-    background: transparent !important;
-    min-height: 100vh !important;
+[data-testid="stSidebar"] > div {
+    background: linear-gradient(180deg, #0a0815, #0d0b1e) !important;
 }
-/* ALL sidebar text visible */
-section[data-testid="stSidebar"] p,
-section[data-testid="stSidebar"] span,
-section[data-testid="stSidebar"] div,
-section[data-testid="stSidebar"] label,
-section[data-testid="stSidebar"] a {
-    color: #c8d4e3 !important;
-}
-/* Sidebar input box */
-section[data-testid="stSidebar"] input {
-    background: rgba(255,255,255,0.08) !important;
-    border: 1.5px solid rgba(139,92,246,0.4) !important;
-    border-radius: 11px !important;
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] span,
+[data-testid="stSidebar"] div,
+[data-testid="stSidebar"] label {
     color: #e2e8f0 !important;
-}
-section[data-testid="stSidebar"] input::placeholder { color: #374151 !important; }
-section[data-testid="stSidebar"] input:focus {
-    border-color: rgba(168,85,247,0.75) !important;
-    box-shadow: 0 0 0 3px rgba(139,92,246,0.15) !important;
-    background: rgba(255,255,255,0.1) !important;
-}
-/* Mobile — toggle button visible, sidebar as overlay */
-@media screen and (max-width: 768px) {
-    [data-testid="collapsedControl"] {
-        display: flex !important;
-        visibility: visible !important;
-        background: linear-gradient(135deg,#3730a3,#7c3aed) !important;
-        border-radius: 0 12px 12px 0 !important;
-        border: 1px solid rgba(139,92,246,0.5) !important;
-        box-shadow: 4px 0 20px rgba(99,102,241,0.4) !important;
-        z-index: 9999 !important;
-    }
-    [data-testid="collapsedControl"] svg { fill: white !important; }
-    section[data-testid="stSidebar"] {
-        position: fixed !important;
-        left: 0 !important; top: 0 !important;
-        height: 100vh !important; z-index: 1000 !important;
-        min-width: 270px !important; max-width: 88vw !important;
-        box-shadow: 8px 0 40px rgba(0,0,0,0.7) !important;
-    }
-    section[data-testid="stSidebar"] > div {
-        overflow-y: auto !important; height: 100vh !important;
-    }
 }
 
 /* ── Radio ── */
@@ -535,126 +498,55 @@ def get_groq_client(sidebar_key=""):
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
+    st.markdown("""
+    <div style='text-align:center;padding:1.2rem 0 0.8rem;'>
+        <div style='width:52px;height:52px;
+                    background:linear-gradient(135deg,#4f46e5,#7c3aed,#a855f7);
+                    border-radius:15px;display:flex;align-items:center;
+                    justify-content:center;margin:0 auto 0.8rem;
+                    font-size:26px;box-shadow:0 4px 20px rgba(99,102,241,0.5);'>
+            🧠
+        </div>
+        <div style='font-size:0.95rem;font-weight:700;color:#e2e8f0;'>AI Notes Summarizer</div>
+        <div style='font-size:0.75rem;color:#475569;margin-top:3px;'>by Zainab Gondal</div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    # Brand header
-    st.markdown(
-        "<div style=\"text-align:center;padding:1.3rem 0.3rem 1rem;"
-        "border-bottom:1px solid rgba(139,92,246,0.28);margin-bottom:0.8rem;\">"
-        "<div style=\"width:56px;height:56px;"
-        "background:linear-gradient(135deg,#3730a3,#7c3aed,#a855f7,#ec4899);"
-        "border-radius:16px;display:flex;align-items:center;justify-content:center;"
-        "margin:0 auto 0.65rem;font-size:27px;"
-        "box-shadow:0 6px 24px rgba(139,92,246,0.65);\">🧠</div>"
-        "<div style=\"font-size:0.97rem;font-weight:800;"
-        "background:linear-gradient(135deg,#f1f5f9,#c4b5fd);"
-        "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
-        "background-clip:text;margin-bottom:0.22rem;\">AI Notes Summarizer</div>"
-        "<div style=\"font-size:0.68rem;font-weight:700;"
-        "background:linear-gradient(90deg,#a78bfa,#e879f9);"
-        "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
-        "background-clip:text;margin-bottom:0.38rem;\">✨ by Zainab Gondal · v2.0</div>"
-        "<div style=\"display:inline-block;background:rgba(16,185,129,0.15);"
-        "border:1px solid rgba(16,185,129,0.38);border-radius:100px;"
-        "padding:2px 12px;font-size:0.61rem;font-weight:700;color:#34d399;\">"
-        "💚 100% Free · No Key Needed</div>"
-        "</div>",
-        unsafe_allow_html=True,
-    )
+    st.divider()
 
-    # API Key (optional)
-    st.markdown(
-        "<div style=\"font-size:0.62rem;font-weight:800;text-transform:uppercase;"
-        "letter-spacing:0.1em;color:#a78bfa;margin-bottom:5px;\">"
-        "🔑 API Key <span style=\"color:#475569;font-weight:500;text-transform:none;\">(optional)</span>"
-        "</div>",
-        unsafe_allow_html=True,
-    )
-    sidebar_key = st.text_input("key", type="password",
-                                placeholder="gsk_...  (leave empty = free)",
+    st.markdown("<div style='font-size:0.8rem;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;'>API Key</div>", unsafe_allow_html=True)
+    sidebar_key = st.text_input("key", type="password", placeholder="gsk_...",
                                 label_visibility="collapsed",
                                 help="Free key at console.groq.com")
-    st.markdown(
-        "<div style=\"font-size:0.61rem;color:#475569;margin-top:3px;margin-bottom:0.7rem;\">"
-        "Leave empty — app works 100% free ✅</div>",
-        unsafe_allow_html=True,
-    )
+    st.markdown("<div style='font-size:0.75rem;color:#334155;margin-top:4px;'>🔑 Get free key at console.groq.com</div>", unsafe_allow_html=True)
 
-    # Input method
-    st.markdown(
-        "<div style=\"font-size:0.62rem;font-weight:800;text-transform:uppercase;"
-        "letter-spacing:0.1em;color:#a78bfa;margin-bottom:6px;\">📥 Input Method</div>",
-        unsafe_allow_html=True,
-    )
-    input_mode = st.radio("", ["📋 Paste Text", "📁 Upload File"],
-                          label_visibility="collapsed")
+    st.divider()
 
-    st.markdown("<div style=\"height:0.5rem\"></div>", unsafe_allow_html=True)
+    st.markdown("<div style='font-size:0.8rem;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;'>Input Method</div>", unsafe_allow_html=True)
+    input_mode = st.radio("", ["📋 Paste Text", "📁 Upload File"], label_visibility="collapsed")
 
-    # What you get
-    st.markdown(
-        "<div style=\"background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(168,85,247,0.06));"
-        "border:1px solid rgba(139,92,246,0.22);border-radius:13px;"
-        "padding:0.8rem 0.95rem;margin-bottom:0.55rem;\">"
-        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;"
-        "letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.45rem;\">⚡ What You Get</div>"
-        "<div style=\"display:flex;flex-direction:column;gap:4px;font-size:0.72rem;color:#c4b5fd;\">"
-        "<div>📝 Quick · Detailed · Key Points</div>"
-        "<div>🔬 Concepts · Definitions · Facts</div>"
-        "<div>❓ 13 Study Questions (MCQ + more)</div>"
-        "<div>🃏 Flashcards auto-generated</div>"
-        "<div>📄 PDF + TXT download</div>"
-        "<div>🏷️ NLP Keywords</div>"
-        "</div></div>",
-        unsafe_allow_html=True,
-    )
+    st.divider()
 
-    # Formats + tip
-    st.markdown(
-        "<div style=\"background:rgba(255,255,255,0.03);"
-        "border:1px solid rgba(139,92,246,0.15);border-radius:13px;"
-        "padding:0.75rem 0.95rem;margin-bottom:0.55rem;\">"
-        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;"
-        "letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.4rem;\">📂 Formats</div>"
-        "<div style=\"display:flex;gap:5px;flex-wrap:wrap;margin-bottom:0.4rem;\">"
-        "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;"
-        "border:1px solid rgba(99,102,241,0.32);border-radius:100px;"
-        "padding:2px 10px;font-size:0.67rem;font-weight:700;\">📄 PDF</span>"
-        "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;"
-        "border:1px solid rgba(99,102,241,0.32);border-radius:100px;"
-        "padding:2px 10px;font-size:0.67rem;font-weight:700;\">📝 DOCX</span>"
-        "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;"
-        "border:1px solid rgba(99,102,241,0.32);border-radius:100px;"
-        "padding:2px 10px;font-size:0.67rem;font-weight:700;\">📃 TXT</span>"
-        "</div>"
-        "<div style=\"font-size:0.68rem;color:#6ee7b7;line-height:1.45;\">"
-        "💡 Best: 200–2000 words · Full pack in 60 sec!"
-        "</div></div>",
-        unsafe_allow_html=True,
-    )
-
-    # Footer
-    st.markdown(
-        "<div style=\"border-top:1px solid rgba(139,92,246,0.18);"
-        "padding-top:0.75rem;text-align:center;\">"
-        "<div style=\"font-size:0.63rem;color:#475569;margin-bottom:0.55rem;\">"
-        "Crafted with 💜 by "
-        "<span style=\"font-weight:800;"
-        "background:linear-gradient(90deg,#a78bfa,#e879f9);"
-        "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
-        "background-clip:text;\">Zainab Gondal</span></div>"
-        "<a href=\"https://www.linkedin.com/in/zainabgondal/\" target=\"_blank\" "
-        "style=\"display:block;background:rgba(10,102,194,0.18);"
-        "border:1px solid rgba(10,102,194,0.4);color:#93c5fd;"
-        "padding:7px;border-radius:10px;font-size:0.7rem;font-weight:700;"
-        "margin-bottom:5px;text-decoration:none;text-align:center;\">💼 LinkedIn</a>"
-        "<a href=\"https://github.com/zainabgondal\" target=\"_blank\" "
-        "style=\"display:block;background:rgba(255,255,255,0.05);"
-        "border:1px solid rgba(255,255,255,0.12);color:#e2e8f0;"
-        "padding:7px;border-radius:10px;font-size:0.7rem;font-weight:700;"
-        "text-decoration:none;text-align:center;\">🐙 GitHub</a>"
-        "</div>",
-        unsafe_allow_html=True,
-    )
+    st.markdown("""
+    <div style='background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);
+                border-radius:14px;padding:1rem;'>
+        <div style='font-size:0.75rem;font-weight:700;color:#6366f1;
+                    text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;'>
+            Supported Formats
+        </div>
+        <div style='display:flex;flex-wrap:wrap;gap:6px;'>
+            <span style='background:rgba(99,102,241,0.15);color:#a5b4fc;
+                         border:1px solid rgba(99,102,241,0.3);border-radius:100px;
+                         padding:2px 10px;font-size:0.72rem;font-weight:600;'>PDF</span>
+            <span style='background:rgba(99,102,241,0.15);color:#a5b4fc;
+                         border:1px solid rgba(99,102,241,0.3);border-radius:100px;
+                         padding:2px 10px;font-size:0.72rem;font-weight:600;'>DOCX</span>
+            <span style='background:rgba(99,102,241,0.15);color:#a5b4fc;
+                         border:1px solid rgba(99,102,241,0.3);border-radius:100px;
+                         padding:2px 10px;font-size:0.72rem;font-weight:600;'>TXT</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 
 # ── Hero ──────────────────────────────────────────────────────────────────────
