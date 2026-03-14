@@ -27,7 +27,7 @@ st.set_page_config(
     page_title="AI Notes Summarizer",
     page_icon="🧠",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",
 )
 
 # ── Cosmic UI CSS + JS ────────────────────────────────────────────────────────
@@ -1071,24 +1071,70 @@ section[data-testid="stSidebar"] > div {
 /* old stAlert + expander replaced below */
 
 /* ════════════════════════════════════════════
-   HIDE SIDEBAR COLLAPSE ARROW — PERMANENTLY
+   SIDEBAR TOGGLE BUTTON
+   — hidden on desktop (stays open)
+   — VISIBLE on mobile (needed to open sidebar)
 ════════════════════════════════════════════ */
-/* Keep collapse button visible on mobile so users can toggle sidebar */
-[data-testid="stSidebarCollapseButton"]         { display: none !important; }
-.st-emotion-cache-1rtdyuf, .st-emotion-cache-pkbazv { display: none !important; }
+
+/* Desktop: hide the arrow (sidebar always open) */
+@media screen and (min-width: 769px) {
+    [data-testid="collapsedControl"]                { display: none !important; }
+    [data-testid="stSidebarCollapseButton"]         { display: none !important; }
+    [data-testid="stSidebarNavCollapseIcon"]        { display: none !important; }
+    button[data-testid="baseButton-headerNoPadding"]{ display: none !important; }
+    .st-emotion-cache-1rtdyuf, .st-emotion-cache-pkbazv { display: none !important; }
+}
+
+/* Mobile: SHOW the toggle button — styled nicely */
+@media screen and (max-width: 768px) {
+    [data-testid="collapsedControl"] {
+        display: flex !important;
+        visibility: visible !important;
+        position: fixed !important;
+        top: 10px !important;
+        left: 10px !important;
+        z-index: 9999 !important;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+        border-radius: 10px !important;
+        padding: 6px 10px !important;
+        box-shadow: 0 4px 16px rgba(99,102,241,0.5) !important;
+        border: none !important;
+    }
+    [data-testid="collapsedControl"] svg {
+        color: white !important;
+        fill: white !important;
+        width: 20px !important;
+        height: 20px !important;
+    }
+    [data-testid="stSidebarCollapseButton"] {
+        display: flex !important;
+        visibility: visible !important;
+    }
+    [data-testid="stSidebarCollapseButton"] button {
+        background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+        border-radius: 10px !important;
+        border: none !important;
+        color: white !important;
+        box-shadow: 0 4px 16px rgba(99,102,241,0.5) !important;
+    }
+    [data-testid="stSidebarCollapseButton"] svg {
+        color: white !important;
+        fill: white !important;
+    }
+}
 
 /* ════════════════════════════════════════════
    SIDEBAR — MINIMAL, NEVER SCROLLS SEPARATELY
 ════════════════════════════════════════════ */
 section[data-testid="stSidebar"] {
-    width: 280px !important;
-    min-width: 280px !important;
+    width: 260px !important;
+    min-width: 260px !important;
+    max-width: 260px !important;
 }
 section[data-testid="stSidebar"] > div {
+    height: auto !important;
     overflow-y: auto !important;
-    overflow-x: hidden !important;
-    -webkit-overflow-scrolling: touch !important;
-    padding-bottom: 2rem !important;
+    padding-bottom: 1rem !important;
 }
 section[data-testid="stSidebar"] > div > div[data-testid="stVerticalBlock"] {
     padding: 0 0.6rem 1rem !important;
@@ -1625,110 +1671,143 @@ def create_pdf(word_count, char_count, read_time, quick, key_points_txt,
         return None
 
 
-# ── Sidebar ───────────────────────────────────────────────────────────────────
+# ── Sidebar — ONLY controls, no scroll needed ───────────────────────────────
 with st.sidebar:
 
-    st.markdown(
-        "<div style=\"text-align:center;padding:1.3rem 0.3rem 1rem;"
-        "border-bottom:1px solid rgba(139,92,246,0.25);margin-bottom:0.8rem;\">"
-        "<div style=\"width:58px;height:58px;"
-        "background:linear-gradient(135deg,#3730a3,#7c3aed,#a855f7,#ec4899);"
-        "border-radius:18px;display:flex;align-items:center;justify-content:center;"
-        "margin:0 auto 0.65rem;font-size:28px;"
-        "box-shadow:0 6px 24px rgba(139,92,246,0.6);\">🧠</div>"
-        "<div style=\"font-size:1rem;font-weight:800;"
-        "background:linear-gradient(135deg,#f1f5f9,#c4b5fd);"
-        "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
-        "background-clip:text;margin-bottom:0.2rem;\">AI Notes Summarizer</div>"
-        "<div style=\"font-size:0.68rem;font-weight:700;"
-        "background:linear-gradient(90deg,#a78bfa,#e879f9);"
-        "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
-        "background-clip:text;margin-bottom:0.35rem;\">✨ Zainab Gondal · v3.0</div>"
-        "<div style=\"display:inline-block;background:rgba(16,185,129,0.14);"
-        "border:1px solid rgba(16,185,129,0.35);border-radius:100px;"
-        "padding:2px 11px;font-size:0.62rem;font-weight:700;color:#34d399;\">"
-        "💚 100% Free</div></div>",
-        unsafe_allow_html=True,
-    )
+    # Logo
+    st.markdown("""
+    <div style="text-align:center;padding:1.4rem 0.5rem 0.9rem;
+                border-bottom:1px solid rgba(139,92,246,0.2);margin-bottom:0.9rem;">
+        <div style="width:58px;height:58px;
+                    background:linear-gradient(135deg,#3730a3,#7c3aed,#a855f7,#ec4899);
+                    border-radius:18px;display:flex;align-items:center;justify-content:center;
+                    margin:0 auto 0.7rem;font-size:28px;
+                    box-shadow:0 6px 24px rgba(139,92,246,0.6);">🧠</div>
+        <div style="font-size:1rem;font-weight:800;
+                    color:#ffffff;
+                    margin-bottom:0.25rem;">AI Notes Summarizer</div>
+        <div style="font-size:0.65rem;color:#6366f1;font-weight:700;">
+            ✨ by Zainab Gondal · v3.0 · Free
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    st.markdown("<div style=\"font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:6px;\">📥 Input Method</div>", unsafe_allow_html=True)
-    input_mode = st.radio("Input", ["📋 Paste Text", "📁 Upload File"], label_visibility="collapsed")
+    # ── INPUT METHOD — first and most important ───────────────────────────────
+    st.markdown("""
+    <div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;
+                letter-spacing:0.1em;color:#a78bfa;margin-bottom:7px;">
+        📥 Choose How to Add Notes
+    </div>
+    """, unsafe_allow_html=True)
+    input_mode = st.radio("Input", ["📋 Paste Text", "📁 Upload File"],
+                          label_visibility="collapsed")
 
-    st.markdown("<div style=\"font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin:0.7rem 0 5px;\">🔑 API Key <span style=\"color:#475569;font-weight:500;text-transform:none;\">(optional)</span></div>", unsafe_allow_html=True)
-    visitor_key = st.text_input("API Key", type="password", placeholder="gsk_...  (leave empty = free)", label_visibility="collapsed", help="Free key at console.groq.com")
-    st.markdown("<div style=\"font-size:0.62rem;color:#475569;margin-top:2px;\">Leave empty — works 100% free ✅</div>", unsafe_allow_html=True)
+    st.markdown("<div style='height:0.7rem'></div>", unsafe_allow_html=True)
 
-    st.markdown(
-        "<div style=\"background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(168,85,247,0.06));"
-        "border:1px solid rgba(139,92,246,0.22);border-radius:13px;padding:0.8rem 0.95rem;margin-top:0.7rem;\">"
-        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.5rem;\">⚡ What You Get</div>"
-        "<div style=\"font-size:0.73rem;color:#c4b5fd;display:flex;flex-direction:column;gap:5px;\">"
-        "<div>📝 &nbsp;Quick · Detailed · Key Points</div>"
-        "<div>🔬 &nbsp;Concepts · Definitions · Facts</div>"
-        "<div>❓ &nbsp;5 Conceptual + 5 MCQ + 3 Short Ans</div>"
-        "<div>🃏 &nbsp;8 Auto-generated Flashcards</div>"
-        "<div>📄 &nbsp;Download as PDF &amp; TXT</div>"
-        "<div>🏷️ &nbsp;NLP Keyword Extraction</div>"
-        "</div></div>",
-        unsafe_allow_html=True,
-    )
+    # ── API KEY ───────────────────────────────────────────────────────────────
+    st.markdown("""
+    <div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;
+                letter-spacing:0.1em;color:#a78bfa;margin-bottom:5px;">
+        🔑 API Key <span style="color:#475569;font-weight:500;text-transform:none;letter-spacing:0;">(optional)</span>
+    </div>
+    """, unsafe_allow_html=True)
+    visitor_key = st.text_input("API Key", type="password",
+                                placeholder="gsk_...  (leave empty = free)",
+                                label_visibility="collapsed",
+                                help="Free key at console.groq.com")
+    st.markdown('<div style="font-size:0.62rem;color:#475569;margin-top:2px;">Leave empty — app works 100% free ✅</div>', unsafe_allow_html=True)
 
-    st.markdown(
-        "<div style=\"background:rgba(255,255,255,0.03);"
-        "border:1px solid rgba(139,92,246,0.15);border-radius:13px;padding:0.8rem 0.95rem;margin-top:0.55rem;\">"
-        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.45rem;\">📖 How To Use</div>"
-        "<div style=\"font-size:0.72rem;color:#94a3b8;display:flex;flex-direction:column;gap:5px;\">"
-        "<div><span style=\"color:#a78bfa;font-weight:800;\">1.</span> &nbsp;Paste or upload your notes</div>"
-        "<div><span style=\"color:#a78bfa;font-weight:800;\">2.</span> &nbsp;Choose input method above</div>"
-        "<div><span style=\"color:#a78bfa;font-weight:800;\">3.</span> &nbsp;Click 🔍 Analyse Notes</div>"
-        "<div><span style=\"color:#a78bfa;font-weight:800;\">4.</span> &nbsp;Download your study pack</div>"
-        "</div></div>",
-        unsafe_allow_html=True,
-    )
+    st.markdown("<div style='height:0.7rem'></div>", unsafe_allow_html=True)
 
-    st.markdown(
-        "<div style=\"background:rgba(16,185,129,0.07);"
-        "border:1px solid rgba(16,185,129,0.2);border-radius:13px;padding:0.7rem 0.95rem;margin-top:0.55rem;\">"
-        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#34d399;margin-bottom:0.3rem;\">📂 Supported Formats</div>"
-        "<div style=\"display:flex;gap:6px;flex-wrap:wrap;\">"
-        "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;border:1px solid rgba(99,102,241,0.32);border-radius:100px;padding:3px 10px;font-size:0.66rem;font-weight:700;\">📄 PDF</span>"
-        "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;border:1px solid rgba(99,102,241,0.32);border-radius:100px;padding:3px 10px;font-size:0.66rem;font-weight:700;\">📝 DOCX</span>"
-        "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;border:1px solid rgba(99,102,241,0.32);border-radius:100px;padding:3px 10px;font-size:0.66rem;font-weight:700;\">📃 TXT</span>"
-        "</div></div>",
-        unsafe_allow_html=True,
-    )
+    # ── WHAT YOU GET ─────────────────────────────────────────────────────────
+    st.markdown("""
+    <div style="background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(168,85,247,0.06));
+                border:1px solid rgba(139,92,246,0.22);border-radius:14px;
+                padding:0.85rem 1rem;margin-bottom:0.6rem;">
+        <div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;
+                    letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.55rem;">
+            ⚡ What You Get
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.73rem;color:#c4b5fd;">
+                <span style="font-size:0.9rem;">📝</span> 3 types of summaries
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.73rem;color:#c4b5fd;">
+                <span style="font-size:0.9rem;">🔬</span> Knowledge extraction
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.73rem;color:#c4b5fd;">
+                <span style="font-size:0.9rem;">❓</span> 13 study questions
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.73rem;color:#c4b5fd;">
+                <span style="font-size:0.9rem;">🃏</span> 8 flashcards
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.73rem;color:#c4b5fd;">
+                <span style="font-size:0.9rem;">📄</span> PDF + TXT download
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    st.markdown(
-        "<div style=\"background:linear-gradient(145deg,rgba(10,8,28,0.94),rgba(14,10,36,0.94));"
-        "border:1px solid rgba(139,92,246,0.22);border-radius:13px;padding:0.8rem 0.95rem;margin-top:0.55rem;\">"
-        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;"
-        "background:linear-gradient(90deg,#a78bfa,#e879f9);-webkit-background-clip:text;"
-        "-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.5rem;\">📬 Contact Developer</div>"
-        "<div style=\"display:flex;flex-direction:column;gap:6px;\">"
-        "<a href=\"mailto:gondalzainab34@gmail.com\" style=\"display:flex;align-items:center;gap:8px;text-decoration:none;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:9px;padding:0.42rem 0.7rem;\">"
-        "<span>📧</span><span style=\"font-size:0.7rem;font-weight:600;color:#c4b5fd;\">gondalzainab34@gmail.com</span></a>"
-        "<a href=\"https://wa.me/92113430370\" target=\"_blank\" style=\"display:flex;align-items:center;gap:8px;text-decoration:none;background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.25);border-radius:9px;padding:0.42rem 0.7rem;\">"
-        "<span>💬</span><span style=\"font-size:0.7rem;font-weight:600;color:#6ee7b7;\">WhatsApp</span></a>"
-        "<a href=\"https://www.linkedin.com/in/zainabgondal/\" target=\"_blank\" style=\"display:flex;align-items:center;gap:8px;text-decoration:none;background:rgba(10,102,194,0.12);border:1px solid rgba(10,102,194,0.3);border-radius:9px;padding:0.42rem 0.7rem;\">"
-        "<span>💼</span><span style=\"font-size:0.7rem;font-weight:600;color:#93c5fd;\">LinkedIn</span></a>"
-        "<a href=\"https://github.com/zainabgondal\" target=\"_blank\" style=\"display:flex;align-items:center;gap:8px;text-decoration:none;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:9px;padding:0.42rem 0.7rem;\">"
-        "<span>🐙</span><span style=\"font-size:0.7rem;font-weight:600;color:#e2e8f0;\">GitHub</span></a>"
-        "</div></div>",
-        unsafe_allow_html=True,
-    )
+    # ── PRO TIP ───────────────────────────────────────────────────────────────
+    st.markdown("""
+    <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.22);
+                border-radius:14px;padding:0.75rem 1rem;margin-bottom:0.8rem;">
+        <div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;
+                    letter-spacing:0.1em;color:#34d399;margin-bottom:0.3rem;">💡 Pro Tip</div>
+        <div style="font-size:0.7rem;color:#6ee7b7;line-height:1.5;">
+            Best with 200–2000 words. Get your full study pack in under 60 sec!
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    st.markdown(
-        "<div style=\"border-top:1px solid rgba(139,92,246,0.18);margin-top:0.9rem;"
-        "padding-top:0.8rem;text-align:center;\">"
-        "<div style=\"font-size:0.64rem;color:#94a3b8;\">"
-        "Crafted with 💜 by <span style=\"font-weight:800;"
-        "background:linear-gradient(90deg,#a78bfa,#e879f9);"
-        "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
-        "background-clip:text;\">Zainab Gondal</span></div></div>",
-        unsafe_allow_html=True,
-    )
+    # ── LINKS ─────────────────────────────────────────────────────────────────
+    st.markdown("""
+    <div style="border-top:1px solid rgba(139,92,246,0.15);padding-top:0.7rem;text-align:center;">
+        <div style="font-size:0.63rem;color:#475569;margin-bottom:0.55rem;">
+            Crafted with 💜 by <strong style="color:#a78bfa;">Zainab Gondal</strong>
+        </div>
+        <a href="https://www.linkedin.com/in/zainabgondal/" target="_blank"
+           style="display:block;text-decoration:none;
+                  background:rgba(10,102,194,0.15);border:1px solid rgba(10,102,194,0.35);
+                  color:#93c5fd;padding:6px;border-radius:9px;
+                  font-size:0.7rem;font-weight:700;margin-bottom:5px;text-align:center;">
+            💼 LinkedIn
+        </a>
+        <a href="https://github.com/zainabgondal" target="_blank"
+           style="display:block;text-decoration:none;
+                  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);
+                  color:#e2e8f0;padding:6px;border-radius:9px;
+                  font-size:0.7rem;font-weight:700;text-align:center;">
+            🐙 GitHub
+        </a>
+    </div>
+    """, unsafe_allow_html=True)
 
 
+# ── Mobile hint — only shows on small screens ────────────────────────────────
+st.markdown("""
+<style>
+.mobile-hint {
+    display: none;
+    background: linear-gradient(135deg,rgba(99,102,241,0.15),rgba(139,92,246,0.1));
+    border: 1px solid rgba(139,92,246,0.3);
+    border-radius: 12px;
+    padding: 0.6rem 1rem;
+    font-size: 0.8rem;
+    color: #c4b5fd;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    align-items: center;
+    gap: 8px;
+}
+@media screen and (max-width: 768px) {
+    .mobile-hint { display: flex !important; }
+}
+</style>
+<div class="mobile-hint">
+    ☰ &nbsp;Tap the <strong style="color:#a78bfa;">purple button</strong> (top-left) to open settings &amp; input options
+</div>
+""", unsafe_allow_html=True)
 
 # ── Hero ──────────────────────────────────────────────────────────────────────
 st.markdown("""
