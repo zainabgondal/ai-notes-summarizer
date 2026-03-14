@@ -1207,27 +1207,78 @@ section[data-testid="stSidebar"] > div:first-child button { display: none !impor
 .st-emotion-cache-1rtdyuf, .st-emotion-cache-pkbazv { display: none !important; }
 
 /* ════════════════════════════════════════════
-   SIDEBAR — NO SEPARATE SCROLL, FIXED WIDTH
+   SIDEBAR — CLEAN, NO SEPARATE SCROLL
 ════════════════════════════════════════════ */
 section[data-testid="stSidebar"] {
-    width: 300px !important;
-    min-width: 300px !important;
-    max-width: 300px !important;
-    overflow: hidden !important;
+    width: 280px !important;
+    min-width: 280px !important;
+    max-width: 280px !important;
 }
-/* Kill the inner scrollable div — sidebar scrolls with page only */
+/* Let sidebar grow naturally with content — no inner scroll */
 section[data-testid="stSidebar"] > div {
-    overflow: hidden !important;
-    overflow-y: hidden !important;
+    overflow-y: visible !important;
     height: auto !important;
 }
-section[data-testid="stSidebar"] > div > div {
-    padding: 0 0.8rem 1rem !important;
-    overflow: hidden !important;
+section[data-testid="stSidebar"] > div > div[data-testid="stVerticalBlock"] {
+    overflow: visible !important;
+    height: auto !important;
+    padding-bottom: 1rem !important;
 }
-/* Hide scrollbar entirely */
-section[data-testid="stSidebar"] ::-webkit-scrollbar { display: none !important; width: 0 !important; }
-section[data-testid="stSidebar"] { scrollbar-width: none !important; }
+/* Hide any scrollbar that appears */
+section[data-testid="stSidebar"] *::-webkit-scrollbar { display: none !important; width: 0 !important; }
+
+/* ── Sidebar secondary (inactive) buttons ── */
+section[data-testid="stSidebar"] div[data-testid="stButton"] > button[kind="secondary"] {
+    background: rgba(99,102,241,0.08) !important;
+    color: #94a3b8 !important;
+    border: 1px solid rgba(99,102,241,0.2) !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: 0.82rem !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+section[data-testid="stSidebar"] div[data-testid="stButton"] > button[kind="secondary"]:hover {
+    background: rgba(99,102,241,0.18) !important;
+    color: #c4b5fd !important;
+    border-color: rgba(139,92,246,0.4) !important;
+}
+/* ── Sidebar primary (active) buttons ── */
+section[data-testid="stSidebar"] div[data-testid="stButton"] > button[kind="primary"] {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    font-size: 0.82rem !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    box-shadow: 0 3px 12px rgba(99,102,241,0.4) !important;
+}
+/* ── Sidebar caption ── */
+section[data-testid="stSidebar"] [data-testid="stCaptionContainer"] p {
+    color: #475569 !important;
+    font-size: 0.68rem !important;
+}
+/* ── Sidebar radio ── */
+section[data-testid="stSidebar"] [data-testid="stRadio"] label {
+    color: #94a3b8 !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+}
+section[data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
+    color: #c4b5fd !important;
+}
+/* ── Sidebar text input ── */
+section[data-testid="stSidebar"] .stTextInput input {
+    background: rgba(255,255,255,0.06) !important;
+    border: 1.5px solid rgba(139,92,246,0.3) !important;
+    border-radius: 10px !important;
+    color: #e2e8f0 !important;
+    font-size: 0.82rem !important;
+}
+section[data-testid="stSidebar"] .stTextInput input:focus {
+    border-color: rgba(139,92,246,0.7) !important;
+    box-shadow: 0 0 0 2px rgba(99,102,241,0.12) !important;
+}
 
 /* ════════════════════════════════════════════
    MOBILE & TABLET — FULLY RESPONSIVE
@@ -1330,11 +1381,6 @@ section[data-testid="stSidebar"] { scrollbar-width: none !important; }
 }
 </style>
 """, unsafe_allow_html=True)
-
-# ── Inject active theme overrides ─────────────────────────────────────────────
-theme_css = get_theme_css()
-if theme_css:
-    st.markdown(theme_css, unsafe_allow_html=True)
 
 # ── New feature CSS (copy buttons, flashcards, theme selector, lang badge) ────
 st.markdown("""<style>
@@ -1734,160 +1780,152 @@ def create_pdf(word_count, char_count, read_time, quick, key_points_txt,
         return None
 
 
-# ── Sidebar — compact, single screen, no separate scroll ─────────────────────
+# ── Sidebar ─────────────────────────────────────────────────────────────────
 with st.sidebar:
 
-    # Brand — logo FIRST, prominent at top
+    # Logo + name
     st.markdown("""
-    <div style="text-align:center;padding:1.2rem 0.3rem 0.8rem;border-bottom:1px solid rgba(139,92,246,0.2);margin-bottom:0.7rem;">
-        <div style="width:54px;height:54px;background:linear-gradient(135deg,#3730a3,#7c3aed,#a855f7,#ec4899);
-                    border-radius:16px;display:flex;align-items:center;justify-content:center;
-                    margin:0 auto 0.6rem;font-size:26px;box-shadow:0 6px 20px rgba(139,92,246,0.55);">🧠</div>
-        <div style="font-size:0.95rem;font-weight:800;background:linear-gradient(135deg,#e2e8f0,#c4b5fd);
-                    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-                    line-height:1.2;margin-bottom:0.25rem;">AI Notes Summarizer</div>
-        <div style="font-size:0.65rem;color:#6366f1;font-weight:700;">✨ by Zainab Gondal &nbsp;·&nbsp; v3.0 · Free</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # ── Theme — 2 clear labeled buttons ──────────────────────────────────────
-    st.markdown('<div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:6px;">🎨 Theme</div>', unsafe_allow_html=True)
-    th1, th2 = st.columns(2)
-    is_dark  = st.session_state.theme == "dark"
-    is_light = st.session_state.theme == "light"
-    with th1:
-        st.markdown(
-            f'<div style="background:{"linear-gradient(135deg,#4f46e5,#7c3aed)" if is_dark else "rgba(99,102,241,0.08)"};'
-            f'border:{"2px solid #7c3aed" if is_dark else "1px solid rgba(99,102,241,0.25)"};'
-            f'border-radius:10px;padding:0.42rem 0;text-align:center;cursor:pointer;'
-            f'font-size:0.78rem;font-weight:700;color:{"white" if is_dark else "#6b7280"};">🌙 Dark</div>',
-            unsafe_allow_html=True)
-        if st.button("🌙 Dark", key="btn_dark", use_container_width=True):
-            st.session_state.theme = "dark"; st.rerun()
-    with th2:
-        st.markdown(
-            f'<div style="background:{"linear-gradient(135deg,#f59e0b,#d97706)" if is_light else "rgba(245,158,11,0.08)"};'
-            f'border:{"2px solid #f59e0b" if is_light else "1px solid rgba(245,158,11,0.25)"};'
-            f'border-radius:10px;padding:0.42rem 0;text-align:center;cursor:pointer;'
-            f'font-size:0.78rem;font-weight:700;color:{"white" if is_light else "#6b7280"};">☀️ Light</div>',
-            unsafe_allow_html=True)
-        if st.button("☀️ Light", key="btn_light", use_container_width=True):
-            st.session_state.theme = "light"; st.rerun()
-
-    st.markdown("<div style='height:0.55rem'></div>", unsafe_allow_html=True)
-
-    # ── Language — 2 clear labeled buttons ───────────────────────────────────
-    st.markdown('<div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:6px;">🌐 Output Language</div>', unsafe_allow_html=True)
-    lg1, lg2 = st.columns(2)
-    is_eng  = st.session_state.language == "English"
-    is_urdu = st.session_state.language.startswith("Urdu")
-    with lg1:
-        st.markdown(
-            f'<div style="background:{"linear-gradient(135deg,#1d4ed8,#2563eb)" if is_eng else "rgba(29,78,216,0.08)"};'
-            f'border:{"2px solid #3b82f6" if is_eng else "1px solid rgba(59,130,246,0.25)"};'
-            f'border-radius:10px;padding:0.42rem 0;text-align:center;'
-            f'font-size:0.78rem;font-weight:700;color:{"white" if is_eng else "#6b7280"};">🇬🇧 English</div>',
-            unsafe_allow_html=True)
-        if st.button("🇬🇧 English", key="btn_eng", use_container_width=True):
-            st.session_state.language = "English"; st.rerun()
-    with lg2:
-        st.markdown(
-            f'<div style="background:{"linear-gradient(135deg,#15803d,#16a34a)" if is_urdu else "rgba(21,128,61,0.08)"};'
-            f'border:{"2px solid #22c55e" if is_urdu else "1px solid rgba(34,197,94,0.25)"};'
-            f'border-radius:10px;padding:0.42rem 0;text-align:center;'
-            f'font-size:0.78rem;font-weight:700;color:{"white" if is_urdu else "#6b7280"};">🇵🇰 اردو</div>',
-            unsafe_allow_html=True)
-        if st.button("🇵🇰 اردو", key="btn_urdu", use_container_width=True):
-            st.session_state.language = "Urdu (اردو)"; st.rerun()
-
-    st.markdown("<div style='height:0.55rem'></div>", unsafe_allow_html=True)
-
-    # API Key
-    st.markdown('<div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:4px;">🔑 API Key (Optional)</div>', unsafe_allow_html=True)
-    visitor_key = st.text_input("API Key", type="password", placeholder="gsk_... (leave empty = free)",
-                                label_visibility="collapsed", help="Free at console.groq.com")
-    st.markdown('<div style="font-size:0.6rem;color:#475569;margin-top:2px;">Leave empty to use for free ✅</div>', unsafe_allow_html=True)
-
-    st.markdown("<div style='height:0.55rem'></div>", unsafe_allow_html=True)
-
-    # Input method
-    st.markdown('<div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:4px;">📥 Input Method</div>', unsafe_allow_html=True)
-    input_mode = st.radio("Input", ["📋 Paste Text", "📁 Upload File"], label_visibility="collapsed")
-
-    st.markdown("<div style='height:0.4rem'></div>", unsafe_allow_html=True)
-
-    # Features compact grid
-    st.markdown("""
-    <div style="background:rgba(255,255,255,0.025);border:1px solid rgba(139,92,246,0.15);
-                border-radius:12px;padding:0.6rem 0.8rem;margin-bottom:0.5rem;">
-        <div style="font-size:0.58rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;
-                    color:#a78bfa;margin-bottom:0.4rem;">⚡ Features</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;">
-            <div style="font-size:0.66rem;color:#94a3b8;">⚡ Quick Summary</div>
-            <div style="font-size:0.66rem;color:#94a3b8;">📖 Detailed Summary</div>
-            <div style="font-size:0.66rem;color:#94a3b8;">🎯 Key Points</div>
-            <div style="font-size:0.66rem;color:#94a3b8;">🔬 Knowledge Extract</div>
-            <div style="font-size:0.66rem;color:#94a3b8;">❓ Study Questions</div>
-            <div style="font-size:0.66rem;color:#94a3b8;">🃏 Flashcards</div>
-            <div style="font-size:0.66rem;color:#94a3b8;">🏷️ NLP Keywords</div>
-            <div style="font-size:0.66rem;color:#94a3b8;">📄 PDF + TXT Export</div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # How to use compact
-    st.markdown("""
-    <div style="background:rgba(255,255,255,0.025);border:1px solid rgba(139,92,246,0.15);
-                border-radius:12px;padding:0.6rem 0.8rem;margin-bottom:0.5rem;">
-        <div style="font-size:0.58rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;
-                    color:#a78bfa;margin-bottom:0.4rem;">📖 How To Use</div>
-        <div style="display:flex;flex-direction:column;gap:3px;">
-            <div style="font-size:0.66rem;color:#94a3b8;display:flex;gap:5px;">
-                <span style="color:#a78bfa;font-weight:800;min-width:12px;">1.</span><span>Paste notes or upload file</span></div>
-            <div style="font-size:0.66rem;color:#94a3b8;display:flex;gap:5px;">
-                <span style="color:#a78bfa;font-weight:800;min-width:12px;">2.</span><span>Pick theme &amp; language above</span></div>
-            <div style="font-size:0.66rem;color:#94a3b8;display:flex;gap:5px;">
-                <span style="color:#a78bfa;font-weight:800;min-width:12px;">3.</span><span>Click <strong style="color:#c4b5fd;">🔍 Analyse Notes</strong></span></div>
-            <div style="font-size:0.66rem;color:#94a3b8;display:flex;gap:5px;">
-                <span style="color:#a78bfa;font-weight:800;min-width:12px;">4.</span><span>Download PDF or TXT</span></div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # Format chips + links footer
-    st.markdown("""
-    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:0.6rem;">
-        <span style="background:rgba(99,102,241,0.13);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25);border-radius:100px;padding:2px 7px;font-size:0.6rem;font-weight:700;">📄 PDF</span>
-        <span style="background:rgba(99,102,241,0.13);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25);border-radius:100px;padding:2px 7px;font-size:0.6rem;font-weight:700;">📝 DOCX</span>
-        <span style="background:rgba(99,102,241,0.13);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25);border-radius:100px;padding:2px 7px;font-size:0.6rem;font-weight:700;">📃 TXT</span>
-        <span style="background:rgba(99,102,241,0.13);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25);border-radius:100px;padding:2px 7px;font-size:0.6rem;font-weight:700;">🐍 Python</span>
-        <span style="background:rgba(99,102,241,0.13);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25);border-radius:100px;padding:2px 7px;font-size:0.6rem;font-weight:700;">🚀 Groq</span>
-        <span style="background:rgba(99,102,241,0.13);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25);border-radius:100px;padding:2px 7px;font-size:0.6rem;font-weight:700;">🌊 Streamlit</span>
-    </div>
-    <div style="border-top:1px solid rgba(139,92,246,0.15);padding-top:0.6rem;text-align:center;">
-        <div style="font-size:0.75rem;font-weight:800;background:linear-gradient(135deg,#a78bfa,#f0abfc,#67e8f9);
+    <div style="text-align:center;padding:1.4rem 0.5rem 1rem;
+                border-bottom:1px solid rgba(139,92,246,0.2);margin-bottom:0.8rem;">
+        <div style="width:60px;height:60px;
+                    background:linear-gradient(135deg,#3730a3,#7c3aed,#a855f7,#ec4899);
+                    border-radius:18px;display:flex;align-items:center;justify-content:center;
+                    margin:0 auto 0.7rem;font-size:28px;
+                    box-shadow:0 6px 24px rgba(139,92,246,0.6);">🧠</div>
+        <div style="font-size:1rem;font-weight:800;
+                    background:linear-gradient(135deg,#e2e8f0,#c4b5fd);
                     -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-                    background-clip:text;margin-bottom:0.5rem;">Zainab Gondal</div>
-        <div style="display:flex;flex-direction:column;gap:5px;">
-            <a href="https://www.linkedin.com/in/zainabgondal/" target="_blank"
-               style="display:flex;align-items:center;justify-content:center;gap:5px;
-                      background:linear-gradient(135deg,rgba(10,102,194,0.28),rgba(10,102,194,0.12));
-                      border:1px solid rgba(10,102,194,0.4);color:#93c5fd;text-decoration:none;
-                      padding:5px 10px;border-radius:10px;font-size:0.65rem;font-weight:700;">💼 LinkedIn</a>
-            <a href="https://github.com/zainabgondal" target="_blank"
-               style="display:flex;align-items:center;justify-content:center;gap:5px;
-                      background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);
-                      color:#e2e8f0;text-decoration:none;
-                      padding:5px 10px;border-radius:10px;font-size:0.65rem;font-weight:700;">🐙 GitHub</a>
-            <a href="https://zainab-notes-summarizer.streamlit.app/" target="_blank"
-               style="display:flex;align-items:center;justify-content:center;gap:5px;
-                      background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);
-                      color:#c4b5fd;text-decoration:none;
-                      padding:5px 10px;border-radius:10px;font-size:0.65rem;font-weight:700;">🌐 Live App</a>
+                    background-clip:text;margin-bottom:0.3rem;">AI Notes Summarizer</div>
+        <div style="font-size:0.65rem;color:#6366f1;font-weight:700;">
+            ✨ by Zainab Gondal · v3.0 · Free
         </div>
     </div>
     """, unsafe_allow_html=True)
 
+    # ── Theme ────────────────────────────────────────────────────────────────
+    st.markdown('<p style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin:0 0 6px 0;">🎨 Theme</p>', unsafe_allow_html=True)
+    tc1, tc2 = st.columns(2)
+    with tc1:
+        dark_active = st.session_state.theme == "dark"
+        if st.button(
+            "🌙  Dark",
+            key="btn_dark",
+            use_container_width=True,
+            type="primary" if dark_active else "secondary",
+        ):
+            st.session_state.theme = "dark"
+            st.rerun()
+    with tc2:
+        light_active = st.session_state.theme == "light"
+        if st.button(
+            "☀️  Light",
+            key="btn_light",
+            use_container_width=True,
+            type="primary" if light_active else "secondary",
+        ):
+            st.session_state.theme = "light"
+            st.rerun()
+
+    st.markdown("<div style='height:0.6rem'></div>", unsafe_allow_html=True)
+
+    # ── Language ─────────────────────────────────────────────────────────────
+    st.markdown('<p style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin:0 0 6px 0;">🌐 Language</p>', unsafe_allow_html=True)
+    lc1, lc2 = st.columns(2)
+    with lc1:
+        eng_active = st.session_state.language == "English"
+        if st.button(
+            "🇬🇧  English",
+            key="btn_eng",
+            use_container_width=True,
+            type="primary" if eng_active else "secondary",
+        ):
+            st.session_state.language = "English"
+            st.rerun()
+    with lc2:
+        urdu_active = st.session_state.language.startswith("Urdu")
+        if st.button(
+            "🇵🇰  اردو",
+            key="btn_urdu",
+            use_container_width=True,
+            type="primary" if urdu_active else "secondary",
+        ):
+            st.session_state.language = "Urdu (اردو)"
+            st.rerun()
+
+    st.markdown("<div style='height:0.6rem'></div>", unsafe_allow_html=True)
+
+    # ── API Key ───────────────────────────────────────────────────────────────
+    st.markdown('<p style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin:0 0 5px 0;">🔑 API Key (Optional)</p>', unsafe_allow_html=True)
+    visitor_key = st.text_input(
+        "API Key", type="password",
+        placeholder="gsk_... (leave empty = free)",
+        label_visibility="collapsed",
+        help="Get free key at console.groq.com",
+    )
+    st.caption("Leave empty to use for free ✅")
+
+    st.markdown("<div style='height:0.6rem'></div>", unsafe_allow_html=True)
+
+    # ── Input method ─────────────────────────────────────────────────────────
+    st.markdown('<p style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin:0 0 5px 0;">📥 Input Method</p>', unsafe_allow_html=True)
+    input_mode = st.radio(
+        "Input", ["📋 Paste Text", "📁 Upload File"],
+        label_visibility="collapsed",
+    )
+
+    st.markdown("<div style='height:0.6rem'></div>", unsafe_allow_html=True)
+
+    # ── Quick info ────────────────────────────────────────────────────────────
+    st.markdown("""
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(139,92,246,0.18);
+                border-radius:12px;padding:0.7rem 0.9rem;margin-bottom:0.6rem;">
+        <div style="font-size:0.62rem;font-weight:800;color:#a78bfa;
+                    text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;">
+            ⚡ What You Get
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 6px;">
+            <div style="font-size:0.68rem;color:#94a3b8;">⚡ Summaries</div>
+            <div style="font-size:0.68rem;color:#94a3b8;">🔬 Knowledge</div>
+            <div style="font-size:0.68rem;color:#94a3b8;">❓ Questions</div>
+            <div style="font-size:0.68rem;color:#94a3b8;">🃏 Flashcards</div>
+            <div style="font-size:0.68rem;color:#94a3b8;">🏷️ Keywords</div>
+            <div style="font-size:0.68rem;color:#94a3b8;">📄 PDF Export</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ── Links ─────────────────────────────────────────────────────────────────
+    st.markdown("""
+    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:0.5rem;">
+        <a href="https://www.linkedin.com/in/zainabgondal/" target="_blank"
+           style="display:flex;align-items:center;gap:7px;text-decoration:none;
+                  background:rgba(10,102,194,0.15);border:1px solid rgba(10,102,194,0.35);
+                  color:#93c5fd;padding:6px 10px;border-radius:10px;
+                  font-size:0.7rem;font-weight:700;">
+            💼 Connect on LinkedIn
+        </a>
+        <a href="https://github.com/zainabgondal" target="_blank"
+           style="display:flex;align-items:center;gap:7px;text-decoration:none;
+                  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);
+                  color:#e2e8f0;padding:6px 10px;border-radius:10px;
+                  font-size:0.7rem;font-weight:700;">
+            🐙 GitHub
+        </a>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="text-align:center;font-size:0.62rem;color:#334155;padding-top:0.4rem;
+                border-top:1px solid rgba(139,92,246,0.12);">
+        Crafted with 💜 by <strong style="color:#a78bfa;">Zainab Gondal</strong><br>
+        CS Student · MUET · Pakistan
+    </div>
+    """, unsafe_allow_html=True)
+
+# ── Inject active theme overrides ─────────────────────────────────────────────
+theme_css = get_theme_css()
+if theme_css:
+    st.markdown(theme_css, unsafe_allow_html=True)
 
 # ── Hero ──────────────────────────────────────────────────────────────────────
 st.markdown("""
