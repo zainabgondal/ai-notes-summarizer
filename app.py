@@ -1762,7 +1762,7 @@ with st.sidebar:
             f'border-radius:10px;padding:0.42rem 0;text-align:center;cursor:pointer;'
             f'font-size:0.78rem;font-weight:700;color:{"white" if is_dark else "#6b7280"};">🌙 Dark</div>',
             unsafe_allow_html=True)
-        if st.button("🌙 Dark", key="btn_dark", use_container_width=True, label_visibility="collapsed"):
+        if st.button("🌙 Dark", key="btn_dark", use_container_width=True):
             st.session_state.theme = "dark"; st.rerun()
     with th2:
         st.markdown(
@@ -1771,7 +1771,7 @@ with st.sidebar:
             f'border-radius:10px;padding:0.42rem 0;text-align:center;cursor:pointer;'
             f'font-size:0.78rem;font-weight:700;color:{"white" if is_light else "#6b7280"};">☀️ Light</div>',
             unsafe_allow_html=True)
-        if st.button("☀️ Light", key="btn_light", use_container_width=True, label_visibility="collapsed"):
+        if st.button("☀️ Light", key="btn_light", use_container_width=True):
             st.session_state.theme = "light"; st.rerun()
 
     st.markdown("<div style='height:0.55rem'></div>", unsafe_allow_html=True)
@@ -1788,7 +1788,7 @@ with st.sidebar:
             f'border-radius:10px;padding:0.42rem 0;text-align:center;'
             f'font-size:0.78rem;font-weight:700;color:{"white" if is_eng else "#6b7280"};">🇬🇧 English</div>',
             unsafe_allow_html=True)
-        if st.button("🇬🇧 English", key="btn_eng", use_container_width=True, label_visibility="collapsed"):
+        if st.button("🇬🇧 English", key="btn_eng", use_container_width=True):
             st.session_state.language = "English"; st.rerun()
     with lg2:
         st.markdown(
@@ -1797,7 +1797,7 @@ with st.sidebar:
             f'border-radius:10px;padding:0.42rem 0;text-align:center;'
             f'font-size:0.78rem;font-weight:700;color:{"white" if is_urdu else "#6b7280"};">🇵🇰 اردو</div>',
             unsafe_allow_html=True)
-        if st.button("🇵🇰 اردو", key="btn_urdu", use_container_width=True, label_visibility="collapsed"):
+        if st.button("🇵🇰 اردو", key="btn_urdu", use_container_width=True):
             st.session_state.language = "Urdu (اردو)"; st.rerun()
 
     st.markdown("<div style='height:0.55rem'></div>", unsafe_allow_html=True)
