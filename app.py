@@ -1631,32 +1631,161 @@ def create_pdf(word_count, char_count, read_time, quick, key_points_txt,
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
 
-    # Brand Header
-    st.markdown("<div style=\"text-align:center;padding:1.3rem 0.3rem 1rem;border-bottom:1px solid rgba(139,92,246,0.25);margin-bottom:0.8rem;\"><div style=\"width:56px;height:56px;background:linear-gradient(135deg,#3730a3,#7c3aed,#a855f7,#ec4899);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 0.6rem;font-size:26px;box-shadow:0 6px 22px rgba(139,92,246,0.6);\">🧠</div><div style=\"font-size:0.97rem;font-weight:800;background:linear-gradient(135deg,#f1f5f9,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.2rem;\">AI Notes Summarizer</div><div style=\"font-size:0.68rem;font-weight:700;background:linear-gradient(90deg,#a78bfa,#e879f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.35rem;\">✨ Zainab Gondal · v3.0</div><div style=\"display:inline-block;background:rgba(16,185,129,0.14);border:1px solid rgba(16,185,129,0.35);border-radius:100px;padding:2px 11px;font-size:0.61rem;font-weight:700;color:#34d399;\">💚 100% Free</div></div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div style=\"text-align:center;padding:1.3rem 0.3rem 1rem;"
+        "border-bottom:1px solid rgba(139,92,246,0.25);margin-bottom:0.8rem;\">"
+        "<div style=\"width:58px;height:58px;"
+        "background:linear-gradient(135deg,#3730a3,#7c3aed,#a855f7,#ec4899);"
+        "border-radius:18px;display:flex;align-items:center;justify-content:center;"
+        "margin:0 auto 0.65rem;font-size:28px;"
+        "box-shadow:0 6px 24px rgba(139,92,246,0.6);\">🧠</div>"
+        "<div style=\"font-size:1rem;font-weight:800;"
+        "background:linear-gradient(135deg,#f1f5f9,#c4b5fd);"
+        "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
+        "background-clip:text;margin-bottom:0.2rem;\">AI Notes Summarizer</div>"
+        "<div style=\"font-size:0.68rem;font-weight:700;"
+        "background:linear-gradient(90deg,#a78bfa,#e879f9);"
+        "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
+        "background-clip:text;margin-bottom:0.35rem;\">✨ Zainab Gondal · v3.0</div>"
+        "<div style=\"display:inline-block;background:rgba(16,185,129,0.14);"
+        "border:1px solid rgba(16,185,129,0.35);border-radius:100px;"
+        "padding:2px 11px;font-size:0.62rem;font-weight:700;color:#34d399;\">"
+        "💚 100% Free</div></div>",
+        unsafe_allow_html=True,
+    )
 
-    # Input Method
-    st.markdown("<div style=\"font-size:0.61rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:6px;\">📥 Input Method</div>", unsafe_allow_html=True)
-    input_mode = st.radio("Input", ["📋 Paste Text", "📁 Upload File"], label_visibility="collapsed")
+    st.markdown(
+        "<div style=\"font-size:0.62rem;font-weight:800;text-transform:uppercase;"
+        "letter-spacing:0.1em;color:#a78bfa;margin-bottom:6px;\">📥 Input Method</div>",
+        unsafe_allow_html=True,
+    )
+    input_mode = st.radio("Input", ["📋 Paste Text", "📁 Upload File"],
+                          label_visibility="collapsed")
 
-    # API Key
-    st.markdown("<div style=\"font-size:0.61rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin:0.7rem 0 5px;\">🔑 API Key <span style=\"color:#475569;font-weight:500;text-transform:none;\">(optional)</span></div>", unsafe_allow_html=True)
-    visitor_key = st.text_input("API Key", type="password", placeholder="gsk_...  (leave empty = free)", label_visibility="collapsed", help="Free key at console.groq.com")
-    st.markdown("<div style=\"font-size:0.6rem;color:#475569;margin-top:2px;\">Leave empty — works 100% free ✅</div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div style=\"font-size:0.62rem;font-weight:800;text-transform:uppercase;"
+        "letter-spacing:0.1em;color:#a78bfa;margin:0.7rem 0 5px;\">"
+        "🔑 API Key <span style=\"color:#475569;font-weight:500;text-transform:none;\">"
+        "(optional)</span></div>",
+        unsafe_allow_html=True,
+    )
+    visitor_key = st.text_input("API Key", type="password",
+                                placeholder="gsk_...  (leave empty = free)",
+                                label_visibility="collapsed",
+                                help="Free key at console.groq.com")
+    st.markdown(
+        "<div style=\"font-size:0.62rem;color:#475569;margin-top:2px;\">"
+        "Leave empty — works 100% free ✅</div>",
+        unsafe_allow_html=True,
+    )
 
-    # What You Get
-    st.markdown("<div style=\"background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(168,85,247,0.06));border:1px solid rgba(139,92,246,0.22);border-radius:13px;padding:0.78rem 0.92rem;margin-top:0.7rem;\"><div style=\"font-size:0.59rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.5rem;\">⚡ What You Get</div><div style=\"font-size:0.72rem;color:#c4b5fd;display:flex;flex-direction:column;gap:4px;\"><div>📝 &nbsp;Quick · Detailed · Key Points</div><div>🔬 &nbsp;Concepts · Definitions · Facts</div><div>❓ &nbsp;5 Conceptual + 5 MCQ + 3 Short Ans</div><div>🃏 &nbsp;8 Auto-generated Flashcards</div><div>📄 &nbsp;Download as PDF &amp; TXT</div><div>🏷️ &nbsp;NLP Keyword Extraction</div></div></div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div style=\"background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(168,85,247,0.06));"
+        "border:1px solid rgba(139,92,246,0.22);border-radius:13px;"
+        "padding:0.8rem 0.95rem;margin-top:0.7rem;\">"
+        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;"
+        "letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.5rem;\">⚡ What You Get</div>"
+        "<div style=\"font-size:0.73rem;color:#c4b5fd;"
+        "display:flex;flex-direction:column;gap:5px;\">"
+        "<div>📝 &nbsp;Quick · Detailed · Key Points</div>"
+        "<div>🔬 &nbsp;Concepts · Definitions · Facts</div>"
+        "<div>❓ &nbsp;5 Conceptual + 5 MCQ + 3 Short Ans</div>"
+        "<div>🃏 &nbsp;8 Auto-generated Flashcards</div>"
+        "<div>📄 &nbsp;Download as PDF &amp; TXT</div>"
+        "<div>🏷️ &nbsp;NLP Keyword Extraction</div>"
+        "</div></div>",
+        unsafe_allow_html=True,
+    )
 
-    # How To Use
-    st.markdown("<div style=\"background:rgba(255,255,255,0.03);border:1px solid rgba(139,92,246,0.15);border-radius:13px;padding:0.78rem 0.92rem;margin-top:0.55rem;\"><div style=\"font-size:0.59rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.45rem;\">📖 How To Use</div><div style=\"font-size:0.71rem;color:#94a3b8;display:flex;flex-direction:column;gap:4px;\"><div><span style=\"color:#a78bfa;font-weight:800;\">1.</span> &nbsp;Paste or upload your notes</div><div><span style=\"color:#a78bfa;font-weight:800;\">2.</span> &nbsp;Choose input method above</div><div><span style=\"color:#a78bfa;font-weight:800;\">3.</span> &nbsp;Click 🔍 Analyse Notes</div><div><span style=\"color:#a78bfa;font-weight:800;\">4.</span> &nbsp;Download your study pack</div></div></div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div style=\"background:rgba(255,255,255,0.03);"
+        "border:1px solid rgba(139,92,246,0.15);border-radius:13px;"
+        "padding:0.8rem 0.95rem;margin-top:0.55rem;\">"
+        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;"
+        "letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.45rem;\">📖 How To Use</div>"
+        "<div style=\"font-size:0.72rem;color:#94a3b8;"
+        "display:flex;flex-direction:column;gap:5px;\">"
+        "<div><span style=\"color:#a78bfa;font-weight:800;\">1.</span>"
+        " &nbsp;Paste or upload your notes</div>"
+        "<div><span style=\"color:#a78bfa;font-weight:800;\">2.</span>"
+        " &nbsp;Choose input method above</div>"
+        "<div><span style=\"color:#a78bfa;font-weight:800;\">3.</span>"
+        " &nbsp;Click 🔍 Analyse Notes</div>"
+        "<div><span style=\"color:#a78bfa;font-weight:800;\">4.</span>"
+        " &nbsp;Download your study pack</div>"
+        "</div></div>",
+        unsafe_allow_html=True,
+    )
 
-    # Supported Formats
-    st.markdown("<div style=\"background:rgba(16,185,129,0.07);border:1px solid rgba(16,185,129,0.2);border-radius:13px;padding:0.7rem 0.92rem;margin-top:0.55rem;\"><div style=\"font-size:0.59rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#34d399;margin-bottom:0.3rem;\">📂 Supported Formats</div><div style=\"display:flex;gap:5px;flex-wrap:wrap;\"><span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;border:1px solid rgba(99,102,241,0.32);border-radius:100px;padding:2px 9px;font-size:0.65rem;font-weight:700;\">📄 PDF</span><span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;border:1px solid rgba(99,102,241,0.32);border-radius:100px;padding:2px 9px;font-size:0.65rem;font-weight:700;\">📝 DOCX</span><span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;border:1px solid rgba(99,102,241,0.32);border-radius:100px;padding:2px 9px;font-size:0.65rem;font-weight:700;\">📃 TXT</span></div></div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div style=\"background:rgba(16,185,129,0.07);"
+        "border:1px solid rgba(16,185,129,0.2);border-radius:13px;"
+        "padding:0.7rem 0.95rem;margin-top:0.55rem;\">"
+        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;"
+        "letter-spacing:0.1em;color:#34d399;margin-bottom:0.3rem;\">📂 Supported Formats</div>"
+        "<div style=\"display:flex;gap:6px;flex-wrap:wrap;\">"
+        "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;"
+        "border:1px solid rgba(99,102,241,0.32);border-radius:100px;"
+        "padding:3px 10px;font-size:0.66rem;font-weight:700;\">📄 PDF</span>"
+        "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;"
+        "border:1px solid rgba(99,102,241,0.32);border-radius:100px;"
+        "padding:3px 10px;font-size:0.66rem;font-weight:700;\">📝 DOCX</span>"
+        "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;"
+        "border:1px solid rgba(99,102,241,0.32);border-radius:100px;"
+        "padding:3px 10px;font-size:0.66rem;font-weight:700;\">📃 TXT</span>"
+        "</div></div>",
+        unsafe_allow_html=True,
+    )
 
-    # Contact Developer
-    st.markdown("<div style=\"background:linear-gradient(145deg,rgba(10,8,28,0.94),rgba(14,10,36,0.94));border:1px solid rgba(139,92,246,0.22);border-radius:13px;padding:0.78rem 0.92rem;margin-top:0.55rem;\"><div style=\"font-size:0.59rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;background:linear-gradient(90deg,#a78bfa,#e879f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.5rem;\">📬 Contact Developer</div><div style=\"display:flex;flex-direction:column;gap:5px;\"><a href=\"mailto:gondalzainab34@gmail.com\" style=\"display:flex;align-items:center;gap:7px;text-decoration:none;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:9px;padding:0.4rem 0.6rem;\"><span>📧</span><span style=\"font-size:0.68rem;font-weight:600;color:#c4b5fd;\">gondalzainab34@gmail.com</span></a><a href=\"https://wa.me/92113430370\" target=\"_blank\" style=\"display:flex;align-items:center;gap:7px;text-decoration:none;background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.25);border-radius:9px;padding:0.4rem 0.6rem;\"><span>💬</span><span style=\"font-size:0.68rem;font-weight:600;color:#6ee7b7;\">WhatsApp</span></a><a href=\"https://www.linkedin.com/in/zainabgondal/\" target=\"_blank\" style=\"display:flex;align-items:center;gap:7px;text-decoration:none;background:rgba(10,102,194,0.12);border:1px solid rgba(10,102,194,0.3);border-radius:9px;padding:0.4rem 0.6rem;\"><span>💼</span><span style=\"font-size:0.68rem;font-weight:600;color:#93c5fd;\">LinkedIn</span></a><a href=\"https://github.com/zainabgondal\" target=\"_blank\" style=\"display:flex;align-items:center;gap:7px;text-decoration:none;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:9px;padding:0.4rem 0.6rem;\"><span>🐙</span><span style=\"font-size:0.68rem;font-weight:600;color:#e2e8f0;\">GitHub</span></a></div></div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div style=\"background:linear-gradient(145deg,rgba(10,8,28,0.94),rgba(14,10,36,0.94));"
+        "border:1px solid rgba(139,92,246,0.22);border-radius:13px;"
+        "padding:0.8rem 0.95rem;margin-top:0.55rem;\">"
+        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;"
+        "letter-spacing:0.1em;background:linear-gradient(90deg,#a78bfa,#e879f9);"
+        "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
+        "background-clip:text;margin-bottom:0.5rem;\">📬 Contact Developer</div>"
+        "<div style=\"display:flex;flex-direction:column;gap:6px;\">"
+        "<a href=\"mailto:gondalzainab34@gmail.com\" "
+        "style=\"display:flex;align-items:center;gap:8px;text-decoration:none;"
+        "background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);"
+        "border-radius:9px;padding:0.42rem 0.7rem;\">"
+        "<span>📧</span>"
+        "<span style=\"font-size:0.7rem;font-weight:600;color:#c4b5fd;\">"
+        "gondalzainab34@gmail.com</span></a>"
+        "<a href=\"https://wa.me/92113430370\" target=\"_blank\" "
+        "style=\"display:flex;align-items:center;gap:8px;text-decoration:none;"
+        "background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.25);"
+        "border-radius:9px;padding:0.42rem 0.7rem;\">"
+        "<span>💬</span>"
+        "<span style=\"font-size:0.7rem;font-weight:600;color:#6ee7b7;\">WhatsApp</span></a>"
+        "<a href=\"https://www.linkedin.com/in/zainabgondal/\" target=\"_blank\" "
+        "style=\"display:flex;align-items:center;gap:8px;text-decoration:none;"
+        "background:rgba(10,102,194,0.12);border:1px solid rgba(10,102,194,0.3);"
+        "border-radius:9px;padding:0.42rem 0.7rem;\">"
+        "<span>💼</span>"
+        "<span style=\"font-size:0.7rem;font-weight:600;color:#93c5fd;\">LinkedIn</span></a>"
+        "<a href=\"https://github.com/zainabgondal\" target=\"_blank\" "
+        "style=\"display:flex;align-items:center;gap:8px;text-decoration:none;"
+        "background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);"
+        "border-radius:9px;padding:0.42rem 0.7rem;\">"
+        "<span>🐙</span>"
+        "<span style=\"font-size:0.7rem;font-weight:600;color:#e2e8f0;\">GitHub</span></a>"
+        "</div></div>",
+        unsafe_allow_html=True,
+    )
 
-    # Footer
-    st.markdown("<div style=\"border-top:1px solid rgba(139,92,246,0.18);margin-top:0.85rem;padding-top:0.75rem;text-align:center;\"><div style=\"font-size:0.63rem;color:#94a3b8;\">Crafted with 💜 by <span style=\"font-weight:800;background:linear-gradient(90deg,#a78bfa,#e879f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;\">Zainab Gondal</span></div></div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div style=\"border-top:1px solid rgba(139,92,246,0.18);"
+        "margin-top:0.9rem;padding-top:0.8rem;text-align:center;\">"
+        "<div style=\"font-size:0.64rem;color:#94a3b8;\">"
+        "Crafted with 💜 by "
+        "<span style=\"font-weight:800;"
+        "background:linear-gradient(90deg,#a78bfa,#e879f9);"
+        "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
+        "background-clip:text;\">Zainab Gondal</span></div></div>",
+        unsafe_allow_html=True,
+    )
 
 
 # ── Hero ──────────────────────────────────────────────────────────────────────
