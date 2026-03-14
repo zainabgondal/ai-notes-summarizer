@@ -37,14 +37,6 @@ html, body, [class*="css"] {
     background-color: #080b14 !important;
     color: #e2e8f0 !important;
 }
-html { background: #080b14 !important; }
-body { background: #080b14 !important; }
-#root { background: #080b14 !important; }
-.stApp { background: #080b14 !important; }
-[data-testid="stAppViewContainer"] { background: #080b14 !important; }
-[data-testid="stMain"] { background: #080b14 !important; }
-[data-testid="stMainBlockContainer"] { background: #080b14 !important; }
-[data-testid="stBottom"] { background: #080b14 !important; }
 .main { background-color: #080b14 !important; }
 .block-container { padding-top: 1.5rem !important; padding-bottom: 3rem !important; }
 #MainMenu, footer, header { visibility: hidden; }
@@ -447,17 +439,11 @@ div[data-testid="stDownloadButton"] > button:hover {
 
 /* ── Sidebar ── */
 [data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #0a0815, #0d0b1e) !important;
+    background: #07091200 !important;
     border-right: 1px solid rgba(139,92,246,0.18) !important;
 }
 [data-testid="stSidebar"] > div {
     background: linear-gradient(180deg, #0a0815, #0d0b1e) !important;
-}
-[data-testid="stSidebar"] p,
-[data-testid="stSidebar"] span,
-[data-testid="stSidebar"] div,
-[data-testid="stSidebar"] label {
-    color: #e2e8f0 !important;
 }
 
 /* ── Radio ── */
@@ -498,55 +484,138 @@ def get_groq_client(sidebar_key=""):
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("""
-    <div style='text-align:center;padding:1.2rem 0 0.8rem;'>
-        <div style='width:52px;height:52px;
-                    background:linear-gradient(135deg,#4f46e5,#7c3aed,#a855f7);
-                    border-radius:15px;display:flex;align-items:center;
-                    justify-content:center;margin:0 auto 0.8rem;
-                    font-size:26px;box-shadow:0 4px 20px rgba(99,102,241,0.5);'>
-            🧠
-        </div>
-        <div style='font-size:0.95rem;font-weight:700;color:#e2e8f0;'>AI Notes Summarizer</div>
-        <div style='font-size:0.75rem;color:#475569;margin-top:3px;'>by Zainab Gondal</div>
-    </div>
-    """, unsafe_allow_html=True)
 
-    st.divider()
+    # Brand header
+    st.markdown(
+        "<div style=\"text-align:center;padding:1.3rem 0.3rem 1rem;"
+        "border-bottom:1px solid rgba(139,92,246,0.25);margin-bottom:0.8rem;\">"
+        "<div style=\"width:56px;height:56px;"
+        "background:linear-gradient(135deg,#3730a3,#7c3aed,#a855f7,#ec4899);"
+        "border-radius:16px;display:flex;align-items:center;justify-content:center;"
+        "margin:0 auto 0.6rem;font-size:26px;"
+        "box-shadow:0 6px 22px rgba(139,92,246,0.6);\">🧠</div>"
+        "<div style=\"font-size:0.97rem;font-weight:800;"
+        "background:linear-gradient(135deg,#f1f5f9,#c4b5fd);"
+        "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
+        "background-clip:text;margin-bottom:0.2rem;\">AI Notes Summarizer</div>"
+        "<div style=\"font-size:0.68rem;font-weight:700;"
+        "background:linear-gradient(90deg,#a78bfa,#e879f9);"
+        "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
+        "background-clip:text;margin-bottom:0.35rem;\">✨ Zainab Gondal · v3.0</div>"
+        "<div style=\"display:inline-block;background:rgba(16,185,129,0.14);"
+        "border:1px solid rgba(16,185,129,0.35);border-radius:100px;"
+        "padding:2px 11px;font-size:0.61rem;font-weight:700;color:#34d399;\">"
+        "💚 100% Free</div>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
 
-    st.markdown("<div style='font-size:0.8rem;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;'>API Key</div>", unsafe_allow_html=True)
-    sidebar_key = st.text_input("key", type="password", placeholder="gsk_...",
+    # Input method
+    st.markdown(
+        "<div style=\"font-size:0.61rem;font-weight:800;text-transform:uppercase;"
+        "letter-spacing:0.1em;color:#a78bfa;margin-bottom:6px;\">📥 Input Method</div>",
+        unsafe_allow_html=True,
+    )
+    input_mode = st.radio("Input", ["📋 Paste Text", "📁 Upload File"],
+                          label_visibility="collapsed")
+
+    # Optional API key
+    st.markdown(
+        "<div style=\"font-size:0.61rem;font-weight:800;text-transform:uppercase;"
+        "letter-spacing:0.1em;color:#a78bfa;margin:0.65rem 0 5px;\">"
+        "🔑 Your Key <span style=\"color:#475569;font-weight:500;text-transform:none;\"> (optional)</span></div>",
+        unsafe_allow_html=True,
+    )
+    sidebar_key = st.text_input("API Key", type="password",
+                                placeholder="gsk_...  (leave empty = free)",
                                 label_visibility="collapsed",
                                 help="Free key at console.groq.com")
-    st.markdown("<div style='font-size:0.75rem;color:#334155;margin-top:4px;'>🔑 Get free key at console.groq.com</div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div style=\"font-size:0.6rem;color:#475569;margin-top:2px;\">Leave empty — works 100% free ✅</div>",
+        unsafe_allow_html=True,
+    )
 
-    st.divider()
+    # What you get
+    st.markdown(
+        "<div style=\"background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(168,85,247,0.06));"
+        "border:1px solid rgba(139,92,246,0.22);border-radius:13px;"
+        "padding:0.78rem 0.92rem;margin-top:0.7rem;\">"
+        "<div style=\"font-size:0.59rem;font-weight:800;text-transform:uppercase;"
+        "letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.5rem;\">⚡ What You Get</div>"
+        "<div style=\"font-size:0.72rem;color:#c4b5fd;display:flex;flex-direction:column;gap:4px;\">"
+        "<div>📝 &nbsp;Quick · Detailed · Key Points</div>"
+        "<div>🔬 &nbsp;Concepts · Definitions · Facts</div>"
+        "<div>❓ &nbsp;5 Conceptual + 5 MCQ + 3 Short Ans</div>"
+        "<div>🃏 &nbsp;8 Auto-generated Flashcards</div>"
+        "<div>📄 &nbsp;Download as PDF &amp; TXT</div>"
+        "<div>🏷️ &nbsp;NLP Keyword Extraction</div>"
+        "</div></div>",
+        unsafe_allow_html=True,
+    )
 
-    st.markdown("<div style='font-size:0.8rem;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;'>Input Method</div>", unsafe_allow_html=True)
-    input_mode = st.radio("", ["📋 Paste Text", "📁 Upload File"], label_visibility="collapsed")
+    # How to use
+    st.markdown(
+        "<div style=\"background:rgba(255,255,255,0.03);"
+        "border:1px solid rgba(139,92,246,0.15);border-radius:13px;"
+        "padding:0.78rem 0.92rem;margin-top:0.55rem;\">"
+        "<div style=\"font-size:0.59rem;font-weight:800;text-transform:uppercase;"
+        "letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.45rem;\">📖 How To Use</div>"
+        "<div style=\"font-size:0.71rem;color:#94a3b8;display:flex;flex-direction:column;gap:4px;\">"
+        "<div><span style=\"color:#a78bfa;font-weight:800;\">1.</span> &nbsp;Paste or upload your notes</div>"
+        "<div><span style=\"color:#a78bfa;font-weight:800;\">2.</span> &nbsp;Choose input method above</div>"
+        "<div><span style=\"color:#a78bfa;font-weight:800;\">3.</span> &nbsp;Click 🔍 Analyse Notes</div>"
+        "<div><span style=\"color:#a78bfa;font-weight:800;\">4.</span> &nbsp;Download your study pack</div>"
+        "</div></div>",
+        unsafe_allow_html=True,
+    )
 
-    st.divider()
+    # Formats + tip
+    st.markdown(
+        "<div style=\"background:rgba(16,185,129,0.07);"
+        "border:1px solid rgba(16,185,129,0.2);border-radius:13px;"
+        "padding:0.7rem 0.92rem;margin-top:0.55rem;\">"
+        "<div style=\"font-size:0.59rem;font-weight:800;text-transform:uppercase;"
+        "letter-spacing:0.1em;color:#34d399;margin-bottom:0.3rem;\">📂 Formats &amp; Tip</div>"
+        "<div style=\"display:flex;gap:5px;flex-wrap:wrap;margin-bottom:0.4rem;\">"
+        "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;"
+        "border:1px solid rgba(99,102,241,0.32);border-radius:100px;"
+        "padding:2px 9px;font-size:0.65rem;font-weight:700;\">📄 PDF</span>"
+        "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;"
+        "border:1px solid rgba(99,102,241,0.32);border-radius:100px;"
+        "padding:2px 9px;font-size:0.65rem;font-weight:700;\">📝 DOCX</span>"
+        "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;"
+        "border:1px solid rgba(99,102,241,0.32);border-radius:100px;"
+        "padding:2px 9px;font-size:0.65rem;font-weight:700;\">📃 TXT</span>"
+        "</div>"
+        "<div style=\"font-size:0.69rem;color:#6ee7b7;line-height:1.45;\">"
+        "💡 Best with 200–2000 words. Full pack in under 60 sec!"
+        "</div></div>",
+        unsafe_allow_html=True,
+    )
 
-    st.markdown("""
-    <div style='background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);
-                border-radius:14px;padding:1rem;'>
-        <div style='font-size:0.75rem;font-weight:700;color:#6366f1;
-                    text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;'>
-            Supported Formats
-        </div>
-        <div style='display:flex;flex-wrap:wrap;gap:6px;'>
-            <span style='background:rgba(99,102,241,0.15);color:#a5b4fc;
-                         border:1px solid rgba(99,102,241,0.3);border-radius:100px;
-                         padding:2px 10px;font-size:0.72rem;font-weight:600;'>PDF</span>
-            <span style='background:rgba(99,102,241,0.15);color:#a5b4fc;
-                         border:1px solid rgba(99,102,241,0.3);border-radius:100px;
-                         padding:2px 10px;font-size:0.72rem;font-weight:600;'>DOCX</span>
-            <span style='background:rgba(99,102,241,0.15);color:#a5b4fc;
-                         border:1px solid rgba(99,102,241,0.3);border-radius:100px;
-                         padding:2px 10px;font-size:0.72rem;font-weight:600;'>TXT</span>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    # Footer links
+    st.markdown(
+        "<div style=\"border-top:1px solid rgba(139,92,246,0.18);"
+        "margin-top:0.85rem;padding-top:0.75rem;text-align:center;\">"
+        "<div style=\"font-size:0.63rem;color:#94a3b8;margin-bottom:0.55rem;\">"
+        "Crafted with 💜 by "
+        "<span style=\"font-weight:800;background:linear-gradient(90deg,#a78bfa,#e879f9);"
+        "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
+        "background-clip:text;\">Zainab Gondal</span>"
+        "</div>"
+        "<a href=\"https://www.linkedin.com/in/zainabgondal/\" target=\"_blank\" "
+        "style=\"display:block;background:rgba(10,102,194,0.18);"
+        "border:1px solid rgba(10,102,194,0.4);color:#93c5fd;"
+        "padding:7px;border-radius:10px;font-size:0.7rem;font-weight:700;"
+        "margin-bottom:6px;text-align:center;text-decoration:none;\">💼 LinkedIn</a>"
+        "<a href=\"https://github.com/zainabgondal\" target=\"_blank\" "
+        "style=\"display:block;background:rgba(255,255,255,0.05);"
+        "border:1px solid rgba(255,255,255,0.12);color:#e2e8f0;"
+        "padding:7px;border-radius:10px;font-size:0.7rem;font-weight:700;"
+        "text-align:center;text-decoration:none;\">🐙 GitHub</a>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
 
 
 # ── Hero ──────────────────────────────────────────────────────────────────────
