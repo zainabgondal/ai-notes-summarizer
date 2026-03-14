@@ -1736,44 +1736,79 @@ def create_pdf(word_count, char_count, read_time, quick, key_points_txt,
 
 # ── Sidebar — compact, single screen, no separate scroll ─────────────────────
 with st.sidebar:
-    # Brand
+
+    # Brand — logo FIRST, prominent at top
     st.markdown("""
-    <div style="text-align:center;padding:0.9rem 0.3rem 0.7rem;border-bottom:1px solid rgba(139,92,246,0.2);margin-bottom:0.6rem;">
-        <div style="width:46px;height:46px;background:linear-gradient(135deg,#3730a3,#7c3aed,#a855f7,#ec4899);
-                    border-radius:14px;display:flex;align-items:center;justify-content:center;
-                    margin:0 auto 0.5rem;font-size:22px;box-shadow:0 4px 16px rgba(139,92,246,0.5);">🧠</div>
-        <div style="font-size:0.88rem;font-weight:800;background:linear-gradient(135deg,#e2e8f0,#c4b5fd);
+    <div style="text-align:center;padding:1.2rem 0.3rem 0.8rem;border-bottom:1px solid rgba(139,92,246,0.2);margin-bottom:0.7rem;">
+        <div style="width:54px;height:54px;background:linear-gradient(135deg,#3730a3,#7c3aed,#a855f7,#ec4899);
+                    border-radius:16px;display:flex;align-items:center;justify-content:center;
+                    margin:0 auto 0.6rem;font-size:26px;box-shadow:0 6px 20px rgba(139,92,246,0.55);">🧠</div>
+        <div style="font-size:0.95rem;font-weight:800;background:linear-gradient(135deg,#e2e8f0,#c4b5fd);
                     -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-                    line-height:1.2;margin-bottom:0.2rem;">AI Notes Summarizer</div>
+                    line-height:1.2;margin-bottom:0.25rem;">AI Notes Summarizer</div>
         <div style="font-size:0.65rem;color:#6366f1;font-weight:700;">✨ by Zainab Gondal &nbsp;·&nbsp; v3.0 · Free</div>
     </div>
     """, unsafe_allow_html=True)
+
+    # ── Theme — 2 clear labeled buttons ──────────────────────────────────────
+    st.markdown('<div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:6px;">🎨 Theme</div>', unsafe_allow_html=True)
+    th1, th2 = st.columns(2)
+    is_dark  = st.session_state.theme == "dark"
+    is_light = st.session_state.theme == "light"
+    with th1:
+        st.markdown(
+            f'<div style="background:{"linear-gradient(135deg,#4f46e5,#7c3aed)" if is_dark else "rgba(99,102,241,0.08)"};'
+            f'border:{"2px solid #7c3aed" if is_dark else "1px solid rgba(99,102,241,0.25)"};'
+            f'border-radius:10px;padding:0.42rem 0;text-align:center;cursor:pointer;'
+            f'font-size:0.78rem;font-weight:700;color:{"white" if is_dark else "#6b7280"};">🌙 Dark</div>',
+            unsafe_allow_html=True)
+        if st.button("🌙 Dark", key="btn_dark", use_container_width=True, label_visibility="collapsed"):
+            st.session_state.theme = "dark"; st.rerun()
+    with th2:
+        st.markdown(
+            f'<div style="background:{"linear-gradient(135deg,#f59e0b,#d97706)" if is_light else "rgba(245,158,11,0.08)"};'
+            f'border:{"2px solid #f59e0b" if is_light else "1px solid rgba(245,158,11,0.25)"};'
+            f'border-radius:10px;padding:0.42rem 0;text-align:center;cursor:pointer;'
+            f'font-size:0.78rem;font-weight:700;color:{"white" if is_light else "#6b7280"};">☀️ Light</div>',
+            unsafe_allow_html=True)
+        if st.button("☀️ Light", key="btn_light", use_container_width=True, label_visibility="collapsed"):
+            st.session_state.theme = "light"; st.rerun()
+
+    st.markdown("<div style='height:0.55rem'></div>", unsafe_allow_html=True)
+
+    # ── Language — 2 clear labeled buttons ───────────────────────────────────
+    st.markdown('<div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:6px;">🌐 Output Language</div>', unsafe_allow_html=True)
+    lg1, lg2 = st.columns(2)
+    is_eng  = st.session_state.language == "English"
+    is_urdu = st.session_state.language.startswith("Urdu")
+    with lg1:
+        st.markdown(
+            f'<div style="background:{"linear-gradient(135deg,#1d4ed8,#2563eb)" if is_eng else "rgba(29,78,216,0.08)"};'
+            f'border:{"2px solid #3b82f6" if is_eng else "1px solid rgba(59,130,246,0.25)"};'
+            f'border-radius:10px;padding:0.42rem 0;text-align:center;'
+            f'font-size:0.78rem;font-weight:700;color:{"white" if is_eng else "#6b7280"};">🇬🇧 English</div>',
+            unsafe_allow_html=True)
+        if st.button("🇬🇧 English", key="btn_eng", use_container_width=True, label_visibility="collapsed"):
+            st.session_state.language = "English"; st.rerun()
+    with lg2:
+        st.markdown(
+            f'<div style="background:{"linear-gradient(135deg,#15803d,#16a34a)" if is_urdu else "rgba(21,128,61,0.08)"};'
+            f'border:{"2px solid #22c55e" if is_urdu else "1px solid rgba(34,197,94,0.25)"};'
+            f'border-radius:10px;padding:0.42rem 0;text-align:center;'
+            f'font-size:0.78rem;font-weight:700;color:{"white" if is_urdu else "#6b7280"};">🇵🇰 اردو</div>',
+            unsafe_allow_html=True)
+        if st.button("🇵🇰 اردو", key="btn_urdu", use_container_width=True, label_visibility="collapsed"):
+            st.session_state.language = "Urdu (اردو)"; st.rerun()
+
+    st.markdown("<div style='height:0.55rem'></div>", unsafe_allow_html=True)
 
     # API Key
     st.markdown('<div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:4px;">🔑 API Key (Optional)</div>', unsafe_allow_html=True)
     visitor_key = st.text_input("API Key", type="password", placeholder="gsk_... (leave empty = free)",
                                 label_visibility="collapsed", help="Free at console.groq.com")
+    st.markdown('<div style="font-size:0.6rem;color:#475569;margin-top:2px;">Leave empty to use for free ✅</div>', unsafe_allow_html=True)
 
-    st.markdown("<div style='height:0.5rem'></div>", unsafe_allow_html=True)
-
-    # Theme + Language side by side
-    st.markdown('<div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:5px;">🎨 Theme &nbsp;&nbsp;&nbsp; 🌐 Language</div>', unsafe_allow_html=True)
-    col_t1, col_t2, col_l1, col_l2 = st.columns(4)
-    with col_t1:
-        if st.button("🌙", key="btn_dark", use_container_width=True, help="Dark"):
-            st.session_state.theme = "dark"; st.rerun()
-    with col_t2:
-        if st.button("☀️", key="btn_light", use_container_width=True, help="Light"):
-            st.session_state.theme = "light"; st.rerun()
-    with col_l1:
-        if st.button("🇬🇧", key="btn_eng", use_container_width=True, help="English"):
-            st.session_state.language = "English"; st.rerun()
-    with col_l2:
-        if st.button("🇵🇰", key="btn_urdu", use_container_width=True, help="Urdu"):
-            st.session_state.language = "Urdu (اردو)"; st.rerun()
-    th_n = "🌙 Dark" if st.session_state.theme == "dark" else "☀️ Light"
-    ln_n = "🇬🇧 English" if st.session_state.language == "English" else "🇵🇰 Urdu"
-    st.markdown(f'<div style="font-size:0.6rem;color:#475569;text-align:center;margin-top:2px;margin-bottom:0.5rem;">{th_n} &nbsp;|&nbsp; {ln_n}</div>', unsafe_allow_html=True)
+    st.markdown("<div style='height:0.55rem'></div>", unsafe_allow_html=True)
 
     # Input method
     st.markdown('<div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:4px;">📥 Input Method</div>', unsafe_allow_html=True)
@@ -1781,94 +1816,77 @@ with st.sidebar:
 
     st.markdown("<div style='height:0.4rem'></div>", unsafe_allow_html=True)
 
-    # What you get — compact
+    # Features compact grid
     st.markdown("""
     <div style="background:rgba(255,255,255,0.025);border:1px solid rgba(139,92,246,0.15);
                 border-radius:12px;padding:0.6rem 0.8rem;margin-bottom:0.5rem;">
         <div style="font-size:0.58rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;
                     color:#a78bfa;margin-bottom:0.4rem;">⚡ Features</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 8px;">
-            <div style="font-size:0.68rem;color:#94a3b8;">⚡ Quick Summary</div>
-            <div style="font-size:0.68rem;color:#94a3b8;">📖 Detailed Summary</div>
-            <div style="font-size:0.68rem;color:#94a3b8;">🎯 Key Points</div>
-            <div style="font-size:0.68rem;color:#94a3b8;">🔬 Knowledge Extract</div>
-            <div style="font-size:0.68rem;color:#94a3b8;">❓ Study Questions</div>
-            <div style="font-size:0.68rem;color:#94a3b8;">🃏 Flashcards</div>
-            <div style="font-size:0.68rem;color:#94a3b8;">🏷️ NLP Keywords</div>
-            <div style="font-size:0.68rem;color:#94a3b8;">📄 PDF + TXT Export</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;">
+            <div style="font-size:0.66rem;color:#94a3b8;">⚡ Quick Summary</div>
+            <div style="font-size:0.66rem;color:#94a3b8;">📖 Detailed Summary</div>
+            <div style="font-size:0.66rem;color:#94a3b8;">🎯 Key Points</div>
+            <div style="font-size:0.66rem;color:#94a3b8;">🔬 Knowledge Extract</div>
+            <div style="font-size:0.66rem;color:#94a3b8;">❓ Study Questions</div>
+            <div style="font-size:0.66rem;color:#94a3b8;">🃏 Flashcards</div>
+            <div style="font-size:0.66rem;color:#94a3b8;">🏷️ NLP Keywords</div>
+            <div style="font-size:0.66rem;color:#94a3b8;">📄 PDF + TXT Export</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # How to use — compact
+    # How to use compact
     st.markdown("""
     <div style="background:rgba(255,255,255,0.025);border:1px solid rgba(139,92,246,0.15);
                 border-radius:12px;padding:0.6rem 0.8rem;margin-bottom:0.5rem;">
         <div style="font-size:0.58rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;
                     color:#a78bfa;margin-bottom:0.4rem;">📖 How To Use</div>
         <div style="display:flex;flex-direction:column;gap:3px;">
-            <div style="font-size:0.68rem;color:#94a3b8;display:flex;gap:5px;">
+            <div style="font-size:0.66rem;color:#94a3b8;display:flex;gap:5px;">
                 <span style="color:#a78bfa;font-weight:800;min-width:12px;">1.</span><span>Paste notes or upload file</span></div>
-            <div style="font-size:0.68rem;color:#94a3b8;display:flex;gap:5px;">
-                <span style="color:#a78bfa;font-weight:800;min-width:12px;">2.</span><span>Choose theme &amp; language</span></div>
-            <div style="font-size:0.68rem;color:#94a3b8;display:flex;gap:5px;">
+            <div style="font-size:0.66rem;color:#94a3b8;display:flex;gap:5px;">
+                <span style="color:#a78bfa;font-weight:800;min-width:12px;">2.</span><span>Pick theme &amp; language above</span></div>
+            <div style="font-size:0.66rem;color:#94a3b8;display:flex;gap:5px;">
                 <span style="color:#a78bfa;font-weight:800;min-width:12px;">3.</span><span>Click <strong style="color:#c4b5fd;">🔍 Analyse Notes</strong></span></div>
-            <div style="font-size:0.68rem;color:#94a3b8;display:flex;gap:5px;">
+            <div style="font-size:0.66rem;color:#94a3b8;display:flex;gap:5px;">
                 <span style="color:#a78bfa;font-weight:800;min-width:12px;">4.</span><span>Download PDF or TXT</span></div>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # Formats + tech
+    # Format chips + links footer
     st.markdown("""
-    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:0.5rem;">
-        <span style="background:rgba(99,102,241,0.13);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25);
-                     border-radius:100px;padding:2px 7px;font-size:0.62rem;font-weight:700;">📄 PDF</span>
-        <span style="background:rgba(99,102,241,0.13);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25);
-                     border-radius:100px;padding:2px 7px;font-size:0.62rem;font-weight:700;">📝 DOCX</span>
-        <span style="background:rgba(99,102,241,0.13);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25);
-                     border-radius:100px;padding:2px 7px;font-size:0.62rem;font-weight:700;">📃 TXT</span>
-        <span style="background:rgba(99,102,241,0.13);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25);
-                     border-radius:100px;padding:2px 7px;font-size:0.62rem;font-weight:700;">🐍 Python</span>
-        <span style="background:rgba(99,102,241,0.13);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25);
-                     border-radius:100px;padding:2px 7px;font-size:0.62rem;font-weight:700;">🚀 Groq</span>
-        <span style="background:rgba(99,102,241,0.13);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25);
-                     border-radius:100px;padding:2px 7px;font-size:0.62rem;font-weight:700;">🌊 Streamlit</span>
+    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:0.6rem;">
+        <span style="background:rgba(99,102,241,0.13);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25);border-radius:100px;padding:2px 7px;font-size:0.6rem;font-weight:700;">📄 PDF</span>
+        <span style="background:rgba(99,102,241,0.13);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25);border-radius:100px;padding:2px 7px;font-size:0.6rem;font-weight:700;">📝 DOCX</span>
+        <span style="background:rgba(99,102,241,0.13);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25);border-radius:100px;padding:2px 7px;font-size:0.6rem;font-weight:700;">📃 TXT</span>
+        <span style="background:rgba(99,102,241,0.13);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25);border-radius:100px;padding:2px 7px;font-size:0.6rem;font-weight:700;">🐍 Python</span>
+        <span style="background:rgba(99,102,241,0.13);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25);border-radius:100px;padding:2px 7px;font-size:0.6rem;font-weight:700;">🚀 Groq</span>
+        <span style="background:rgba(99,102,241,0.13);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25);border-radius:100px;padding:2px 7px;font-size:0.6rem;font-weight:700;">🌊 Streamlit</span>
     </div>
-    """, unsafe_allow_html=True)
-
-    # Contact + Links footer
-    st.markdown("""
     <div style="border-top:1px solid rgba(139,92,246,0.15);padding-top:0.6rem;text-align:center;">
         <div style="font-size:0.75rem;font-weight:800;background:linear-gradient(135deg,#a78bfa,#f0abfc,#67e8f9);
-                    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-                    margin-bottom:0.5rem;">Zainab Gondal</div>
-        <div style="display:flex;flex-direction:column;gap:5px;align-items:stretch;">
+                    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+                    background-clip:text;margin-bottom:0.5rem;">Zainab Gondal</div>
+        <div style="display:flex;flex-direction:column;gap:5px;">
             <a href="https://www.linkedin.com/in/zainabgondal/" target="_blank"
                style="display:flex;align-items:center;justify-content:center;gap:5px;
                       background:linear-gradient(135deg,rgba(10,102,194,0.28),rgba(10,102,194,0.12));
                       border:1px solid rgba(10,102,194,0.4);color:#93c5fd;text-decoration:none;
-                      padding:5px 10px;border-radius:10px;font-size:0.65rem;font-weight:700;">
-                💼 LinkedIn
-            </a>
+                      padding:5px 10px;border-radius:10px;font-size:0.65rem;font-weight:700;">💼 LinkedIn</a>
             <a href="https://github.com/zainabgondal" target="_blank"
                style="display:flex;align-items:center;justify-content:center;gap:5px;
                       background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);
                       color:#e2e8f0;text-decoration:none;
-                      padding:5px 10px;border-radius:10px;font-size:0.65rem;font-weight:700;">
-                🐙 GitHub
-            </a>
+                      padding:5px 10px;border-radius:10px;font-size:0.65rem;font-weight:700;">🐙 GitHub</a>
             <a href="https://zainab-notes-summarizer.streamlit.app/" target="_blank"
                style="display:flex;align-items:center;justify-content:center;gap:5px;
                       background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);
                       color:#c4b5fd;text-decoration:none;
-                      padding:5px 10px;border-radius:10px;font-size:0.65rem;font-weight:700;">
-                🌐 Live App
-            </a>
+                      padding:5px 10px;border-radius:10px;font-size:0.65rem;font-weight:700;">🌐 Live App</a>
         </div>
     </div>
     """, unsafe_allow_html=True)
-
 
 
 # ── Hero ──────────────────────────────────────────────────────────────────────
@@ -1898,82 +1916,6 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
-
-# ── Contact + Suggestion row ──────────────────────────────────────────────────
-cont_col, sugg_col = st.columns([1, 1])
-
-with cont_col:
-    st.markdown("""
-    <div style="background:linear-gradient(145deg,rgba(10,8,28,0.94),rgba(14,10,36,0.94));
-                border:1px solid rgba(139,92,246,0.22);border-radius:18px;padding:1.2rem 1.4rem;
-                box-shadow:0 4px 20px rgba(0,0,0,0.4);animation:fadeInUp 0.5s ease both;">
-        <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;
-                    background:linear-gradient(90deg,#a78bfa,#e879f9);-webkit-background-clip:text;
-                    -webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.7rem;">
-            📬 Contact the Developer
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-            <a href="mailto:gondalzainab34@gmail.com"
-               style="display:flex;align-items:center;gap:8px;text-decoration:none;
-                      background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);
-                      border-radius:10px;padding:0.5rem 0.8rem;">
-                <span style="font-size:1rem;">📧</span>
-                <span style="font-size:0.75rem;font-weight:600;color:#c4b5fd;">gondalzainab34@gmail.com</span>
-            </a>
-            <a href="https://wa.me/92113430370" target="_blank"
-               style="display:flex;align-items:center;gap:8px;text-decoration:none;
-                      background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.25);
-                      border-radius:10px;padding:0.5rem 0.8rem;">
-                <span style="font-size:1rem;">📱</span>
-                <span style="font-size:0.75rem;font-weight:600;color:#6ee7b7;">+92 113 430 370</span>
-            </a>
-            <a href="https://www.linkedin.com/in/zainabgondal/" target="_blank"
-               style="display:flex;align-items:center;gap:8px;text-decoration:none;
-                      background:rgba(10,102,194,0.12);border:1px solid rgba(10,102,194,0.3);
-                      border-radius:10px;padding:0.5rem 0.8rem;">
-                <span style="font-size:1rem;">💼</span>
-                <span style="font-size:0.75rem;font-weight:600;color:#93c5fd;">linkedin.com/in/zainabgondal</span>
-            </a>
-            <a href="https://github.com/zainabgondal" target="_blank"
-               style="display:flex;align-items:center;gap:8px;text-decoration:none;
-                      background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);
-                      border-radius:10px;padding:0.5rem 0.8rem;">
-                <span style="font-size:1rem;">🐙</span>
-                <span style="font-size:0.75rem;font-weight:600;color:#e2e8f0;">github.com/zainabgondal</span>
-            </a>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-with sugg_col:
-    st.markdown("""
-    <div style="background:linear-gradient(145deg,rgba(10,8,28,0.94),rgba(14,10,36,0.94));
-                border:1px solid rgba(139,92,246,0.22);border-radius:18px;padding:1.2rem 1.4rem;
-                box-shadow:0 4px 20px rgba(0,0,0,0.4);animation:fadeInUp 0.5s ease both;height:100%;">
-        <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;
-                    background:linear-gradient(90deg,#a78bfa,#e879f9);-webkit-background-clip:text;
-                    -webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.5rem;">
-            💬 Feedback & Suggestions
-        </div>
-        <div style="font-size:0.72rem;color:#64748b;margin-bottom:0.6rem;line-height:1.5;">
-            Loved the app? Found a bug? Want a new feature?<br>Send your thoughts — I read every message! 🙏
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-    suggestion = st.text_area(
-        "suggestion_box",
-        placeholder="Write your feedback, suggestion or review here... 💭",
-        height=120,
-        label_visibility="collapsed",
-        key="suggestion_input",
-    )
-    if st.button("📨 Send Feedback", use_container_width=True):
-        if suggestion.strip():
-            st.success("✅ Thank you! Your feedback means a lot 💜")
-        else:
-            st.warning("Please write something before sending!")
-
-st.markdown("<div style='height:0.5rem'></div>", unsafe_allow_html=True)
 
 
 # ── Input ─────────────────────────────────────────────────────────────────────
@@ -2289,6 +2231,85 @@ AI Notes Summarizer  |  Zainab Gondal  |  Powered by Groq + Llama3
             )
         else:
             st.info("💡 Install fpdf2 for PDF export: `pip install fpdf2`")
+
+# ── Contact & Feedback — bottom of page ──────────────────────────────────────
+st.markdown("""<div class="sec-head" style="margin-top:2.5rem;">
+    <div class="sec-icon">📬</div><div class="sec-title">Contact & Feedback</div>
+    <div class="sec-line"></div></div>""", unsafe_allow_html=True)
+
+bot1, bot2 = st.columns([1, 1])
+
+with bot1:
+    st.markdown("""
+    <div style="background:linear-gradient(145deg,rgba(10,8,28,0.94),rgba(14,10,36,0.94));
+                border:1px solid rgba(139,92,246,0.22);border-radius:18px;padding:1.3rem 1.5rem;
+                box-shadow:0 4px 24px rgba(0,0,0,0.4);">
+        <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;
+                    background:linear-gradient(90deg,#a78bfa,#e879f9);-webkit-background-clip:text;
+                    -webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.8rem;">
+            📬 Contact the Developer
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+            <a href="mailto:gondalzainab34@gmail.com"
+               style="display:flex;align-items:center;gap:10px;text-decoration:none;
+                      background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);
+                      border-radius:12px;padding:0.55rem 0.9rem;transition:all 0.2s;">
+                <span style="font-size:1.1rem;">📧</span>
+                <span style="font-size:0.76rem;font-weight:600;color:#c4b5fd;">gondalzainab34@gmail.com</span>
+            </a>
+            <a href="https://wa.me/92113430370" target="_blank"
+               style="display:flex;align-items:center;gap:10px;text-decoration:none;
+                      background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.25);
+                      border-radius:12px;padding:0.55rem 0.9rem;">
+                <span style="font-size:1.1rem;">💬</span>
+                <span style="font-size:0.76rem;font-weight:600;color:#6ee7b7;">WhatsApp: +92 113 430 370</span>
+            </a>
+            <a href="https://www.linkedin.com/in/zainabgondal/" target="_blank"
+               style="display:flex;align-items:center;gap:10px;text-decoration:none;
+                      background:rgba(10,102,194,0.12);border:1px solid rgba(10,102,194,0.3);
+                      border-radius:12px;padding:0.55rem 0.9rem;">
+                <span style="font-size:1.1rem;">💼</span>
+                <span style="font-size:0.76rem;font-weight:600;color:#93c5fd;">linkedin.com/in/zainabgondal</span>
+            </a>
+            <a href="https://github.com/zainabgondal" target="_blank"
+               style="display:flex;align-items:center;gap:10px;text-decoration:none;
+                      background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);
+                      border-radius:12px;padding:0.55rem 0.9rem;">
+                <span style="font-size:1.1rem;">🐙</span>
+                <span style="font-size:0.76rem;font-weight:600;color:#e2e8f0;">github.com/zainabgondal</span>
+            </a>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+with bot2:
+    st.markdown("""
+    <div style="background:linear-gradient(145deg,rgba(10,8,28,0.94),rgba(14,10,36,0.94));
+                border:1px solid rgba(139,92,246,0.22);border-radius:18px;padding:1.3rem 1.5rem;
+                box-shadow:0 4px 24px rgba(0,0,0,0.4);margin-bottom:0.6rem;">
+        <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;
+                    background:linear-gradient(90deg,#a78bfa,#e879f9);-webkit-background-clip:text;
+                    -webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.4rem;">
+            💬 Feedback & Suggestions
+        </div>
+        <div style="font-size:0.75rem;color:#64748b;line-height:1.6;">
+            Loved the app? Found a bug? Want a new feature?<br>
+            <strong style="color:#a78bfa;">I read every single message!</strong> 🙏
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    suggestion = st.text_area(
+        "feedback",
+        placeholder="Write your review, suggestion or idea here... 💭\n\nExamples:\n• 'Love the flashcards feature!'\n• 'Can you add dark mode for cards?'\n• 'Please add more languages'",
+        height=140,
+        label_visibility="collapsed",
+        key="suggestion_input",
+    )
+    if st.button("📨 Send Feedback", use_container_width=True, type="primary"):
+        if suggestion.strip():
+            st.success("✅ Thank you so much! Your feedback means everything 💜")
+        else:
+            st.warning("Please write something before sending!")
 
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.markdown("""
