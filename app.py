@@ -1027,12 +1027,13 @@ section[data-testid="stSidebar"] > div {
 /* Bullet dot before each label */
 [data-testid="stRadio"] label::before {
     content: "●";
-    font-size: 0.5rem;
-    color: rgba(139,92,246,0.4);
+    font-size: 0.65rem;
+    color: white;
     flex-shrink: 0;
     line-height: 1;
+    opacity: 0.7;
 }
-[data-testid="stRadio"] label:hover::before { color: #a78bfa; }
+[data-testid="stRadio"] label:hover::before { color: white; opacity: 1; }
 /* Sidebar radio stays simple */
 section[data-testid="stSidebar"] [data-testid="stRadio"] label {
     background: rgba(255,255,255,0.03) !important;
