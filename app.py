@@ -1073,12 +1073,53 @@ section[data-testid="stSidebar"] > div {
 /* ════════════════════════════════════════════
    HIDE SIDEBAR COLLAPSE ARROW — PERMANENTLY
 ════════════════════════════════════════════ */
-[data-testid="collapsedControl"]                { display: none !important; visibility: hidden !important; }
-[data-testid="stSidebarCollapseButton"]         { display: none !important; visibility: hidden !important; }
-[data-testid="stSidebarNavCollapseIcon"]        { display: none !important; visibility: hidden !important; }
-button[data-testid="baseButton-headerNoPadding"]{ display: none !important; visibility: hidden !important; }
-section[data-testid="stSidebar"] > div:first-child button { display: none !important; }
-.st-emotion-cache-1rtdyuf, .st-emotion-cache-pkbazv { display: none !important; }
+/* Hide collapse button on DESKTOP only — show it on mobile */
+@media screen and (min-width: 769px) {
+    [data-testid="collapsedControl"]                { display: none !important; }
+    [data-testid="stSidebarCollapseButton"]         { display: none !important; }
+    [data-testid="stSidebarNavCollapseIcon"]        { display: none !important; }
+    button[data-testid="baseButton-headerNoPadding"]{ display: none !important; }
+    section[data-testid="stSidebar"] > div:first-child button { display: none !important; }
+    .st-emotion-cache-1rtdyuf, .st-emotion-cache-pkbazv { display: none !important; }
+}
+/* On mobile — show the toggle arrow so user can open sidebar */
+@media screen and (max-width: 768px) {
+    [data-testid="collapsedControl"] {
+        display: flex !important;
+        visibility: visible !important;
+        background: linear-gradient(135deg, #3730a3, #7c3aed) !important;
+        border-radius: 0 12px 12px 0 !important;
+        border: 1px solid rgba(139,92,246,0.5) !important;
+        box-shadow: 4px 0 20px rgba(99,102,241,0.5) !important;
+        z-index: 9999 !important;
+        padding: 0.5rem !important;
+        position: fixed !important;
+        top: 50% !important;
+        left: 0 !important;
+        transform: translateY(-50%) !important;
+    }
+    [data-testid="collapsedControl"] svg {
+        fill: white !important;
+        color: white !important;
+    }
+    /* Sidebar as full overlay on mobile */
+    section[data-testid="stSidebar"] {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        height: 100vh !important;
+        z-index: 1000 !important;
+        min-width: 280px !important;
+        max-width: 88vw !important;
+        box-shadow: 8px 0 40px rgba(0,0,0,0.8), 4px 0 20px rgba(99,102,241,0.4) !important;
+        overflow-y: auto !important;
+    }
+    section[data-testid="stSidebar"] > div {
+        height: auto !important;
+        min-height: 100vh !important;
+        overflow-y: auto !important;
+    }
+}
 
 /* ════════════════════════════════════════════
    SIDEBAR — MINIMAL, NEVER SCROLLS SEPARATELY
@@ -1149,99 +1190,116 @@ section[data-testid="stSidebar"] [data-testid="stCaptionContainer"] p {
 ════════════════════════════════════════════ */
 
 /* Tablet ≤ 1024px */
+/* ═══════════════════════════════════════
+   TABLET ≤ 1024px
+═══════════════════════════════════════ */
 @media screen and (max-width: 1024px) {
     .block-container { max-width: 100% !important; padding-left: 1.2rem !important; padding-right: 1.2rem !important; }
     .feat-row { grid-template-columns: repeat(2,1fr) !important; gap: 10px !important; }
     .hero-title { font-size: 2.4rem !important; }
 }
 
-/* Mobile ≤ 768px */
+/* ═══════════════════════════════════════
+   MOBILE ≤ 768px — NO OVERLAP, FULL STACK
+═══════════════════════════════════════ */
 @media screen and (max-width: 768px) {
-    /* Block container — tighter padding */
+
+    /* Main content full width — sidebar is overlay */
     .block-container { padding: 0.8rem 0.7rem 3rem !important; max-width: 100% !important; }
+    [data-testid="stMainBlockContainer"] { padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
 
-    /* Hero */
-    .hero { padding: 1.8rem 1.2rem 1.6rem !important; border-radius: 18px !important; margin-bottom: 1.4rem !important; }
-    .hero-title { font-size: 1.75rem !important; line-height: 1.18 !important; letter-spacing: -0.01em !important; }
-    .hero-sub { font-size: 0.85rem !important; margin-bottom: 1.2rem !important; }
+    /* Hero — compact, no overflow */
+    .hero { padding: 1.6rem 1rem 1.4rem !important; border-radius: 16px !important; margin-bottom: 1.2rem !important; }
+    .hero-title { font-size: 1.6rem !important; line-height: 1.15 !important; letter-spacing: -0.01em !important; }
+    .hero-sub { font-size: 0.83rem !important; margin-bottom: 1.1rem !important; max-width: 100% !important; }
     .hero-sub br { display: none !important; }
-    .hero-eyebrow { font-size: 0.62rem !important; padding: 0.25rem 0.75rem !important; }
-    .hero-author { font-size: 0.75rem !important; padding: 0.4rem 1rem !important; }
-    .hero-corner-dots { top: 14px !important; right: 14px !important; }
-    .hero-corner-dot { width: 9px !important; height: 9px !important; }
+    .hero-eyebrow { font-size: 0.6rem !important; padding: 0.22rem 0.7rem !important; }
+    .hero-author { font-size: 0.72rem !important; padding: 0.38rem 0.9rem !important; }
+    .hero-corner-dots { top: 12px !important; right: 12px !important; }
+    .hero-corner-dot { width: 8px !important; height: 8px !important; }
 
-    /* Feature row */
-    .feat-row { grid-template-columns: repeat(2,1fr) !important; gap: 8px !important; margin-bottom: 1.2rem !important; }
-    .feat-card { padding: 0.85rem 0.6rem !important; border-radius: 12px !important; }
-    .feat-icon { font-size: 1.25rem !important; margin-bottom: 0.3rem !important; }
-    .feat-val { font-size: 0.78rem !important; }
-    .feat-label { font-size: 0.62rem !important; }
+    /* Feature row — 2 columns */
+    .feat-row { grid-template-columns: repeat(2,1fr) !important; gap: 7px !important; margin-bottom: 1rem !important; }
+    .feat-card { padding: 0.8rem 0.5rem !important; border-radius: 11px !important; }
+    .feat-icon { font-size: 1.2rem !important; margin-bottom: 0.25rem !important; }
+    .feat-val { font-size: 0.75rem !important; }
+    .feat-label { font-size: 0.6rem !important; }
 
-    /* Stat cards */
-    .stat-row { grid-template-columns: repeat(3,1fr) !important; gap: 8px !important; }
-    .stat-card { padding: 1.1rem 0.6rem !important; border-radius: 14px !important; }
-    .stat-num { font-size: 1.6rem !important; }
-    .stat-lbl { font-size: 0.58rem !important; }
+    /* Stat cards — 3 columns, compact */
+    .stat-row { grid-template-columns: repeat(3,1fr) !important; gap: 6px !important; }
+    .stat-card { padding: 0.9rem 0.4rem !important; border-radius: 12px !important; }
+    .stat-num { font-size: 1.45rem !important; }
+    .stat-lbl { font-size: 0.55rem !important; }
 
     /* Section headers */
-    .sec-head { gap: 8px !important; margin: 1.6rem 0 0.9rem !important; }
-    .sec-icon { width: 32px !important; height: 32px !important; font-size: 14px !important; border-radius: 9px !important; }
-    .sec-title { font-size: 0.95rem !important; }
+    .sec-head { gap: 7px !important; margin: 1.4rem 0 0.8rem !important; }
+    .sec-icon { width: 30px !important; height: 30px !important; font-size: 13px !important; border-radius: 8px !important; }
+    .sec-title { font-size: 0.9rem !important; }
+    .sec-line { display: none !important; }
 
     /* Output cards */
-    .out-card { padding: 1.2rem 1rem !important; font-size: 0.85rem !important; border-radius: 14px !important; line-height: 1.75 !important; }
+    .out-card { padding: 1rem 0.9rem !important; font-size: 0.83rem !important; border-radius: 13px !important; line-height: 1.7 !important; }
 
-    /* Progress */
-    .prog-box { padding: 1.2rem 1rem !important; border-radius: 14px !important; }
-    .prog-step { font-size: 0.8rem !important; gap: 9px !important; padding: 0.5rem 0 !important; }
-    .prog-dot { width: 24px !important; height: 24px !important; font-size: 11px !important; }
-    .prog-label { font-size: 0.62rem !important; margin-bottom: 0.8rem !important; }
+    /* Progress tracker */
+    .prog-box { padding: 1rem 0.9rem !important; border-radius: 13px !important; }
+    .prog-step { font-size: 0.78rem !important; gap: 8px !important; padding: 0.45rem 0 !important; }
+    .prog-dot { width: 22px !important; height: 22px !important; font-size: 10px !important; }
+    .prog-label { font-size: 0.6rem !important; margin-bottom: 0.7rem !important; }
 
     /* Chips */
-    .chips { gap: 6px !important; }
-    .chip { font-size: 0.7rem !important; padding: 0.22rem 0.65rem !important; }
+    .chips { gap: 5px !important; }
+    .chip { font-size: 0.68rem !important; padding: 0.2rem 0.6rem !important; }
 
-    /* Tabs */
-    .stTabs [data-baseweb="tab-list"] { padding: 4px !important; gap: 3px !important; }
-    .stTabs [data-baseweb="tab"] { font-size: 0.72rem !important; padding: 0.4rem 0.7rem !important; }
+    /* Tabs — scrollable, no wrap */
+    .stTabs [data-baseweb="tab-list"] { padding: 3px !important; gap: 2px !important; overflow-x: auto !important; flex-wrap: nowrap !important; }
+    .stTabs [data-baseweb="tab"] { font-size: 0.7rem !important; padding: 0.38rem 0.6rem !important; white-space: nowrap !important; }
 
     /* Buttons — full width */
-    div[data-testid="stButton"] > button[kind="primary"] {
-        width: 100% !important; padding: 0.75rem 1rem !important; font-size: 0.92rem !important;
-    }
-    div[data-testid="stDownloadButton"] > button {
-        width: 100% !important; font-size: 0.88rem !important;
-    }
+    div[data-testid="stButton"] > button[kind="primary"] { width: 100% !important; padding: 0.7rem 1rem !important; font-size: 0.9rem !important; }
+    div[data-testid="stDownloadButton"] > button { width: 100% !important; font-size: 0.85rem !important; }
 
     /* Textarea */
-    .stTextArea textarea { font-size: 0.88rem !important; }
+    .stTextArea textarea { font-size: 0.86rem !important; }
 
     /* Divider */
-    .div { margin: 1.4rem 0 !important; }
+    .div { margin: 1.2rem 0 !important; }
 
-    /* Knowledge grid — stack */
-    [data-testid="column"] { min-width: 100% !important; }
+    /* Knowledge columns — stack vertically, no overlap */
+    [data-testid="stHorizontalBlock"] { flex-direction: column !important; }
+    [data-testid="column"] { width: 100% !important; min-width: 100% !important; flex: none !important; }
+
+    /* Flashcard grid — single column */
+    .fc-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
 
     /* Success box */
-    .success-box { padding: 0.9rem 1rem !important; font-size: 0.82rem !important; border-radius: 12px !important; }
+    .success-box { padding: 0.85rem 0.9rem !important; font-size: 0.8rem !important; border-radius: 11px !important; }
 
     /* Footer */
-    .app-footer { padding: 1rem 1.2rem !important; font-size: 0.75rem !important; border-radius: 14px !important; }
+    .app-footer { padding: 0.9rem 1rem !important; font-size: 0.72rem !important; border-radius: 13px !important; margin-top: 2rem !important; }
+
+    /* Contact cards — stack */
+    .app-footer a { display: block !important; margin-bottom: 4px !important; }
 }
 
-/* Small phones ≤ 480px */
+/* ═══════════════════════════════════════
+   SMALL PHONES ≤ 480px
+═══════════════════════════════════════ */
 @media screen and (max-width: 480px) {
-    .block-container { padding: 0.6rem 0.5rem 2.5rem !important; }
-    .hero { padding: 1.5rem 1rem 1.3rem !important; }
-    .hero-title { font-size: 1.45rem !important; }
-    .hero-sub { font-size: 0.82rem !important; }
-    .feat-row { gap: 6px !important; }
-    .stat-row { grid-template-columns: repeat(3,1fr) !important; gap: 6px !important; }
-    .stat-num { font-size: 1.35rem !important; }
-    .out-card { padding: 1rem 0.85rem !important; font-size: 0.82rem !important; }
-    .stTabs [data-baseweb="tab"] { font-size: 0.65rem !important; padding: 0.35rem 0.5rem !important; }
-    .sec-title { font-size: 0.88rem !important; }
-    .prog-step { font-size: 0.75rem !important; }
+    .block-container { padding: 0.5rem 0.4rem 2.5rem !important; }
+    .hero { padding: 1.3rem 0.9rem 1.2rem !important; }
+    .hero-title { font-size: 1.35rem !important; }
+    .hero-sub { font-size: 0.78rem !important; }
+    .feat-row { gap: 5px !important; }
+    .feat-card { padding: 0.65rem 0.4rem !important; }
+    .stat-row { gap: 5px !important; }
+    .stat-num { font-size: 1.2rem !important; }
+    .stat-lbl { font-size: 0.5rem !important; }
+    .out-card { padding: 0.85rem 0.75rem !important; font-size: 0.8rem !important; }
+    .stTabs [data-baseweb="tab"] { font-size: 0.62rem !important; padding: 0.32rem 0.5rem !important; }
+    .sec-title { font-size: 0.82rem !important; }
+    .prog-step { font-size: 0.72rem !important; }
+    .chip { font-size: 0.65rem !important; padding: 0.18rem 0.5rem !important; }
+    .hero-author { font-size: 0.68rem !important; padding: 0.32rem 0.75rem !important; }
 }
 </style>
 """, unsafe_allow_html=True)
@@ -1654,39 +1712,18 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
 
-    st.markdown(
-        "<div style=\"font-size:0.62rem;font-weight:800;text-transform:uppercase;"
-        "letter-spacing:0.1em;color:#a78bfa;margin-bottom:6px;\">📥 Input Method</div>",
-        unsafe_allow_html=True,
-    )
-    input_mode = st.radio("Input", ["📋 Paste Text", "📁 Upload File"],
-                          label_visibility="collapsed")
+    st.markdown("<div style=\"font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:6px;\">📥 Input Method</div>", unsafe_allow_html=True)
+    input_mode = st.radio("Input", ["📋 Paste Text", "📁 Upload File"], label_visibility="collapsed")
 
-    st.markdown(
-        "<div style=\"font-size:0.62rem;font-weight:800;text-transform:uppercase;"
-        "letter-spacing:0.1em;color:#a78bfa;margin:0.7rem 0 5px;\">"
-        "🔑 API Key <span style=\"color:#475569;font-weight:500;text-transform:none;\">"
-        "(optional)</span></div>",
-        unsafe_allow_html=True,
-    )
-    visitor_key = st.text_input("API Key", type="password",
-                                placeholder="gsk_...  (leave empty = free)",
-                                label_visibility="collapsed",
-                                help="Free key at console.groq.com")
-    st.markdown(
-        "<div style=\"font-size:0.62rem;color:#475569;margin-top:2px;\">"
-        "Leave empty — works 100% free ✅</div>",
-        unsafe_allow_html=True,
-    )
+    st.markdown("<div style=\"font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin:0.7rem 0 5px;\">🔑 API Key <span style=\"color:#475569;font-weight:500;text-transform:none;\">(optional)</span></div>", unsafe_allow_html=True)
+    visitor_key = st.text_input("API Key", type="password", placeholder="gsk_...  (leave empty = free)", label_visibility="collapsed", help="Free key at console.groq.com")
+    st.markdown("<div style=\"font-size:0.62rem;color:#475569;margin-top:2px;\">Leave empty — works 100% free ✅</div>", unsafe_allow_html=True)
 
     st.markdown(
         "<div style=\"background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(168,85,247,0.06));"
-        "border:1px solid rgba(139,92,246,0.22);border-radius:13px;"
-        "padding:0.8rem 0.95rem;margin-top:0.7rem;\">"
-        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;"
-        "letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.5rem;\">⚡ What You Get</div>"
-        "<div style=\"font-size:0.73rem;color:#c4b5fd;"
-        "display:flex;flex-direction:column;gap:5px;\">"
+        "border:1px solid rgba(139,92,246,0.22);border-radius:13px;padding:0.8rem 0.95rem;margin-top:0.7rem;\">"
+        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.5rem;\">⚡ What You Get</div>"
+        "<div style=\"font-size:0.73rem;color:#c4b5fd;display:flex;flex-direction:column;gap:5px;\">"
         "<div>📝 &nbsp;Quick · Detailed · Key Points</div>"
         "<div>🔬 &nbsp;Concepts · Definitions · Facts</div>"
         "<div>❓ &nbsp;5 Conceptual + 5 MCQ + 3 Short Ans</div>"
@@ -1699,93 +1736,58 @@ with st.sidebar:
 
     st.markdown(
         "<div style=\"background:rgba(255,255,255,0.03);"
-        "border:1px solid rgba(139,92,246,0.15);border-radius:13px;"
-        "padding:0.8rem 0.95rem;margin-top:0.55rem;\">"
-        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;"
-        "letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.45rem;\">📖 How To Use</div>"
-        "<div style=\"font-size:0.72rem;color:#94a3b8;"
-        "display:flex;flex-direction:column;gap:5px;\">"
-        "<div><span style=\"color:#a78bfa;font-weight:800;\">1.</span>"
-        " &nbsp;Paste or upload your notes</div>"
-        "<div><span style=\"color:#a78bfa;font-weight:800;\">2.</span>"
-        " &nbsp;Choose input method above</div>"
-        "<div><span style=\"color:#a78bfa;font-weight:800;\">3.</span>"
-        " &nbsp;Click 🔍 Analyse Notes</div>"
-        "<div><span style=\"color:#a78bfa;font-weight:800;\">4.</span>"
-        " &nbsp;Download your study pack</div>"
+        "border:1px solid rgba(139,92,246,0.15);border-radius:13px;padding:0.8rem 0.95rem;margin-top:0.55rem;\">"
+        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.45rem;\">📖 How To Use</div>"
+        "<div style=\"font-size:0.72rem;color:#94a3b8;display:flex;flex-direction:column;gap:5px;\">"
+        "<div><span style=\"color:#a78bfa;font-weight:800;\">1.</span> &nbsp;Paste or upload your notes</div>"
+        "<div><span style=\"color:#a78bfa;font-weight:800;\">2.</span> &nbsp;Choose input method above</div>"
+        "<div><span style=\"color:#a78bfa;font-weight:800;\">3.</span> &nbsp;Click 🔍 Analyse Notes</div>"
+        "<div><span style=\"color:#a78bfa;font-weight:800;\">4.</span> &nbsp;Download your study pack</div>"
         "</div></div>",
         unsafe_allow_html=True,
     )
 
     st.markdown(
         "<div style=\"background:rgba(16,185,129,0.07);"
-        "border:1px solid rgba(16,185,129,0.2);border-radius:13px;"
-        "padding:0.7rem 0.95rem;margin-top:0.55rem;\">"
-        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;"
-        "letter-spacing:0.1em;color:#34d399;margin-bottom:0.3rem;\">📂 Supported Formats</div>"
+        "border:1px solid rgba(16,185,129,0.2);border-radius:13px;padding:0.7rem 0.95rem;margin-top:0.55rem;\">"
+        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#34d399;margin-bottom:0.3rem;\">📂 Supported Formats</div>"
         "<div style=\"display:flex;gap:6px;flex-wrap:wrap;\">"
-        "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;"
-        "border:1px solid rgba(99,102,241,0.32);border-radius:100px;"
-        "padding:3px 10px;font-size:0.66rem;font-weight:700;\">📄 PDF</span>"
-        "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;"
-        "border:1px solid rgba(99,102,241,0.32);border-radius:100px;"
-        "padding:3px 10px;font-size:0.66rem;font-weight:700;\">📝 DOCX</span>"
-        "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;"
-        "border:1px solid rgba(99,102,241,0.32);border-radius:100px;"
-        "padding:3px 10px;font-size:0.66rem;font-weight:700;\">📃 TXT</span>"
+        "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;border:1px solid rgba(99,102,241,0.32);border-radius:100px;padding:3px 10px;font-size:0.66rem;font-weight:700;\">📄 PDF</span>"
+        "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;border:1px solid rgba(99,102,241,0.32);border-radius:100px;padding:3px 10px;font-size:0.66rem;font-weight:700;\">📝 DOCX</span>"
+        "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;border:1px solid rgba(99,102,241,0.32);border-radius:100px;padding:3px 10px;font-size:0.66rem;font-weight:700;\">📃 TXT</span>"
         "</div></div>",
         unsafe_allow_html=True,
     )
 
     st.markdown(
         "<div style=\"background:linear-gradient(145deg,rgba(10,8,28,0.94),rgba(14,10,36,0.94));"
-        "border:1px solid rgba(139,92,246,0.22);border-radius:13px;"
-        "padding:0.8rem 0.95rem;margin-top:0.55rem;\">"
-        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;"
-        "letter-spacing:0.1em;background:linear-gradient(90deg,#a78bfa,#e879f9);"
-        "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
-        "background-clip:text;margin-bottom:0.5rem;\">📬 Contact Developer</div>"
+        "border:1px solid rgba(139,92,246,0.22);border-radius:13px;padding:0.8rem 0.95rem;margin-top:0.55rem;\">"
+        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;"
+        "background:linear-gradient(90deg,#a78bfa,#e879f9);-webkit-background-clip:text;"
+        "-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.5rem;\">📬 Contact Developer</div>"
         "<div style=\"display:flex;flex-direction:column;gap:6px;\">"
-        "<a href=\"mailto:gondalzainab34@gmail.com\" "
-        "style=\"display:flex;align-items:center;gap:8px;text-decoration:none;"
-        "background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);"
-        "border-radius:9px;padding:0.42rem 0.7rem;\">"
-        "<span>📧</span>"
-        "<span style=\"font-size:0.7rem;font-weight:600;color:#c4b5fd;\">"
-        "gondalzainab34@gmail.com</span></a>"
-        "<a href=\"https://wa.me/92113430370\" target=\"_blank\" "
-        "style=\"display:flex;align-items:center;gap:8px;text-decoration:none;"
-        "background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.25);"
-        "border-radius:9px;padding:0.42rem 0.7rem;\">"
-        "<span>💬</span>"
-        "<span style=\"font-size:0.7rem;font-weight:600;color:#6ee7b7;\">WhatsApp</span></a>"
-        "<a href=\"https://www.linkedin.com/in/zainabgondal/\" target=\"_blank\" "
-        "style=\"display:flex;align-items:center;gap:8px;text-decoration:none;"
-        "background:rgba(10,102,194,0.12);border:1px solid rgba(10,102,194,0.3);"
-        "border-radius:9px;padding:0.42rem 0.7rem;\">"
-        "<span>💼</span>"
-        "<span style=\"font-size:0.7rem;font-weight:600;color:#93c5fd;\">LinkedIn</span></a>"
-        "<a href=\"https://github.com/zainabgondal\" target=\"_blank\" "
-        "style=\"display:flex;align-items:center;gap:8px;text-decoration:none;"
-        "background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);"
-        "border-radius:9px;padding:0.42rem 0.7rem;\">"
-        "<span>🐙</span>"
-        "<span style=\"font-size:0.7rem;font-weight:600;color:#e2e8f0;\">GitHub</span></a>"
+        "<a href=\"mailto:gondalzainab34@gmail.com\" style=\"display:flex;align-items:center;gap:8px;text-decoration:none;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:9px;padding:0.42rem 0.7rem;\">"
+        "<span>📧</span><span style=\"font-size:0.7rem;font-weight:600;color:#c4b5fd;\">gondalzainab34@gmail.com</span></a>"
+        "<a href=\"https://wa.me/92113430370\" target=\"_blank\" style=\"display:flex;align-items:center;gap:8px;text-decoration:none;background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.25);border-radius:9px;padding:0.42rem 0.7rem;\">"
+        "<span>💬</span><span style=\"font-size:0.7rem;font-weight:600;color:#6ee7b7;\">WhatsApp</span></a>"
+        "<a href=\"https://www.linkedin.com/in/zainabgondal/\" target=\"_blank\" style=\"display:flex;align-items:center;gap:8px;text-decoration:none;background:rgba(10,102,194,0.12);border:1px solid rgba(10,102,194,0.3);border-radius:9px;padding:0.42rem 0.7rem;\">"
+        "<span>💼</span><span style=\"font-size:0.7rem;font-weight:600;color:#93c5fd;\">LinkedIn</span></a>"
+        "<a href=\"https://github.com/zainabgondal\" target=\"_blank\" style=\"display:flex;align-items:center;gap:8px;text-decoration:none;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:9px;padding:0.42rem 0.7rem;\">"
+        "<span>🐙</span><span style=\"font-size:0.7rem;font-weight:600;color:#e2e8f0;\">GitHub</span></a>"
         "</div></div>",
         unsafe_allow_html=True,
     )
 
     st.markdown(
-        "<div style=\"border-top:1px solid rgba(139,92,246,0.18);"
-        "margin-top:0.9rem;padding-top:0.8rem;text-align:center;\">"
+        "<div style=\"border-top:1px solid rgba(139,92,246,0.18);margin-top:0.9rem;padding-top:0.8rem;text-align:center;\">"
         "<div style=\"font-size:0.64rem;color:#94a3b8;\">"
-        "Crafted with 💜 by "
-        "<span style=\"font-weight:800;"
+        "Crafted with 💜 by <span style=\"font-weight:800;"
         "background:linear-gradient(90deg,#a78bfa,#e879f9);"
         "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
         "background-clip:text;\">Zainab Gondal</span></div></div>",
         unsafe_allow_html=True,
     )
+
 
 
 # ── Hero ──────────────────────────────────────────────────────────────────────
