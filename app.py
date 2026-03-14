@@ -986,68 +986,59 @@ section[data-testid="stSidebar"] > div {
 }
 
 /* ════════════════════════════════════════════
-   RADIO — card style, clearly visible
+   RADIO — big white bullets, card style
 ════════════════════════════════════════════ */
-/* Hide the default radio dot circles */
+/* Hide tiny default circle */
 [data-testid="stRadio"] [data-baseweb="radio"] [role="radio"] {
     display: none !important;
 }
-/* Each option looks like a clickable card */
+/* Card-style option row */
 [data-testid="stRadio"] label {
     display: flex !important;
     align-items: center !important;
-    gap: 8px !important;
+    gap: 12px !important;
     background: rgba(255,255,255,0.03) !important;
-    border: 1.5px solid rgba(139,92,246,0.2) !important;
-    border-radius: 12px !important;
-    padding: 0.55rem 0.9rem !important;
-    margin-bottom: 6px !important;
+    border: 1.5px solid rgba(139,92,246,0.22) !important;
+    border-radius: 13px !important;
+    padding: 0.7rem 1rem !important;
+    margin-bottom: 8px !important;
     color: #94a3b8 !important;
     font-family: 'Plus Jakarta Sans', sans-serif !important;
     font-weight: 600 !important;
-    font-size: 0.82rem !important;
+    font-size: 0.88rem !important;
     cursor: pointer !important;
     transition: all 0.2s ease !important;
     width: 100% !important;
 }
 [data-testid="stRadio"] label:hover {
     background: rgba(99,102,241,0.1) !important;
-    border-color: rgba(139,92,246,0.5) !important;
-    color: #c4b5fd !important;
+    border-color: rgba(139,92,246,0.55) !important;
+    color: #e2e8f0 !important;
+    transform: translateX(3px);
 }
-/* Selected state */
-[data-testid="stRadio"] label[data-checked="true"],
-[data-testid="stRadio"] [aria-checked="true"] ~ label,
-[data-testid="stRadio"] [data-baseweb="radio"]:has(input:checked) label {
-    background: linear-gradient(135deg,rgba(79,70,229,0.2),rgba(124,58,237,0.15)) !important;
-    border-color: rgba(139,92,246,0.7) !important;
-    color: #c4b5fd !important;
-    box-shadow: 0 2px 12px rgba(99,102,241,0.2) !important;
-}
-/* Bullet dot before each label */
+/* BIG WHITE BULLET */
 [data-testid="stRadio"] label::before {
     content: "●";
-    font-size: 0.65rem;
-    color: white;
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.6);
     flex-shrink: 0;
     line-height: 1;
-    opacity: 0.7;
+    transition: all 0.2s ease;
 }
-[data-testid="stRadio"] label:hover::before { color: white; opacity: 1; }
-/* Sidebar radio stays simple */
-section[data-testid="stSidebar"] [data-testid="stRadio"] label {
-    background: rgba(255,255,255,0.03) !important;
-    border: 1px solid rgba(139,92,246,0.15) !important;
-    border-radius: 10px !important;
-    padding: 0.45rem 0.8rem !important;
-    margin-bottom: 5px !important;
-    color: #94a3b8 !important;
-    font-size: 0.8rem !important;
+[data-testid="stRadio"] label:hover::before {
+    color: white;
+    transform: scale(1.2);
 }
-section[data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
-    background: rgba(99,102,241,0.1) !important;
-    border-color: rgba(139,92,246,0.4) !important;
-    color: #c4b5fd !important;
+/* Selected — purple bullet + glowing card */
+[data-testid="stRadio"] [data-baseweb="radio"]:has(input:checked) label {
+    background: linear-gradient(135deg,rgba(79,70,229,0.2),rgba(124,58,237,0.13)) !important;
+    border-color: rgba(139,92,246,0.8) !important;
+    color: #e2e8f0 !important;
+    box-shadow: 0 3px 16px rgba(99,102,241,0.25) !important;
+}
+[data-testid="stRadio"] [data-baseweb="radio"]:has(input:checked) label::before {
+    color: #a78bfa !important;
+    font-size: 1.2rem;
 }
 
 /* ════════════════════════════════════════════
@@ -1640,80 +1631,97 @@ def create_pdf(word_count, char_count, read_time, quick, key_points_txt,
 # ── Sidebar — ONLY controls, no scroll needed ───────────────────────────────
 with st.sidebar:
 
+    # Logo
     st.markdown("""
-    <div style="text-align:center;padding:1.5rem 0.5rem 1rem;
-                border-bottom:1px solid rgba(139,92,246,0.2);margin-bottom:1rem;">
+    <div style="text-align:center;padding:1.4rem 0.5rem 0.9rem;
+                border-bottom:1px solid rgba(139,92,246,0.2);margin-bottom:0.9rem;">
         <div style="width:58px;height:58px;
                     background:linear-gradient(135deg,#3730a3,#7c3aed,#a855f7,#ec4899);
                     border-radius:18px;display:flex;align-items:center;justify-content:center;
-                    margin:0 auto 0.8rem;font-size:28px;
+                    margin:0 auto 0.7rem;font-size:28px;
                     box-shadow:0 6px 24px rgba(139,92,246,0.6);">🧠</div>
         <div style="font-size:1rem;font-weight:800;
                     background:linear-gradient(135deg,#e2e8f0,#c4b5fd);
                     -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-                    background-clip:text;margin-bottom:0.3rem;">AI Notes Summarizer</div>
+                    background-clip:text;margin-bottom:0.25rem;">AI Notes Summarizer</div>
         <div style="font-size:0.65rem;color:#6366f1;font-weight:700;">
             ✨ by Zainab Gondal · v3.0 · Free
         </div>
     </div>
     """, unsafe_allow_html=True)
 
+    # ── INPUT METHOD — first and most important ───────────────────────────────
     st.markdown("""
-    <div style="background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(168,85,247,0.08));
-                border:1px solid rgba(139,92,246,0.25);border-radius:14px;padding:0.9rem 1rem;
-                margin-bottom:0.6rem;">
-        <div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;
-                    letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.6rem;">
-            ⚡ What You Get
-        </div>
-        <div style="display:flex;flex-direction:column;gap:5px;">
-            <div style="display:flex;align-items:center;gap:7px;font-size:0.72rem;color:#c4b5fd;">
-                <span style="font-size:0.85rem;">📝</span> 3 types of summaries
-            </div>
-            <div style="display:flex;align-items:center;gap:7px;font-size:0.72rem;color:#c4b5fd;">
-                <span style="font-size:0.85rem;">🔬</span> Knowledge extraction
-            </div>
-            <div style="display:flex;align-items:center;gap:7px;font-size:0.72rem;color:#c4b5fd;">
-                <span style="font-size:0.85rem;">❓</span> 13 study questions
-            </div>
-            <div style="display:flex;align-items:center;gap:7px;font-size:0.72rem;color:#c4b5fd;">
-                <span style="font-size:0.85rem;">🃏</span> 8 flashcards
-            </div>
-            <div style="display:flex;align-items:center;gap:7px;font-size:0.72rem;color:#c4b5fd;">
-                <span style="font-size:0.85rem;">📄</span> PDF + TXT download
-            </div>
-        </div>
+    <div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;
+                letter-spacing:0.1em;color:#a78bfa;margin-bottom:7px;">
+        📥 Choose How to Add Notes
     </div>
     """, unsafe_allow_html=True)
-
-    st.markdown("""
-    <div style="background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(5,150,105,0.06));
-                border:1px solid rgba(16,185,129,0.25);border-radius:14px;padding:0.75rem 1rem;
-                margin-bottom:0.6rem;">
-        <div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;
-                    letter-spacing:0.1em;color:#34d399;margin-bottom:0.4rem;">
-            💡 Pro Tip
-        </div>
-        <div style="font-size:0.7rem;color:#6ee7b7;line-height:1.5;">
-            Works best with 200–2000 words. Paste your lecture notes and get a full study pack in under 60 seconds!
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("**📥 Input Method**")
     input_mode = st.radio("Input", ["📋 Paste Text", "📁 Upload File"],
                           label_visibility="collapsed")
 
-    st.markdown("**🔑 API Key** *(optional)*")
+    st.markdown("<div style='height:0.7rem'></div>", unsafe_allow_html=True)
+
+    # ── API KEY ───────────────────────────────────────────────────────────────
+    st.markdown("""
+    <div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;
+                letter-spacing:0.1em;color:#a78bfa;margin-bottom:5px;">
+        🔑 API Key <span style="color:#475569;font-weight:500;text-transform:none;letter-spacing:0;">(optional)</span>
+    </div>
+    """, unsafe_allow_html=True)
     visitor_key = st.text_input("API Key", type="password",
-                                placeholder="gsk_...  (empty = free)",
+                                placeholder="gsk_...  (leave empty = free)",
                                 label_visibility="collapsed",
                                 help="Free key at console.groq.com")
+    st.markdown('<div style="font-size:0.62rem;color:#475569;margin-top:2px;">Leave empty — app works 100% free ✅</div>', unsafe_allow_html=True)
 
+    st.markdown("<div style='height:0.7rem'></div>", unsafe_allow_html=True)
+
+    # ── WHAT YOU GET ─────────────────────────────────────────────────────────
     st.markdown("""
-    <div style="margin-top:1.5rem;padding-top:0.8rem;
-                border-top:1px solid rgba(139,92,246,0.15);text-align:center;">
-        <div style="font-size:0.65rem;color:#475569;margin-bottom:0.6rem;">
+    <div style="background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(168,85,247,0.06));
+                border:1px solid rgba(139,92,246,0.22);border-radius:14px;
+                padding:0.85rem 1rem;margin-bottom:0.6rem;">
+        <div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;
+                    letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.55rem;">
+            ⚡ What You Get
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.73rem;color:#c4b5fd;">
+                <span style="font-size:0.9rem;">📝</span> 3 types of summaries
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.73rem;color:#c4b5fd;">
+                <span style="font-size:0.9rem;">🔬</span> Knowledge extraction
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.73rem;color:#c4b5fd;">
+                <span style="font-size:0.9rem;">❓</span> 13 study questions
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.73rem;color:#c4b5fd;">
+                <span style="font-size:0.9rem;">🃏</span> 8 flashcards
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.73rem;color:#c4b5fd;">
+                <span style="font-size:0.9rem;">📄</span> PDF + TXT download
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ── PRO TIP ───────────────────────────────────────────────────────────────
+    st.markdown("""
+    <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.22);
+                border-radius:14px;padding:0.75rem 1rem;margin-bottom:0.8rem;">
+        <div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;
+                    letter-spacing:0.1em;color:#34d399;margin-bottom:0.3rem;">💡 Pro Tip</div>
+        <div style="font-size:0.7rem;color:#6ee7b7;line-height:1.5;">
+            Best with 200–2000 words. Get your full study pack in under 60 sec!
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ── LINKS ─────────────────────────────────────────────────────────────────
+    st.markdown("""
+    <div style="border-top:1px solid rgba(139,92,246,0.15);padding-top:0.7rem;text-align:center;">
+        <div style="font-size:0.63rem;color:#475569;margin-bottom:0.55rem;">
             Crafted with 💜 by <strong style="color:#a78bfa;">Zainab Gondal</strong>
         </div>
         <a href="https://www.linkedin.com/in/zainabgondal/" target="_blank"
@@ -1732,7 +1740,6 @@ with st.sidebar:
         </a>
     </div>
     """, unsafe_allow_html=True)
-
 
 
 # ── Hero ──────────────────────────────────────────────────────────────────────
