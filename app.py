@@ -437,87 +437,60 @@ div[data-testid="stDownloadButton"] > button:hover {
     box-shadow: 0 8px 32px rgba(99,102,241,0.55) !important;
 }
 
-/* ── Sidebar — dark purple, always visible, mobile-ready ── */
+/* ── Sidebar — solid dark, always visible on desktop + mobile ── */
 section[data-testid="stSidebar"] {
-    background:
+    background-color: #0d0a1f !important;
+    background-image:
         radial-gradient(ellipse 150% 40% at 50% 0%,  rgba(109,40,217,0.75) 0%, transparent 48%),
         radial-gradient(ellipse 110% 60% at 0%  90%,  rgba(168,85,247,0.4)  0%, transparent 58%),
-        radial-gradient(ellipse 90%  50% at 100% 50%, rgba(56,189,248,0.15) 0%, transparent 55%),
-        linear-gradient(160deg, #0d0a1f 0%, #130e30 45%, #0a0818 100%) !important;
+        radial-gradient(ellipse 90%  50% at 100% 50%, rgba(56,189,248,0.15) 0%, transparent 55%) !important;
     border-right: 1px solid rgba(139,92,246,0.35) !important;
     min-width: 268px !important;
     max-width: 268px !important;
 }
 section[data-testid="stSidebar"] > div {
     background: transparent !important;
-    height: auto !important;
-    overflow-y: visible !important;
-    overflow-x: hidden !important;
-    padding: 0 !important;
     min-height: 100vh !important;
 }
-section[data-testid="stSidebar"] > div > div[data-testid="stVerticalBlock"] {
-    padding: 0 0.65rem 1.5rem !important;
-    gap: 0 !important;
-}
-/* All text bright and readable */
-section[data-testid="stSidebar"] *,
+/* ALL sidebar text visible */
 section[data-testid="stSidebar"] p,
 section[data-testid="stSidebar"] span,
 section[data-testid="stSidebar"] div,
-section[data-testid="stSidebar"] label {
+section[data-testid="stSidebar"] label,
+section[data-testid="stSidebar"] a {
     color: #c8d4e3 !important;
-    font-family: 'Outfit', sans-serif !important;
 }
-section[data-testid="stSidebar"] a { text-decoration: none !important; }
-section[data-testid="stSidebar"] [data-testid="stRadio"] label {
-    display: flex !important; align-items: center !important; gap: 10px !important;
-    background: rgba(255,255,255,0.04) !important;
-    border: 1.5px solid rgba(139,92,246,0.22) !important;
-    border-radius: 11px !important; padding: 0.58rem 0.85rem !important;
-    margin-bottom: 6px !important; color: #94a3b8 !important;
-    font-size: 0.84rem !important; font-weight: 600 !important;
-    cursor: pointer !important; transition: all 0.2s ease !important; width: 100% !important;
+/* Sidebar input box */
+section[data-testid="stSidebar"] input {
+    background: rgba(255,255,255,0.08) !important;
+    border: 1.5px solid rgba(139,92,246,0.4) !important;
+    border-radius: 11px !important;
+    color: #e2e8f0 !important;
 }
-section[data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
-    background: rgba(99,102,241,0.12) !important;
-    border-color: rgba(139,92,246,0.55) !important; color: #e2e8f0 !important;
-}
-section[data-testid="stSidebar"] [data-testid="stRadio"] [data-baseweb="radio"] [role="radio"] {
-    display: none !important;
-}
-section[data-testid="stSidebar"] .stTextInput input {
-    background: rgba(255,255,255,0.07) !important;
-    border: 1.5px solid rgba(139,92,246,0.38) !important;
-    border-radius: 11px !important; color: #e2e8f0 !important;
-    font-size: 0.83rem !important; padding: 0.52rem 0.88rem !important;
-    transition: all 0.25s ease !important; width: 100% !important;
-}
-section[data-testid="stSidebar"] .stTextInput input:focus {
+section[data-testid="stSidebar"] input::placeholder { color: #374151 !important; }
+section[data-testid="stSidebar"] input:focus {
     border-color: rgba(168,85,247,0.75) !important;
     box-shadow: 0 0 0 3px rgba(139,92,246,0.15) !important;
     background: rgba(255,255,255,0.1) !important;
 }
-section[data-testid="stSidebar"] .stTextInput input::placeholder { color: #374151 !important; }
-section[data-testid="stSidebar"] ::-webkit-scrollbar { width: 3px; }
-section[data-testid="stSidebar"] ::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.35); border-radius: 2px; }
-
-/* Mobile — show toggle button, sidebar as overlay */
+/* Mobile — toggle button visible, sidebar as overlay */
 @media screen and (max-width: 768px) {
     [data-testid="collapsedControl"] {
-        display: flex !important; visibility: visible !important;
+        display: flex !important;
+        visibility: visible !important;
         background: linear-gradient(135deg,#3730a3,#7c3aed) !important;
         border-radius: 0 12px 12px 0 !important;
         border: 1px solid rgba(139,92,246,0.5) !important;
         box-shadow: 4px 0 20px rgba(99,102,241,0.4) !important;
-        z-index: 9999 !important; padding: 0.5rem !important;
+        z-index: 9999 !important;
     }
-    [data-testid="collapsedControl"] svg { fill: white !important; color: white !important; }
+    [data-testid="collapsedControl"] svg { fill: white !important; }
     section[data-testid="stSidebar"] {
-        position: fixed !important; left: 0 !important; top: 0 !important;
+        position: fixed !important;
+        left: 0 !important; top: 0 !important;
         height: 100vh !important; z-index: 1000 !important;
         min-width: 270px !important; max-width: 88vw !important;
-        box-shadow: 8px 0 40px rgba(0,0,0,0.7), 4px 0 20px rgba(99,102,241,0.3) !important;
+        box-shadow: 8px 0 40px rgba(0,0,0,0.7) !important;
     }
     section[data-testid="stSidebar"] > div {
         overflow-y: auto !important; height: 100vh !important;
@@ -548,9 +521,7 @@ section[data-testid="stSidebar"] ::-webkit-scrollbar-thumb { background: rgba(13
 
 
 # ── Groq client ───────────────────────────────────────────────────────────────
-def get_groq_client(visitor_key=""):
-    """Visitor key first, then owner key from secrets, then env var."""
-    if visitor_key.strip(): return Groq(api_key=visitor_key.strip())
+def get_groq_client(sidebar_key=""):
     try:
         key = st.secrets["GROQ_API_KEY"]
         if key: return Groq(api_key=key)
@@ -558,141 +529,129 @@ def get_groq_client(visitor_key=""):
         pass
     key = os.environ.get("GROQ_API_KEY", "")
     if key: return Groq(api_key=key)
+    if sidebar_key.strip(): return Groq(api_key=sidebar_key.strip())
     return None
 
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
 
-    # ── BRAND HEADER ─────────────────────────────────────────────────────────
+    # Brand header
     st.markdown(
         "<div style=\"text-align:center;padding:1.3rem 0.3rem 1rem;"
-        "border-bottom:1px solid rgba(139,92,246,0.25);margin-bottom:0.8rem;\">"
+        "border-bottom:1px solid rgba(139,92,246,0.28);margin-bottom:0.8rem;\">"
         "<div style=\"width:56px;height:56px;"
         "background:linear-gradient(135deg,#3730a3,#7c3aed,#a855f7,#ec4899);"
         "border-radius:16px;display:flex;align-items:center;justify-content:center;"
-        "margin:0 auto 0.6rem;font-size:26px;"
-        "box-shadow:0 6px 22px rgba(139,92,246,0.6);\">🧠</div>"
+        "margin:0 auto 0.65rem;font-size:27px;"
+        "box-shadow:0 6px 24px rgba(139,92,246,0.65);\">🧠</div>"
         "<div style=\"font-size:0.97rem;font-weight:800;"
         "background:linear-gradient(135deg,#f1f5f9,#c4b5fd);"
         "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
-        "background-clip:text;margin-bottom:0.2rem;\">AI Notes Summarizer</div>"
+        "background-clip:text;margin-bottom:0.22rem;\">AI Notes Summarizer</div>"
         "<div style=\"font-size:0.68rem;font-weight:700;"
         "background:linear-gradient(90deg,#a78bfa,#e879f9);"
         "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
-        "background-clip:text;margin-bottom:0.35rem;\">✨ Zainab Gondal · v3.0</div>"
-        "<div style=\"display:inline-block;background:rgba(16,185,129,0.14);"
-        "border:1px solid rgba(16,185,129,0.35);border-radius:100px;"
-        "padding:2px 11px;font-size:0.61rem;font-weight:700;color:#34d399;\">"
-        "💚 100% Free — No Key Needed</div>"
+        "background-clip:text;margin-bottom:0.38rem;\">✨ by Zainab Gondal · v2.0</div>"
+        "<div style=\"display:inline-block;background:rgba(16,185,129,0.15);"
+        "border:1px solid rgba(16,185,129,0.38);border-radius:100px;"
+        "padding:2px 12px;font-size:0.61rem;font-weight:700;color:#34d399;\">"
+        "💚 100% Free · No Key Needed</div>"
         "</div>",
         unsafe_allow_html=True,
     )
 
-    # ── INPUT METHOD ─────────────────────────────────────────────────────────
+    # API Key (optional)
     st.markdown(
-        "<div style=\"font-size:0.61rem;font-weight:800;text-transform:uppercase;"
-        "letter-spacing:0.1em;color:#a78bfa;margin-bottom:6px;\">📥 Input Method</div>",
+        "<div style=\"font-size:0.62rem;font-weight:800;text-transform:uppercase;"
+        "letter-spacing:0.1em;color:#a78bfa;margin-bottom:5px;\">"
+        "🔑 API Key <span style=\"color:#475569;font-weight:500;text-transform:none;\">(optional)</span>"
+        "</div>",
         unsafe_allow_html=True,
     )
-    input_mode = st.radio("Input", ["📋 Paste Text", "📁 Upload File"],
-                          label_visibility="collapsed")
-    visitor_key = ""
-
-    # ── OPTIONAL KEY ─────────────────────────────────────────────────────────
-    st.markdown(
-        "<div style=\"font-size:0.61rem;font-weight:800;text-transform:uppercase;"
-        "letter-spacing:0.1em;color:#a78bfa;margin:0.65rem 0 5px;\">"
-        "🔑 Your Key <span style=\"color:#475569;font-weight:500;text-transform:none;\"> (optional)</span></div>",
-        unsafe_allow_html=True,
-    )
-    visitor_key = st.text_input("API Key", type="password",
+    sidebar_key = st.text_input("key", type="password",
                                 placeholder="gsk_...  (leave empty = free)",
                                 label_visibility="collapsed",
                                 help="Free key at console.groq.com")
     st.markdown(
-        "<div style=\"font-size:0.6rem;color:#475569;margin-top:2px;\">Leave empty — works 100% free ✅</div>",
+        "<div style=\"font-size:0.61rem;color:#475569;margin-top:3px;margin-bottom:0.7rem;\">"
+        "Leave empty — app works 100% free ✅</div>",
         unsafe_allow_html=True,
     )
 
-    # ── WHAT YOU GET ─────────────────────────────────────────────────────────
+    # Input method
+    st.markdown(
+        "<div style=\"font-size:0.62rem;font-weight:800;text-transform:uppercase;"
+        "letter-spacing:0.1em;color:#a78bfa;margin-bottom:6px;\">📥 Input Method</div>",
+        unsafe_allow_html=True,
+    )
+    input_mode = st.radio("", ["📋 Paste Text", "📁 Upload File"],
+                          label_visibility="collapsed")
+
+    st.markdown("<div style=\"height:0.5rem\"></div>", unsafe_allow_html=True)
+
+    # What you get
     st.markdown(
         "<div style=\"background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(168,85,247,0.06));"
         "border:1px solid rgba(139,92,246,0.22);border-radius:13px;"
-        "padding:0.78rem 0.92rem;margin-top:0.7rem;\">"
-        "<div style=\"font-size:0.59rem;font-weight:800;text-transform:uppercase;"
-        "letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.5rem;\">⚡ What You Get</div>"
-        "<div style=\"font-size:0.72rem;color:#c4b5fd;display:flex;flex-direction:column;gap:4px;\">"
-        "<div>📝 &nbsp;Quick · Detailed · Key Points</div>"
-        "<div>🔬 &nbsp;Concepts · Definitions · Facts</div>"
-        "<div>❓ &nbsp;5 Conceptual + 5 MCQ + 3 Short Ans</div>"
-        "<div>🃏 &nbsp;8 Auto-generated Flashcards</div>"
-        "<div>📄 &nbsp;Download as PDF &amp; TXT</div>"
-        "<div>🏷️ &nbsp;NLP Keyword Extraction</div>"
+        "padding:0.8rem 0.95rem;margin-bottom:0.55rem;\">"
+        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;"
+        "letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.45rem;\">⚡ What You Get</div>"
+        "<div style=\"display:flex;flex-direction:column;gap:4px;font-size:0.72rem;color:#c4b5fd;\">"
+        "<div>📝 Quick · Detailed · Key Points</div>"
+        "<div>🔬 Concepts · Definitions · Facts</div>"
+        "<div>❓ 13 Study Questions (MCQ + more)</div>"
+        "<div>🃏 Flashcards auto-generated</div>"
+        "<div>📄 PDF + TXT download</div>"
+        "<div>🏷️ NLP Keywords</div>"
         "</div></div>",
         unsafe_allow_html=True,
     )
 
-    # ── HOW TO USE ────────────────────────────────────────────────────────────
+    # Formats + tip
     st.markdown(
         "<div style=\"background:rgba(255,255,255,0.03);"
         "border:1px solid rgba(139,92,246,0.15);border-radius:13px;"
-        "padding:0.78rem 0.92rem;margin-top:0.55rem;\">"
-        "<div style=\"font-size:0.59rem;font-weight:800;text-transform:uppercase;"
-        "letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.45rem;\">📖 How To Use</div>"
-        "<div style=\"font-size:0.71rem;color:#94a3b8;display:flex;flex-direction:column;gap:4px;\">"
-        "<div><span style=\"color:#a78bfa;font-weight:800;\">1.</span> &nbsp;Paste or upload your notes</div>"
-        "<div><span style=\"color:#a78bfa;font-weight:800;\">2.</span> &nbsp;Choose input method above</div>"
-        "<div><span style=\"color:#a78bfa;font-weight:800;\">3.</span> &nbsp;Click 🔍 Analyse Notes</div>"
-        "<div><span style=\"color:#a78bfa;font-weight:800;\">4.</span> &nbsp;Download your study pack</div>"
-        "</div></div>",
-        unsafe_allow_html=True,
-    )
-
-    # ── FORMATS + TIP ────────────────────────────────────────────────────────
-    st.markdown(
-        "<div style=\"background:rgba(16,185,129,0.07);"
-        "border:1px solid rgba(16,185,129,0.2);border-radius:13px;"
-        "padding:0.7rem 0.92rem;margin-top:0.55rem;\">"
-        "<div style=\"font-size:0.59rem;font-weight:800;text-transform:uppercase;"
-        "letter-spacing:0.1em;color:#34d399;margin-bottom:0.3rem;\">📂 Formats &amp; Tip</div>"
+        "padding:0.75rem 0.95rem;margin-bottom:0.55rem;\">"
+        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;"
+        "letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.4rem;\">📂 Formats</div>"
         "<div style=\"display:flex;gap:5px;flex-wrap:wrap;margin-bottom:0.4rem;\">"
         "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;"
         "border:1px solid rgba(99,102,241,0.32);border-radius:100px;"
-        "padding:2px 9px;font-size:0.65rem;font-weight:700;\">📄 PDF</span>"
+        "padding:2px 10px;font-size:0.67rem;font-weight:700;\">📄 PDF</span>"
         "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;"
         "border:1px solid rgba(99,102,241,0.32);border-radius:100px;"
-        "padding:2px 9px;font-size:0.65rem;font-weight:700;\">📝 DOCX</span>"
+        "padding:2px 10px;font-size:0.67rem;font-weight:700;\">📝 DOCX</span>"
         "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;"
         "border:1px solid rgba(99,102,241,0.32);border-radius:100px;"
-        "padding:2px 9px;font-size:0.65rem;font-weight:700;\">📃 TXT</span>"
+        "padding:2px 10px;font-size:0.67rem;font-weight:700;\">📃 TXT</span>"
         "</div>"
-        "<div style=\"font-size:0.69rem;color:#6ee7b7;line-height:1.45;\">"
-        "💡 Best with 200–2000 words. Full pack in under 60 sec!"
+        "<div style=\"font-size:0.68rem;color:#6ee7b7;line-height:1.45;\">"
+        "💡 Best: 200–2000 words · Full pack in 60 sec!"
         "</div></div>",
         unsafe_allow_html=True,
     )
 
-    # ── FOOTER LINKS ─────────────────────────────────────────────────────────
+    # Footer
     st.markdown(
         "<div style=\"border-top:1px solid rgba(139,92,246,0.18);"
-        "margin-top:0.85rem;padding-top:0.75rem;text-align:center;\">"
+        "padding-top:0.75rem;text-align:center;\">"
         "<div style=\"font-size:0.63rem;color:#475569;margin-bottom:0.55rem;\">"
         "Crafted with 💜 by "
-        "<span style=\"font-weight:800;background:linear-gradient(90deg,#a78bfa,#e879f9);"
+        "<span style=\"font-weight:800;"
+        "background:linear-gradient(90deg,#a78bfa,#e879f9);"
         "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
-        "background-clip:text;\">Zainab Gondal</span>"
-        "</div>"
+        "background-clip:text;\">Zainab Gondal</span></div>"
         "<a href=\"https://www.linkedin.com/in/zainabgondal/\" target=\"_blank\" "
         "style=\"display:block;background:rgba(10,102,194,0.18);"
         "border:1px solid rgba(10,102,194,0.4);color:#93c5fd;"
         "padding:7px;border-radius:10px;font-size:0.7rem;font-weight:700;"
-        "margin-bottom:6px;text-align:center;\">💼 LinkedIn</a>"
+        "margin-bottom:5px;text-decoration:none;text-align:center;\">💼 LinkedIn</a>"
         "<a href=\"https://github.com/zainabgondal\" target=\"_blank\" "
         "style=\"display:block;background:rgba(255,255,255,0.05);"
         "border:1px solid rgba(255,255,255,0.12);color:#e2e8f0;"
         "padding:7px;border-radius:10px;font-size:0.7rem;font-weight:700;"
-        "text-align:center;\">🐙 GitHub</a>"
+        "text-decoration:none;text-align:center;\">🐙 GitHub</a>"
         "</div>",
         unsafe_allow_html=True,
     )
@@ -764,7 +723,7 @@ if analyse_clicked:
         st.warning("Please paste some text or upload a file first.")
         st.stop()
 
-    client = get_groq_client(visitor_key)
+    client = get_groq_client(sidebar_key)
     if client is None:
         st.error("Groq API key not found. Get your free key from console.groq.com")
         st.stop()
