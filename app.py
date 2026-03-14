@@ -27,7 +27,7 @@ st.set_page_config(
     page_title="AI Notes Summarizer",
     page_icon="🧠",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
 # ── Cosmic UI CSS + JS ────────────────────────────────────────────────────────
@@ -101,7 +101,11 @@ body::after {
 
 [data-testid="stMainBlockContainer"] { position: relative; z-index: 1; }
 /* Re-assert sidebar AFTER nuclear reset */
-section[data-testid="stSidebar"] {
+/* Sidebar hidden — controls moved to main page */
+section[data-testid="stSidebar"] { display: none !important; }
+
+/* UNUSED — kept for reference */
+.SIDEBAR_HIDDEN_section[data-testid="stSidebar"] {
     background:
         radial-gradient(ellipse 120% 35% at 50% 0%,  rgba(109,40,217,0.6)  0%, transparent 50%),
         radial-gradient(ellipse 90%  50% at 0%   80%, rgba(168,85,247,0.3)  0%, transparent 60%),
@@ -871,7 +875,11 @@ div[data-testid="stDownloadButton"] > button:hover {
    SIDEBAR — FULLY VISIBLE & STYLED
 ════════════════════════════════════════════ */
 /* SIDEBAR — visible, rich dark purple background */
-section[data-testid="stSidebar"] {
+/* Sidebar hidden — controls moved to main page */
+section[data-testid="stSidebar"] { display: none !important; }
+
+/* UNUSED — kept for reference */
+.SIDEBAR_HIDDEN_section[data-testid="stSidebar"] {
     background:
         radial-gradient(ellipse 120% 35% at 50% 0%,  rgba(109,40,217,0.6)  0%, transparent 50%),
         radial-gradient(ellipse 90%  50% at 0%   80%, rgba(168,85,247,0.3)  0%, transparent 60%),
@@ -1073,53 +1081,12 @@ section[data-testid="stSidebar"] > div {
 /* ════════════════════════════════════════════
    HIDE SIDEBAR COLLAPSE ARROW — PERMANENTLY
 ════════════════════════════════════════════ */
-/* Hide collapse button on DESKTOP only — show it on mobile */
-@media screen and (min-width: 769px) {
-    [data-testid="collapsedControl"]                { display: none !important; }
-    [data-testid="stSidebarCollapseButton"]         { display: none !important; }
-    [data-testid="stSidebarNavCollapseIcon"]        { display: none !important; }
-    button[data-testid="baseButton-headerNoPadding"]{ display: none !important; }
-    section[data-testid="stSidebar"] > div:first-child button { display: none !important; }
-    .st-emotion-cache-1rtdyuf, .st-emotion-cache-pkbazv { display: none !important; }
-}
-/* On mobile — show the toggle arrow so user can open sidebar */
-@media screen and (max-width: 768px) {
-    [data-testid="collapsedControl"] {
-        display: flex !important;
-        visibility: visible !important;
-        background: linear-gradient(135deg, #3730a3, #7c3aed) !important;
-        border-radius: 0 12px 12px 0 !important;
-        border: 1px solid rgba(139,92,246,0.5) !important;
-        box-shadow: 4px 0 20px rgba(99,102,241,0.5) !important;
-        z-index: 9999 !important;
-        padding: 0.5rem !important;
-        position: fixed !important;
-        top: 50% !important;
-        left: 0 !important;
-        transform: translateY(-50%) !important;
-    }
-    [data-testid="collapsedControl"] svg {
-        fill: white !important;
-        color: white !important;
-    }
-    /* Sidebar as full overlay on mobile */
-    section[data-testid="stSidebar"] {
-        position: fixed !important;
-        left: 0 !important;
-        top: 0 !important;
-        height: 100vh !important;
-        z-index: 1000 !important;
-        min-width: 280px !important;
-        max-width: 88vw !important;
-        box-shadow: 8px 0 40px rgba(0,0,0,0.8), 4px 0 20px rgba(99,102,241,0.4) !important;
-        overflow-y: auto !important;
-    }
-    section[data-testid="stSidebar"] > div {
-        height: auto !important;
-        min-height: 100vh !important;
-        overflow-y: auto !important;
-    }
-}
+[data-testid="collapsedControl"]                { display: none !important; visibility: hidden !important; }
+[data-testid="stSidebarCollapseButton"]         { display: none !important; visibility: hidden !important; }
+[data-testid="stSidebarNavCollapseIcon"]        { display: none !important; visibility: hidden !important; }
+button[data-testid="baseButton-headerNoPadding"]{ display: none !important; visibility: hidden !important; }
+section[data-testid="stSidebar"] > div:first-child button { display: none !important; }
+.st-emotion-cache-1rtdyuf, .st-emotion-cache-pkbazv { display: none !important; }
 
 /* ════════════════════════════════════════════
    SIDEBAR — MINIMAL, NEVER SCROLLS SEPARATELY
@@ -1190,116 +1157,99 @@ section[data-testid="stSidebar"] [data-testid="stCaptionContainer"] p {
 ════════════════════════════════════════════ */
 
 /* Tablet ≤ 1024px */
-/* ═══════════════════════════════════════
-   TABLET ≤ 1024px
-═══════════════════════════════════════ */
 @media screen and (max-width: 1024px) {
     .block-container { max-width: 100% !important; padding-left: 1.2rem !important; padding-right: 1.2rem !important; }
     .feat-row { grid-template-columns: repeat(2,1fr) !important; gap: 10px !important; }
     .hero-title { font-size: 2.4rem !important; }
 }
 
-/* ═══════════════════════════════════════
-   MOBILE ≤ 768px — NO OVERLAP, FULL STACK
-═══════════════════════════════════════ */
+/* Mobile ≤ 768px */
 @media screen and (max-width: 768px) {
-
-    /* Main content full width — sidebar is overlay */
+    /* Block container — tighter padding */
     .block-container { padding: 0.8rem 0.7rem 3rem !important; max-width: 100% !important; }
-    [data-testid="stMainBlockContainer"] { padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
 
-    /* Hero — compact, no overflow */
-    .hero { padding: 1.6rem 1rem 1.4rem !important; border-radius: 16px !important; margin-bottom: 1.2rem !important; }
-    .hero-title { font-size: 1.6rem !important; line-height: 1.15 !important; letter-spacing: -0.01em !important; }
-    .hero-sub { font-size: 0.83rem !important; margin-bottom: 1.1rem !important; max-width: 100% !important; }
+    /* Hero */
+    .hero { padding: 1.8rem 1.2rem 1.6rem !important; border-radius: 18px !important; margin-bottom: 1.4rem !important; }
+    .hero-title { font-size: 1.75rem !important; line-height: 1.18 !important; letter-spacing: -0.01em !important; }
+    .hero-sub { font-size: 0.85rem !important; margin-bottom: 1.2rem !important; }
     .hero-sub br { display: none !important; }
-    .hero-eyebrow { font-size: 0.6rem !important; padding: 0.22rem 0.7rem !important; }
-    .hero-author { font-size: 0.72rem !important; padding: 0.38rem 0.9rem !important; }
-    .hero-corner-dots { top: 12px !important; right: 12px !important; }
-    .hero-corner-dot { width: 8px !important; height: 8px !important; }
+    .hero-eyebrow { font-size: 0.62rem !important; padding: 0.25rem 0.75rem !important; }
+    .hero-author { font-size: 0.75rem !important; padding: 0.4rem 1rem !important; }
+    .hero-corner-dots { top: 14px !important; right: 14px !important; }
+    .hero-corner-dot { width: 9px !important; height: 9px !important; }
 
-    /* Feature row — 2 columns */
-    .feat-row { grid-template-columns: repeat(2,1fr) !important; gap: 7px !important; margin-bottom: 1rem !important; }
-    .feat-card { padding: 0.8rem 0.5rem !important; border-radius: 11px !important; }
-    .feat-icon { font-size: 1.2rem !important; margin-bottom: 0.25rem !important; }
-    .feat-val { font-size: 0.75rem !important; }
-    .feat-label { font-size: 0.6rem !important; }
+    /* Feature row */
+    .feat-row { grid-template-columns: repeat(2,1fr) !important; gap: 8px !important; margin-bottom: 1.2rem !important; }
+    .feat-card { padding: 0.85rem 0.6rem !important; border-radius: 12px !important; }
+    .feat-icon { font-size: 1.25rem !important; margin-bottom: 0.3rem !important; }
+    .feat-val { font-size: 0.78rem !important; }
+    .feat-label { font-size: 0.62rem !important; }
 
-    /* Stat cards — 3 columns, compact */
-    .stat-row { grid-template-columns: repeat(3,1fr) !important; gap: 6px !important; }
-    .stat-card { padding: 0.9rem 0.4rem !important; border-radius: 12px !important; }
-    .stat-num { font-size: 1.45rem !important; }
-    .stat-lbl { font-size: 0.55rem !important; }
+    /* Stat cards */
+    .stat-row { grid-template-columns: repeat(3,1fr) !important; gap: 8px !important; }
+    .stat-card { padding: 1.1rem 0.6rem !important; border-radius: 14px !important; }
+    .stat-num { font-size: 1.6rem !important; }
+    .stat-lbl { font-size: 0.58rem !important; }
 
     /* Section headers */
-    .sec-head { gap: 7px !important; margin: 1.4rem 0 0.8rem !important; }
-    .sec-icon { width: 30px !important; height: 30px !important; font-size: 13px !important; border-radius: 8px !important; }
-    .sec-title { font-size: 0.9rem !important; }
-    .sec-line { display: none !important; }
+    .sec-head { gap: 8px !important; margin: 1.6rem 0 0.9rem !important; }
+    .sec-icon { width: 32px !important; height: 32px !important; font-size: 14px !important; border-radius: 9px !important; }
+    .sec-title { font-size: 0.95rem !important; }
 
     /* Output cards */
-    .out-card { padding: 1rem 0.9rem !important; font-size: 0.83rem !important; border-radius: 13px !important; line-height: 1.7 !important; }
+    .out-card { padding: 1.2rem 1rem !important; font-size: 0.85rem !important; border-radius: 14px !important; line-height: 1.75 !important; }
 
-    /* Progress tracker */
-    .prog-box { padding: 1rem 0.9rem !important; border-radius: 13px !important; }
-    .prog-step { font-size: 0.78rem !important; gap: 8px !important; padding: 0.45rem 0 !important; }
-    .prog-dot { width: 22px !important; height: 22px !important; font-size: 10px !important; }
-    .prog-label { font-size: 0.6rem !important; margin-bottom: 0.7rem !important; }
+    /* Progress */
+    .prog-box { padding: 1.2rem 1rem !important; border-radius: 14px !important; }
+    .prog-step { font-size: 0.8rem !important; gap: 9px !important; padding: 0.5rem 0 !important; }
+    .prog-dot { width: 24px !important; height: 24px !important; font-size: 11px !important; }
+    .prog-label { font-size: 0.62rem !important; margin-bottom: 0.8rem !important; }
 
     /* Chips */
-    .chips { gap: 5px !important; }
-    .chip { font-size: 0.68rem !important; padding: 0.2rem 0.6rem !important; }
+    .chips { gap: 6px !important; }
+    .chip { font-size: 0.7rem !important; padding: 0.22rem 0.65rem !important; }
 
-    /* Tabs — scrollable, no wrap */
-    .stTabs [data-baseweb="tab-list"] { padding: 3px !important; gap: 2px !important; overflow-x: auto !important; flex-wrap: nowrap !important; }
-    .stTabs [data-baseweb="tab"] { font-size: 0.7rem !important; padding: 0.38rem 0.6rem !important; white-space: nowrap !important; }
+    /* Tabs */
+    .stTabs [data-baseweb="tab-list"] { padding: 4px !important; gap: 3px !important; }
+    .stTabs [data-baseweb="tab"] { font-size: 0.72rem !important; padding: 0.4rem 0.7rem !important; }
 
     /* Buttons — full width */
-    div[data-testid="stButton"] > button[kind="primary"] { width: 100% !important; padding: 0.7rem 1rem !important; font-size: 0.9rem !important; }
-    div[data-testid="stDownloadButton"] > button { width: 100% !important; font-size: 0.85rem !important; }
+    div[data-testid="stButton"] > button[kind="primary"] {
+        width: 100% !important; padding: 0.75rem 1rem !important; font-size: 0.92rem !important;
+    }
+    div[data-testid="stDownloadButton"] > button {
+        width: 100% !important; font-size: 0.88rem !important;
+    }
 
     /* Textarea */
-    .stTextArea textarea { font-size: 0.86rem !important; }
+    .stTextArea textarea { font-size: 0.88rem !important; }
 
     /* Divider */
-    .div { margin: 1.2rem 0 !important; }
+    .div { margin: 1.4rem 0 !important; }
 
-    /* Knowledge columns — stack vertically, no overlap */
-    [data-testid="stHorizontalBlock"] { flex-direction: column !important; }
-    [data-testid="column"] { width: 100% !important; min-width: 100% !important; flex: none !important; }
-
-    /* Flashcard grid — single column */
-    .fc-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
+    /* Knowledge grid — stack */
+    [data-testid="column"] { min-width: 100% !important; }
 
     /* Success box */
-    .success-box { padding: 0.85rem 0.9rem !important; font-size: 0.8rem !important; border-radius: 11px !important; }
+    .success-box { padding: 0.9rem 1rem !important; font-size: 0.82rem !important; border-radius: 12px !important; }
 
     /* Footer */
-    .app-footer { padding: 0.9rem 1rem !important; font-size: 0.72rem !important; border-radius: 13px !important; margin-top: 2rem !important; }
-
-    /* Contact cards — stack */
-    .app-footer a { display: block !important; margin-bottom: 4px !important; }
+    .app-footer { padding: 1rem 1.2rem !important; font-size: 0.75rem !important; border-radius: 14px !important; }
 }
 
-/* ═══════════════════════════════════════
-   SMALL PHONES ≤ 480px
-═══════════════════════════════════════ */
+/* Small phones ≤ 480px */
 @media screen and (max-width: 480px) {
-    .block-container { padding: 0.5rem 0.4rem 2.5rem !important; }
-    .hero { padding: 1.3rem 0.9rem 1.2rem !important; }
-    .hero-title { font-size: 1.35rem !important; }
-    .hero-sub { font-size: 0.78rem !important; }
-    .feat-row { gap: 5px !important; }
-    .feat-card { padding: 0.65rem 0.4rem !important; }
-    .stat-row { gap: 5px !important; }
-    .stat-num { font-size: 1.2rem !important; }
-    .stat-lbl { font-size: 0.5rem !important; }
-    .out-card { padding: 0.85rem 0.75rem !important; font-size: 0.8rem !important; }
-    .stTabs [data-baseweb="tab"] { font-size: 0.62rem !important; padding: 0.32rem 0.5rem !important; }
-    .sec-title { font-size: 0.82rem !important; }
-    .prog-step { font-size: 0.72rem !important; }
-    .chip { font-size: 0.65rem !important; padding: 0.18rem 0.5rem !important; }
-    .hero-author { font-size: 0.68rem !important; padding: 0.32rem 0.75rem !important; }
+    .block-container { padding: 0.6rem 0.5rem 2.5rem !important; }
+    .hero { padding: 1.5rem 1rem 1.3rem !important; }
+    .hero-title { font-size: 1.45rem !important; }
+    .hero-sub { font-size: 0.82rem !important; }
+    .feat-row { gap: 6px !important; }
+    .stat-row { grid-template-columns: repeat(3,1fr) !important; gap: 6px !important; }
+    .stat-num { font-size: 1.35rem !important; }
+    .out-card { padding: 1rem 0.85rem !important; font-size: 0.82rem !important; }
+    .stTabs [data-baseweb="tab"] { font-size: 0.65rem !important; padding: 0.35rem 0.5rem !important; }
+    .sec-title { font-size: 0.88rem !important; }
+    .prog-step { font-size: 0.75rem !important; }
 }
 </style>
 """, unsafe_allow_html=True)
@@ -1686,108 +1636,58 @@ def create_pdf(word_count, char_count, read_time, quick, key_points_txt,
         return None
 
 
-# ── Sidebar ───────────────────────────────────────────────────────────────────
-with st.sidebar:
+# ── Controls (no sidebar — works on ALL devices including mobile) ─────────────
+# These variables are set here so the rest of the app works unchanged
+col_left, col_right = st.columns([1, 1])
+with col_left:
+    input_mode = st.radio("📥 Input Method", ["📋 Paste Text", "📁 Upload File"],
+                          horizontal=True, label_visibility="visible")
+with col_right:
+    visitor_key = st.text_input("🔑 API Key (optional)",
+                                type="password",
+                                placeholder="gsk_...  (leave empty = free)",
+                                help="Free key at console.groq.com")
 
-    st.markdown(
-        "<div style=\"text-align:center;padding:1.3rem 0.3rem 1rem;"
-        "border-bottom:1px solid rgba(139,92,246,0.25);margin-bottom:0.8rem;\">"
-        "<div style=\"width:58px;height:58px;"
-        "background:linear-gradient(135deg,#3730a3,#7c3aed,#a855f7,#ec4899);"
-        "border-radius:18px;display:flex;align-items:center;justify-content:center;"
-        "margin:0 auto 0.65rem;font-size:28px;"
-        "box-shadow:0 6px 24px rgba(139,92,246,0.6);\">🧠</div>"
-        "<div style=\"font-size:1rem;font-weight:800;"
-        "background:linear-gradient(135deg,#f1f5f9,#c4b5fd);"
-        "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
-        "background-clip:text;margin-bottom:0.2rem;\">AI Notes Summarizer</div>"
-        "<div style=\"font-size:0.68rem;font-weight:700;"
-        "background:linear-gradient(90deg,#a78bfa,#e879f9);"
-        "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
-        "background-clip:text;margin-bottom:0.35rem;\">✨ Zainab Gondal · v3.0</div>"
-        "<div style=\"display:inline-block;background:rgba(16,185,129,0.14);"
-        "border:1px solid rgba(16,185,129,0.35);border-radius:100px;"
-        "padding:2px 11px;font-size:0.62rem;font-weight:700;color:#34d399;\">"
-        "💚 100% Free</div></div>",
-        unsafe_allow_html=True,
-    )
+# ── App Info Bar ──────────────────────────────────────────────────────────────
+st.markdown(
+    "<div style=\"background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(168,85,247,0.06));"
+    "border:1px solid rgba(139,92,246,0.2);border-radius:16px;padding:1rem 1.2rem;"
+    "margin-bottom:1.2rem;display:flex;flex-wrap:wrap;gap:12px;align-items:center;\">"
 
-    st.markdown("<div style=\"font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:6px;\">📥 Input Method</div>", unsafe_allow_html=True)
-    input_mode = st.radio("Input", ["📋 Paste Text", "📁 Upload File"], label_visibility="collapsed")
+    "<div style=\"display:flex;align-items:center;gap:10px;\"><div style=\"width:42px;height:42px;"
+    "background:linear-gradient(135deg,#3730a3,#7c3aed,#a855f7,#ec4899);"
+    "border-radius:12px;display:flex;align-items:center;justify-content:center;"
+    "font-size:20px;box-shadow:0 4px 16px rgba(139,92,246,0.5);flex-shrink:0;\">🧠</div>"
+    "<div><div style=\"font-size:0.88rem;font-weight:800;"
+    "background:linear-gradient(135deg,#f1f5f9,#c4b5fd);"
+    "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
+    "background-clip:text;\">AI Notes Summarizer</div>"
+    "<div style=\"font-size:0.62rem;font-weight:700;"
+    "background:linear-gradient(90deg,#a78bfa,#e879f9);"
+    "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
+    "background-clip:text;\">✨ Zainab Gondal · v3.0</div></div></div>"
 
-    st.markdown("<div style=\"font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin:0.7rem 0 5px;\">🔑 API Key <span style=\"color:#475569;font-weight:500;text-transform:none;\">(optional)</span></div>", unsafe_allow_html=True)
-    visitor_key = st.text_input("API Key", type="password", placeholder="gsk_...  (leave empty = free)", label_visibility="collapsed", help="Free key at console.groq.com")
-    st.markdown("<div style=\"font-size:0.62rem;color:#475569;margin-top:2px;\">Leave empty — works 100% free ✅</div>", unsafe_allow_html=True)
+    "<div style=\"display:inline-block;background:rgba(16,185,129,0.14);"
+    "border:1px solid rgba(16,185,129,0.35);border-radius:100px;"
+    "padding:3px 12px;font-size:0.65rem;font-weight:700;color:#34d399;\">💚 100% Free</div>"
 
-    st.markdown(
-        "<div style=\"background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(168,85,247,0.06));"
-        "border:1px solid rgba(139,92,246,0.22);border-radius:13px;padding:0.8rem 0.95rem;margin-top:0.7rem;\">"
-        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.5rem;\">⚡ What You Get</div>"
-        "<div style=\"font-size:0.73rem;color:#c4b5fd;display:flex;flex-direction:column;gap:5px;\">"
-        "<div>📝 &nbsp;Quick · Detailed · Key Points</div>"
-        "<div>🔬 &nbsp;Concepts · Definitions · Facts</div>"
-        "<div>❓ &nbsp;5 Conceptual + 5 MCQ + 3 Short Ans</div>"
-        "<div>🃏 &nbsp;8 Auto-generated Flashcards</div>"
-        "<div>📄 &nbsp;Download as PDF &amp; TXT</div>"
-        "<div>🏷️ &nbsp;NLP Keyword Extraction</div>"
-        "</div></div>",
-        unsafe_allow_html=True,
-    )
+    "<div style=\"display:flex;gap:6px;flex-wrap:wrap;align-items:center;\">"
+    "<span style=\"font-size:0.65rem;font-weight:700;color:#a78bfa;\">📂 Supports:</span>"
+    "<span style=\"background:rgba(99,102,241,0.15);color:#c4b5fd;border:1px solid rgba(99,102,241,0.3);border-radius:100px;padding:2px 8px;font-size:0.63rem;font-weight:700;\">PDF</span>"
+    "<span style=\"background:rgba(99,102,241,0.15);color:#c4b5fd;border:1px solid rgba(99,102,241,0.3);border-radius:100px;padding:2px 8px;font-size:0.63rem;font-weight:700;\">DOCX</span>"
+    "<span style=\"background:rgba(99,102,241,0.15);color:#c4b5fd;border:1px solid rgba(99,102,241,0.3);border-radius:100px;padding:2px 8px;font-size:0.63rem;font-weight:700;\">TXT</span>"
+    "</div>"
 
-    st.markdown(
-        "<div style=\"background:rgba(255,255,255,0.03);"
-        "border:1px solid rgba(139,92,246,0.15);border-radius:13px;padding:0.8rem 0.95rem;margin-top:0.55rem;\">"
-        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.45rem;\">📖 How To Use</div>"
-        "<div style=\"font-size:0.72rem;color:#94a3b8;display:flex;flex-direction:column;gap:5px;\">"
-        "<div><span style=\"color:#a78bfa;font-weight:800;\">1.</span> &nbsp;Paste or upload your notes</div>"
-        "<div><span style=\"color:#a78bfa;font-weight:800;\">2.</span> &nbsp;Choose input method above</div>"
-        "<div><span style=\"color:#a78bfa;font-weight:800;\">3.</span> &nbsp;Click 🔍 Analyse Notes</div>"
-        "<div><span style=\"color:#a78bfa;font-weight:800;\">4.</span> &nbsp;Download your study pack</div>"
-        "</div></div>",
-        unsafe_allow_html=True,
-    )
+    "<div style=\"display:flex;gap:6px;flex-wrap:wrap;\">"
+    "<a href=\"mailto:gondalzainab34@gmail.com\" style=\"display:inline-flex;align-items:center;gap:4px;text-decoration:none;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:8px;padding:3px 8px;\"><span>📧</span><span style=\"font-size:0.63rem;font-weight:600;color:#c4b5fd;\">Email</span></a>"
+    "<a href=\"https://wa.me/92113430370\" target=\"_blank\" style=\"display:inline-flex;align-items:center;gap:4px;text-decoration:none;background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.25);border-radius:8px;padding:3px 8px;\"><span>💬</span><span style=\"font-size:0.63rem;font-weight:600;color:#6ee7b7;\">WhatsApp</span></a>"
+    "<a href=\"https://www.linkedin.com/in/zainabgondal/\" target=\"_blank\" style=\"display:inline-flex;align-items:center;gap:4px;text-decoration:none;background:rgba(10,102,194,0.12);border:1px solid rgba(10,102,194,0.3);border-radius:8px;padding:3px 8px;\"><span>💼</span><span style=\"font-size:0.63rem;font-weight:600;color:#93c5fd;\">LinkedIn</span></a>"
+    "<a href=\"https://github.com/zainabgondal\" target=\"_blank\" style=\"display:inline-flex;align-items:center;gap:4px;text-decoration:none;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:3px 8px;\"><span>🐙</span><span style=\"font-size:0.63rem;font-weight:600;color:#e2e8f0;\">GitHub</span></a>"
+    "</div>"
 
-    st.markdown(
-        "<div style=\"background:rgba(16,185,129,0.07);"
-        "border:1px solid rgba(16,185,129,0.2);border-radius:13px;padding:0.7rem 0.95rem;margin-top:0.55rem;\">"
-        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#34d399;margin-bottom:0.3rem;\">📂 Supported Formats</div>"
-        "<div style=\"display:flex;gap:6px;flex-wrap:wrap;\">"
-        "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;border:1px solid rgba(99,102,241,0.32);border-radius:100px;padding:3px 10px;font-size:0.66rem;font-weight:700;\">📄 PDF</span>"
-        "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;border:1px solid rgba(99,102,241,0.32);border-radius:100px;padding:3px 10px;font-size:0.66rem;font-weight:700;\">📝 DOCX</span>"
-        "<span style=\"background:rgba(99,102,241,0.18);color:#c4b5fd;border:1px solid rgba(99,102,241,0.32);border-radius:100px;padding:3px 10px;font-size:0.66rem;font-weight:700;\">📃 TXT</span>"
-        "</div></div>",
-        unsafe_allow_html=True,
-    )
-
-    st.markdown(
-        "<div style=\"background:linear-gradient(145deg,rgba(10,8,28,0.94),rgba(14,10,36,0.94));"
-        "border:1px solid rgba(139,92,246,0.22);border-radius:13px;padding:0.8rem 0.95rem;margin-top:0.55rem;\">"
-        "<div style=\"font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;"
-        "background:linear-gradient(90deg,#a78bfa,#e879f9);-webkit-background-clip:text;"
-        "-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.5rem;\">📬 Contact Developer</div>"
-        "<div style=\"display:flex;flex-direction:column;gap:6px;\">"
-        "<a href=\"mailto:gondalzainab34@gmail.com\" style=\"display:flex;align-items:center;gap:8px;text-decoration:none;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:9px;padding:0.42rem 0.7rem;\">"
-        "<span>📧</span><span style=\"font-size:0.7rem;font-weight:600;color:#c4b5fd;\">gondalzainab34@gmail.com</span></a>"
-        "<a href=\"https://wa.me/92113430370\" target=\"_blank\" style=\"display:flex;align-items:center;gap:8px;text-decoration:none;background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.25);border-radius:9px;padding:0.42rem 0.7rem;\">"
-        "<span>💬</span><span style=\"font-size:0.7rem;font-weight:600;color:#6ee7b7;\">WhatsApp</span></a>"
-        "<a href=\"https://www.linkedin.com/in/zainabgondal/\" target=\"_blank\" style=\"display:flex;align-items:center;gap:8px;text-decoration:none;background:rgba(10,102,194,0.12);border:1px solid rgba(10,102,194,0.3);border-radius:9px;padding:0.42rem 0.7rem;\">"
-        "<span>💼</span><span style=\"font-size:0.7rem;font-weight:600;color:#93c5fd;\">LinkedIn</span></a>"
-        "<a href=\"https://github.com/zainabgondal\" target=\"_blank\" style=\"display:flex;align-items:center;gap:8px;text-decoration:none;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:9px;padding:0.42rem 0.7rem;\">"
-        "<span>🐙</span><span style=\"font-size:0.7rem;font-weight:600;color:#e2e8f0;\">GitHub</span></a>"
-        "</div></div>",
-        unsafe_allow_html=True,
-    )
-
-    st.markdown(
-        "<div style=\"border-top:1px solid rgba(139,92,246,0.18);margin-top:0.9rem;padding-top:0.8rem;text-align:center;\">"
-        "<div style=\"font-size:0.64rem;color:#94a3b8;\">"
-        "Crafted with 💜 by <span style=\"font-weight:800;"
-        "background:linear-gradient(90deg,#a78bfa,#e879f9);"
-        "-webkit-background-clip:text;-webkit-text-fill-color:transparent;"
-        "background-clip:text;\">Zainab Gondal</span></div></div>",
-        unsafe_allow_html=True,
-    )
-
+    "</div>",
+    unsafe_allow_html=True,
+)
 
 
 # ── Hero ──────────────────────────────────────────────────────────────────────
