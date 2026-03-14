@@ -20,175 +20,6 @@ from question_generator import generate_all_questions
 from flashcard_generator import generate_flashcards
 
 # ── Session state defaults ────────────────────────────────────────────────────
-if "theme"    not in st.session_state: st.session_state.theme    = "dark"
-if "language" not in st.session_state: st.session_state.language = "English"
-
-# ── Only 2 themes ─────────────────────────────────────────────────────────────
-THEMES = {
-    "dark":  {"emoji": "🌙", "name": "Dark"},
-    "light": {"emoji": "☀️", "name": "Light"},
-}
-
-# ── Only 2 languages ──────────────────────────────────────────────────────────
-LANGUAGES = ["English", "Urdu (اردو)"]
-
-# ── Light theme full CSS override ─────────────────────────────────────────────
-LIGHT_CSS = """<style>
-html, body, #root, .stApp,
-[data-testid="stAppViewContainer"],
-[data-testid="stMain"],
-[data-testid="stMainBlockContainer"] {
-    background: #f0f2ff !important;
-    background-color: #f0f2ff !important;
-}
-body::before, body::after { display: none !important; }
-canvas#cosmic-canvas { display: none !important; }
-
-/* All text dark */
-html, body, [class*="css"], [data-testid], p, span, div, label {
-    color: #1e1b4b !important;
-}
-
-/* Hero */
-.hero {
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #6d28d9 100%) !important;
-    border-color: rgba(79,70,229,0.4) !important;
-    box-shadow: 0 20px 60px rgba(79,70,229,0.3) !important;
-}
-.hero-title { background: linear-gradient(135deg,#ffffff,#e9d5ff,#c4b5fd) !important;
-    -webkit-background-clip:text !important; background-clip:text !important; -webkit-text-fill-color:transparent !important; }
-.hero-sub { color: rgba(255,255,255,0.75) !important; }
-.hero-eyebrow { background: rgba(255,255,255,0.15) !important; border-color: rgba(255,255,255,0.3) !important; color: white !important; }
-.hero-author { background: rgba(255,255,255,0.2) !important; color: white !important; box-shadow: none !important; }
-
-/* Output cards — white on light bg */
-.out-card {
-    background: white !important;
-    border: 1px solid #ddd6fe !important;
-    color: #1e1b4b !important;
-    box-shadow: 0 4px 20px rgba(99,102,241,0.1) !important;
-}
-.out-card:hover { box-shadow: 0 12px 32px rgba(99,102,241,0.18) !important; }
-
-/* Stat cards */
-.stat-card {
-    background: white !important;
-    border: 1px solid #ddd6fe !important;
-    box-shadow: 0 4px 16px rgba(99,102,241,0.08) !important;
-}
-.stat-num { background: linear-gradient(135deg,#4f46e5,#7c3aed) !important;
-    -webkit-background-clip:text !important; background-clip:text !important; -webkit-text-fill-color:transparent !important; }
-.stat-lbl { color: #64748b !important; }
-
-/* Progress box */
-.prog-box { background: white !important; border-color: #ddd6fe !important; box-shadow: 0 4px 20px rgba(99,102,241,0.08) !important; }
-.prog-step.wait { color: #94a3b8 !important; }
-.prog-step.done { color: #059669 !important; }
-.prog-step.active { color: #4f46e5 !important; }
-.prog-dot.wait { background: #f1f5f9 !important; border-color: #e2e8f0 !important; color: #94a3b8 !important; }
-.prog-dot.done { background: #ecfdf5 !important; border-color: #6ee7b7 !important; color: #059669 !important; }
-.prog-dot.active { background: #eef2ff !important; border-color: #6366f1 !important; color: #4f46e5 !important; }
-
-/* Section headers */
-.sec-title { color: #1e1b4b !important; }
-.sec-icon { background: linear-gradient(135deg,#4f46e5,#7c3aed) !important; }
-
-/* Chips */
-.chip { background: #eef2ff !important; color: #4338ca !important; border-color: #c7d2fe !important; }
-.chip:hover { background: #4f46e5 !important; color: white !important; }
-
-/* Know labels */
-.know-lbl { background: linear-gradient(90deg,#4f46e5,#7c3aed) !important;
-    -webkit-background-clip:text !important; background-clip:text !important; -webkit-text-fill-color:transparent !important; }
-
-/* Flashcards */
-.fc-item { background: white !important; border-color: #ddd6fe !important; box-shadow: 0 4px 16px rgba(99,102,241,0.08) !important; }
-.fc-q { color: #1e1b4b !important; border-color: #e9d5ff !important; }
-.fc-q-lbl { color: #6d28d9 !important; }
-.fc-a { color: #475569 !important; }
-.fc-a-lbl { color: #059669 !important; }
-
-/* Success box */
-.success-box { background: linear-gradient(135deg,#ecfdf5,#d1fae5) !important; border-color: #6ee7b7 !important; color: #065f46 !important; }
-
-/* Sidebar light */
-section[data-testid="stSidebar"] {
-    background: linear-gradient(160deg,#ede9fe,#f3e8ff,#faf5ff) !important;
-    border-right: 1px solid #ddd6fe !important;
-}
-[data-testid="stSidebar"] p,
-[data-testid="stSidebar"] span,
-[data-testid="stSidebar"] div,
-[data-testid="stSidebar"] label { color: #3730a3 !important; }
-
-/* Textarea light */
-.stTextArea textarea {
-    background: white !important;
-    background-color: white !important;
-    color: #1e1b4b !important;
-    border-color: #c7d2fe !important;
-}
-.stTextArea textarea:focus { border-color: #6366f1 !important; }
-.stTextArea textarea::placeholder { color: #94a3b8 !important; }
-
-/* File uploader light */
-[data-testid="stFileUploader"] section {
-    background: #faf5ff !important;
-    border-color: #c4b5fd !important;
-}
-[data-testid="stFileUploader"] span,
-[data-testid="stFileUploader"] p { color: #6d28d9 !important; }
-
-/* Tabs light */
-.stTabs [data-baseweb="tab-list"] { background: white !important; border-color: #ddd6fe !important; }
-.stTabs [data-baseweb="tab"] { color: #64748b !important; }
-.stTabs [aria-selected="true"] { background: linear-gradient(135deg,#4f46e5,#7c3aed) !important; color: white !important; }
-
-/* Buttons light */
-div[data-testid="stButton"]>button[kind="primary"] {
-    background: linear-gradient(135deg,#4f46e5,#7c3aed,#9333ea) !important;
-    color: white !important;
-}
-div[data-testid="stDownloadButton"]>button {
-    background: linear-gradient(135deg,#4f46e5,#7c3aed) !important;
-    color: white !important;
-}
-
-/* Divider */
-.div { background: linear-gradient(90deg,transparent,rgba(99,102,241,0.3),transparent) !important; }
-
-/* Footer */
-.app-footer { background: white !important; border-color: #ddd6fe !important; color: #475569 !important; }
-.app-footer strong { color: #6d28d9 !important; }
-
-/* Expander */
-[data-testid="stExpander"] { background: white !important; border-color: #ddd6fe !important; }
-[data-testid="stExpander"] summary span { color: #4f46e5 !important; }
-
-/* Scrollbar */
-::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#7c3aed,#9333ea) !important; }
-
-/* Copy btn */
-.copy-btn { background: rgba(99,102,241,0.1) !important; border-color: rgba(99,102,241,0.3) !important; color: #4f46e5 !important; }
-
-/* Sidebar text input */
-[data-testid="stSidebar"] .stTextInput input {
-    background: white !important; color: #1e1b4b !important;
-    border-color: #c7d2fe !important;
-}
-
-/* Alert/warning light */
-[data-testid="stAlert"] { background: #faf5ff !important; border-color: #ddd6fe !important; }
-[data-testid="stAlert"] p, [data-testid="stAlert"] span { color: #4c1d95 !important; }
-
-/* Code block */
-pre, code, [data-testid="stCode"] { background: #faf5ff !important; border-color: #ddd6fe !important; color: #4f46e5 !important; }
-</style>"""
-
-def get_theme_css():
-    if st.session_state.theme == "light":
-        return LIGHT_CSS
-    return ""  # dark is default — base CSS handles it
 
 
 
@@ -1155,13 +986,68 @@ section[data-testid="stSidebar"] > div {
 }
 
 /* ════════════════════════════════════════════
-   RADIO
+   RADIO — card style, clearly visible
 ════════════════════════════════════════════ */
-[data-testid="stRadio"] label {
-    color: #6b7d96 !important; font-family: 'Plus Jakarta Sans', sans-serif !important;
-    font-weight: 600 !important; transition: color 0.2s ease !important;
+/* Hide the default radio dot circles */
+[data-testid="stRadio"] [data-baseweb="radio"] [role="radio"] {
+    display: none !important;
 }
-[data-testid="stRadio"] label:hover { color: #a78bfa !important; }
+/* Each option looks like a clickable card */
+[data-testid="stRadio"] label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    background: rgba(255,255,255,0.03) !important;
+    border: 1.5px solid rgba(139,92,246,0.2) !important;
+    border-radius: 12px !important;
+    padding: 0.55rem 0.9rem !important;
+    margin-bottom: 6px !important;
+    color: #94a3b8 !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 0.82rem !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    width: 100% !important;
+}
+[data-testid="stRadio"] label:hover {
+    background: rgba(99,102,241,0.1) !important;
+    border-color: rgba(139,92,246,0.5) !important;
+    color: #c4b5fd !important;
+}
+/* Selected state */
+[data-testid="stRadio"] label[data-checked="true"],
+[data-testid="stRadio"] [aria-checked="true"] ~ label,
+[data-testid="stRadio"] [data-baseweb="radio"]:has(input:checked) label {
+    background: linear-gradient(135deg,rgba(79,70,229,0.2),rgba(124,58,237,0.15)) !important;
+    border-color: rgba(139,92,246,0.7) !important;
+    color: #c4b5fd !important;
+    box-shadow: 0 2px 12px rgba(99,102,241,0.2) !important;
+}
+/* Bullet dot before each label */
+[data-testid="stRadio"] label::before {
+    content: "●";
+    font-size: 0.5rem;
+    color: rgba(139,92,246,0.4);
+    flex-shrink: 0;
+    line-height: 1;
+}
+[data-testid="stRadio"] label:hover::before { color: #a78bfa; }
+/* Sidebar radio stays simple */
+section[data-testid="stSidebar"] [data-testid="stRadio"] label {
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(139,92,246,0.15) !important;
+    border-radius: 10px !important;
+    padding: 0.45rem 0.8rem !important;
+    margin-bottom: 5px !important;
+    color: #94a3b8 !important;
+    font-size: 0.8rem !important;
+}
+section[data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
+    background: rgba(99,102,241,0.1) !important;
+    border-color: rgba(139,92,246,0.4) !important;
+    color: #c4b5fd !important;
+}
 
 /* ════════════════════════════════════════════
    SCROLLBAR
@@ -1425,12 +1311,7 @@ st.markdown("""
 <script>
 // ── BACKGROUND ENFORCER — theme-aware ─────────────────────────────────────────
 (function enforceBackground() {
-    // Read theme set by Streamlit via data attribute on body
-    function getTheme() {
-        return document.body.getAttribute('data-theme') || 'dark';
-    }
-    const DARK_BG  = '#02030d';
-    const LIGHT_BG = '#f0f2ff';
+    const DARK = '#02030d';
     const selectors = [
         'body','#root','.stApp',
         '[data-testid="stAppViewContainer"]',
@@ -1441,24 +1322,19 @@ st.markdown("""
         'section.main','.main'
     ];
     function applyBg() {
-        const theme = getTheme();
-        const bg = (theme === 'light') ? LIGHT_BG : DARK_BG;
-        document.body.style.setProperty('background', bg, 'important');
-        document.body.style.setProperty('background-color', bg, 'important');
+        document.body.style.setProperty('background', DARK, 'important');
+        document.body.style.setProperty('background-color', DARK, 'important');
         selectors.forEach(sel => {
             document.querySelectorAll(sel).forEach(el => {
                 el.style.setProperty('background', 'transparent', 'important');
                 el.style.setProperty('background-color', 'transparent', 'important');
             });
         });
-        // Show/hide canvas particles (only in dark mode)
-        const canvas = document.getElementById('cosmic-canvas');
-        if (canvas) canvas.style.display = (theme === 'light') ? 'none' : 'block';
     }
     applyBg();
     new MutationObserver(applyBg).observe(document.documentElement, {
         childList: true, subtree: true, attributes: true,
-        attributeFilter: ['style','class','data-theme']
+        attributeFilter: ['style','class']
     });
     let t = 0; const iv = setInterval(() => { applyBg(); if(++t > 16) clearInterval(iv); }, 300);
 })();
@@ -1781,27 +1657,47 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("**🎨 Theme**")
-    tc1, tc2 = st.columns(2)
-    with tc1:
-        if st.button("🌙  Dark", key="btn_dark", use_container_width=True,
-                     type="primary" if st.session_state.theme == "dark" else "secondary"):
-            st.session_state.theme = "dark"; st.rerun()
-    with tc2:
-        if st.button("☀️  Light", key="btn_light", use_container_width=True,
-                     type="primary" if st.session_state.theme == "light" else "secondary"):
-            st.session_state.theme = "light"; st.rerun()
+    st.markdown("""
+    <div style="background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(168,85,247,0.08));
+                border:1px solid rgba(139,92,246,0.25);border-radius:14px;padding:0.9rem 1rem;
+                margin-bottom:0.6rem;">
+        <div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;
+                    letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.6rem;">
+            ⚡ What You Get
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;">
+            <div style="display:flex;align-items:center;gap:7px;font-size:0.72rem;color:#c4b5fd;">
+                <span style="font-size:0.85rem;">📝</span> 3 types of summaries
+            </div>
+            <div style="display:flex;align-items:center;gap:7px;font-size:0.72rem;color:#c4b5fd;">
+                <span style="font-size:0.85rem;">🔬</span> Knowledge extraction
+            </div>
+            <div style="display:flex;align-items:center;gap:7px;font-size:0.72rem;color:#c4b5fd;">
+                <span style="font-size:0.85rem;">❓</span> 13 study questions
+            </div>
+            <div style="display:flex;align-items:center;gap:7px;font-size:0.72rem;color:#c4b5fd;">
+                <span style="font-size:0.85rem;">🃏</span> 8 flashcards
+            </div>
+            <div style="display:flex;align-items:center;gap:7px;font-size:0.72rem;color:#c4b5fd;">
+                <span style="font-size:0.85rem;">📄</span> PDF + TXT download
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    st.markdown("**🌐 Language**")
-    lc1, lc2 = st.columns(2)
-    with lc1:
-        if st.button("🇬🇧  English", key="btn_eng", use_container_width=True,
-                     type="primary" if st.session_state.language == "English" else "secondary"):
-            st.session_state.language = "English"; st.rerun()
-    with lc2:
-        if st.button("🇵🇰  اردو", key="btn_urdu", use_container_width=True,
-                     type="primary" if st.session_state.language.startswith("Urdu") else "secondary"):
-            st.session_state.language = "Urdu (اردو)"; st.rerun()
+    st.markdown("""
+    <div style="background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(5,150,105,0.06));
+                border:1px solid rgba(16,185,129,0.25);border-radius:14px;padding:0.75rem 1rem;
+                margin-bottom:0.6rem;">
+        <div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;
+                    letter-spacing:0.1em;color:#34d399;margin-bottom:0.4rem;">
+            💡 Pro Tip
+        </div>
+        <div style="font-size:0.7rem;color:#6ee7b7;line-height:1.5;">
+            Works best with 200–2000 words. Paste your lecture notes and get a full study pack in under 60 seconds!
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     st.markdown("**📥 Input Method**")
     input_mode = st.radio("Input", ["📋 Paste Text", "📁 Upload File"],
@@ -1837,21 +1733,6 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
 
-# ── Inject active theme ───────────────────────────────────────────────────────
-_theme_val = st.session_state.theme  # "dark" or "light"
-# Set data-theme on body so the JS enforcer applies the right background
-st.markdown(f"""<script>
-(function(){{
-    document.body.setAttribute('data-theme', '{_theme_val}');
-    // also force bg immediately
-    document.body.style.setProperty('background',
-        '{("#f0f2ff" if _theme_val == "light" else "#02030d")}', 'important');
-}})();
-</script>""", unsafe_allow_html=True)
-
-theme_css = get_theme_css()
-if theme_css:
-    st.markdown(theme_css, unsafe_allow_html=True)
 
 # ── Hero ──────────────────────────────────────────────────────────────────────
 st.markdown("""
@@ -1933,7 +1814,7 @@ if analyse_clicked:
         st.error("🔑 Groq API key not found. Get your free key at console.groq.com and paste it in the sidebar.")
         st.stop()
 
-    language   = st.session_state.language
+    language   = "English"
     clean      = clean_text(raw_text)
     word_count = count_words(clean)
     read_time  = estimate_read_time(clean)
