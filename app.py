@@ -1073,14 +1073,39 @@ section[data-testid="stSidebar"] > div {
 /* ════════════════════════════════════════════
    HIDE SIDEBAR COLLAPSE ARROW — PERMANENTLY
 ════════════════════════════════════════════ */
-/* Keep collapse button visible on mobile so users can toggle sidebar */
-[data-testid="stSidebarCollapseButton"] { display: none !important; }
-@media screen and (max-width: 768px) {
-    [data-testid="stSidebarCollapseButton"] { display: flex !important; visibility: visible !important; }
-    [data-testid="collapsedControl"] { display: flex !important; visibility: visible !important; }
+@media screen and (min-width: 769px) {
+    [data-testid="stSidebarCollapseButton"] { display: none !important; }
+    [data-testid="collapsedControl"] { display: none !important; }
 }
-.st-emotion-cache-1rtdyuf, .st-emotion-cache-pkbazv { display: none !important; }
-
+@media screen and (max-width: 768px) {
+    [data-testid="stSidebarCollapseButton"] {
+        display: flex !important; visibility: visible !important;
+        position: fixed !important; top: 12px !important; left: 12px !important;
+        z-index: 99999 !important;
+    }
+    [data-testid="stSidebarCollapseButton"] button {
+        background: linear-gradient(135deg,#4f46e5,#7c3aed) !important;
+        border-radius: 10px !important; border: none !important;
+        width: 42px !important; height: 42px !important;
+        box-shadow: 0 4px 16px rgba(99,102,241,0.6) !important;
+    }
+    [data-testid="stSidebarCollapseButton"] svg {
+        color: white !important; fill: white !important; width: 22px !important; height: 22px !important;
+    }
+    [data-testid="collapsedControl"] {
+        display: flex !important; visibility: visible !important;
+        position: fixed !important; top: 12px !important; left: 12px !important;
+        z-index: 99999 !important;
+        background: linear-gradient(135deg,#4f46e5,#7c3aed) !important;
+        border-radius: 10px !important; width: 42px !important; height: 42px !important;
+        box-shadow: 0 4px 16px rgba(99,102,241,0.6) !important;
+    }
+    [data-testid="collapsedControl"] svg {
+        color: white !important; fill: white !important; width: 22px !important; height: 22px !important;
+    }
+    section[data-testid="stSidebar"] { width: 85vw !important; max-width: 320px !important; min-width: unset !important; }
+    .block-container { padding-top: 3.5rem !important; }
+}
 /* ════════════════════════════════════════════
    SIDEBAR — MINIMAL, NEVER SCROLLS SEPARATELY
 ════════════════════════════════════════════ */
