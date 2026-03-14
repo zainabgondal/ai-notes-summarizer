@@ -208,23 +208,19 @@ st.markdown("""
    NUCLEAR BACKGROUND OVERRIDE — ALL LAYERS
 ════════════════════════════════════════════ */
 
-/* Step 1: Kill white on every possible Streamlit wrapper */
-html { background: #02030d !important; }
-body { background: #02030d !important; }
-#root { background: #02030d !important; }
-.stApp { background: #02030d !important; }
-[data-testid="stAppViewContainer"] { background: #02030d !important; }
-[data-testid="stMain"]             { background: #02030d !important; }
-[data-testid="stMainBlockContainer"] { background: #02030d !important; }
-[data-testid="stHeader"]           { background: transparent !important; }
-[data-testid="stDecoration"]       { background: transparent !important; }
-section[data-testid="stSidebar"] + div { background: #02030d !important; }
-.main > div { background: transparent !important; }
-section.main { background: transparent !important; }
-.main       { background: transparent !important; }
-[class*="block-container"] { background: transparent !important; }
-[class*="appview"]   { background: #02030d !important; }
-[class*="stMarkdown"] { background: transparent !important; }
+/* Base dark background — overridden by light theme CSS when active */
+html, body { background: #02030d !important; }
+#root, .stApp,
+[data-testid="stAppViewContainer"],
+[data-testid="stMain"],
+[data-testid="stMainBlockContainer"],
+[class*="appview"] { background: #02030d !important; }
+[data-testid="stHeader"],
+[data-testid="stDecoration"],
+section[data-testid="stSidebar"] + div,
+.main > div, section.main, .main,
+[class*="block-container"],
+[class*="stMarkdown"],
 [class*="element-container"] { background: transparent !important; }
 
 /* Step 2: Font + color on everything */
@@ -1427,10 +1423,14 @@ st.markdown("""<style>
 st.markdown("""
 <canvas id="cosmic-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
 <script>
-// ── BACKGROUND ENFORCER: override Streamlit's runtime white injection ─────────
+// ── BACKGROUND ENFORCER — theme-aware ─────────────────────────────────────────
 (function enforceBackground() {
-    const BG = 'linear-gradient(145deg,#02030d 0%,#06071a 30%,#0a0520 60%,#050210 100%)';
-    const DARK = '#02030d';
+    // Read theme set by Streamlit via data attribute on body
+    function getTheme() {
+        return document.body.getAttribute('data-theme') || 'dark';
+    }
+    const DARK_BG  = '#02030d';
+    const LIGHT_BG = '#f0f2ff';
     const selectors = [
         'body','#root','.stApp',
         '[data-testid="stAppViewContainer"]',
@@ -1441,22 +1441,25 @@ st.markdown("""
         'section.main','.main'
     ];
     function applyBg() {
-        document.body.style.setProperty('background', DARK, 'important');
-        document.body.style.setProperty('background-color', DARK, 'important');
+        const theme = getTheme();
+        const bg = (theme === 'light') ? LIGHT_BG : DARK_BG;
+        document.body.style.setProperty('background', bg, 'important');
+        document.body.style.setProperty('background-color', bg, 'important');
         selectors.forEach(sel => {
             document.querySelectorAll(sel).forEach(el => {
                 el.style.setProperty('background', 'transparent', 'important');
                 el.style.setProperty('background-color', 'transparent', 'important');
             });
         });
+        // Show/hide canvas particles (only in dark mode)
+        const canvas = document.getElementById('cosmic-canvas');
+        if (canvas) canvas.style.display = (theme === 'light') ? 'none' : 'block';
     }
     applyBg();
-    // MutationObserver — re-apply whenever Streamlit re-renders
     new MutationObserver(applyBg).observe(document.documentElement, {
         childList: true, subtree: true, attributes: true,
-        attributeFilter: ['style','class']
+        attributeFilter: ['style','class','data-theme']
     });
-    // Also fire every 300ms for first 5s as safety net
     let t = 0; const iv = setInterval(() => { applyBg(); if(++t > 16) clearInterval(iv); }, 300);
 })();
 </script>
@@ -1616,71 +1619,58 @@ def _groq_call(client, system, user, max_tokens=700):
     )
     return r.choices[0].message.content
 
-def lang_instruction(language):
-    if language.startswith("Urdu"):
-        return (
-            " CRITICAL: You MUST write your ENTIRE response in Urdu script only (اردو). "
-            "Every word must be in Urdu. No English allowed at all."
-        )
-    return ""
+def _urdu_sys(task):
+    return (
+        f"آپ ایک ماہر {task} ہیں۔ "
+        "آپ کو لازمی طور پر اپنا پورا جواب صرف اردو زبان میں لکھنا ہے۔ "
+        "ایک بھی انگریزی لفظ استعمال نہ کریں۔ "
+        "مکمل طور پر اردو رسم الخط میں لکھیں۔"
+    )
+
 
 def get_quick_summary(client, text, language):
     if language == "English": return generate_quick_summary(client, text)
-    if language.startswith("Urdu"):
-        return _groq_call(client,
-            "آپ ایک ماہر خلاصہ نویس ہیں۔ تمام جوابات صرف اردو میں لکھیں۔",
-            f"ان نوٹس کا 3-5 جملوں میں خلاصہ اردو میں لکھیں:\n\n{text[:4000]}", 400)
-    return _groq_call(client, f"Expert summarizer.{lang_instruction(language)}", f"Summarize in 3-5 sentences:\n\n{text[:4000]}", 400)
+    return _groq_call(client, _urdu_sys("خلاصہ نویس"),
+        f"ان نوٹس کا 3-5 جملوں میں خلاصہ صرف اردو میں لکھیں:\n\n{text[:4000]}", 450)
 
 def get_detailed_summary(client, text, language):
     if language == "English": return generate_detailed_summary(client, text)
-    if language.startswith("Urdu"):
-        return _groq_call(client,
-            "آپ ایک ماہر خلاصہ نویس ہیں۔ تمام جوابات صرف اردو میں لکھیں۔",
-            f"ان نوٹس کا تفصیلی خلاصہ اردو میں لکھیں، تمام اہم موضوعات شامل کریں:\n\n{text[:4000]}", 900)
-    return _groq_call(client, f"Expert summarizer.{lang_instruction(language)}", f"Detailed summary:\n\n{text[:4000]}", 900)
+    return _groq_call(client, _urdu_sys("خلاصہ نویس"),
+        f"ان نوٹس کا تفصیلی خلاصہ صرف اردو میں لکھیں، تمام موضوعات شامل کریں:\n\n{text[:4000]}", 900)
 
 def get_key_points(client, text, language):
     if language == "English": return generate_key_points(client, text)
-    if language.startswith("Urdu"):
-        return _groq_call(client,
-            "آپ ایک ماہر استاد ہیں۔ تمام جوابات صرف اردو میں لکھیں۔",
-            f"ان نوٹس کے 8-10 اہم نکات اردو میں لکھیں، ہر نکتہ '• ' سے شروع ہو:\n\n{text[:4000]}", 550)
-    return _groq_call(client, f"Study assistant.{lang_instruction(language)}", f"8-10 key points starting with '• ':\n\n{text[:4000]}", 550)
+    return _groq_call(client, _urdu_sys("استاد"),
+        f"ان نوٹس کے 8 اہم نکات صرف اردو میں لکھیں، ہر نکتہ • سے شروع ہو:\n\n{text[:4000]}", 550)
 
 def get_knowledge(client, text, language):
     if language == "English": return run_full_extraction(client, text)
-    is_urdu = language.startswith("Urdu")
-    sys_u = "آپ ایک ماہر ہیں۔ تمام جوابات صرف اردو میں لکھیں۔"
-    notes_u = f"نوٹس:\n{text[:3000]}"
-    li = lang_instruction(language)
-    concepts    = _groq_call(client, sys_u if is_urdu else f"Identify concepts.{li}",
-                             f"5-6 اہم تصورات اردو میں بیان کریں:\n{text[:3000]}" if is_urdu else f"Notes:\n{text[:3000]}", 450)
+    t = text[:3000]
+    concepts    = _groq_call(client, _urdu_sys("ماہر"),
+        f"5-6 اہم تصورات صرف اردو میں بیان کریں:\n{t}", 450)
     time.sleep(3)
-    definitions = _groq_call(client, sys_u if is_urdu else f"List definitions.{li}",
-                             f"اہم اصطلاحات کی تعریف اردو میں لکھیں:\n{text[:3000]}" if is_urdu else f"Notes:\n{text[:3000]}", 450)
+    definitions = _groq_call(client, _urdu_sys("ماہر"),
+        f"اہم اصطلاحات کی تعریف صرف اردو میں لکھیں:\n{t}", 450)
     time.sleep(3)
-    key_terms   = _groq_call(client, sys_u if is_urdu else f"Key terms comma-separated.{li}",
-                             f"10 اہم اصطلاحات کامہ سے الگ لکھیں (صرف اردو میں):\n{text[:3000]}" if is_urdu else f"Notes:\n{text[:3000]}", 150)
+    key_terms   = _groq_call(client, _urdu_sys("ماہر"),
+        f"10 اہم اصطلاحات کامہ سے الگ صرف اردو میں لکھیں:\n{t}", 180)
     time.sleep(3)
-    facts       = _groq_call(client, sys_u if is_urdu else f"List facts.{li}",
-                             f"5-6 اہم حقائق اردو میں بیان کریں:\n{text[:3000]}" if is_urdu else f"Notes:\n{text[:3000]}", 400)
-    return {"concepts": concepts, "definitions": definitions, "key_terms": key_terms, "important_facts": facts}
+    facts       = _groq_call(client, _urdu_sys("ماہر"),
+        f"5-6 اہم حقائق صرف اردو میں بیان کریں:\n{t}", 400)
+    return {"concepts":concepts,"definitions":definitions,"key_terms":key_terms,"important_facts":facts}
 
 def get_questions(client, text, language):
     if language == "English": return generate_all_questions(client, text)
-    is_urdu = language.startswith("Urdu")
-    sys_u = "آپ ایک ماہر استاد ہیں۔ تمام جوابات صرف اردو میں لکھیں۔"
-    li = lang_instruction(language)
-    conceptual   = _groq_call(client, sys_u if is_urdu else f"Write questions.{li}",
-                              f"5 تصوراتی سوالات اردو میں لکھیں:\n{text[:3000]}" if is_urdu else f"Notes:\n{text[:3000]}", 450)
+    t = text[:3000]
+    conceptual   = _groq_call(client, _urdu_sys("استاد"),
+        f"5 تصوراتی سوالات صرف اردو میں لکھیں:\n{t}", 450)
     time.sleep(3)
-    mcq          = _groq_call(client, sys_u if is_urdu else f"Write MCQ.{li}",
-                              f"4 آپشنز کے ساتھ 5 MCQ سوالات اردو میں لکھیں:\n{text[:3000]}" if is_urdu else f"Notes:\n{text[:3000]}", 600)
+    mcq          = _groq_call(client, _urdu_sys("استاد"),
+        f"4 آپشنز کے ساتھ 5 MCQ سوالات صرف اردو میں لکھیں:\n{t}", 600)
     time.sleep(3)
-    short_answer = _groq_call(client, sys_u if is_urdu else f"Write short questions.{li}",
-                              f"3 مختصر جوابی سوالات اردو میں لکھیں:\n{text[:3000]}" if is_urdu else f"Notes:\n{text[:3000]}", 350)
-    return {"conceptual": conceptual, "mcq": mcq, "short_answer": short_answer}
+    short_answer = _groq_call(client, _urdu_sys("استاد"),
+        f"3 مختصر جوابی سوالات صرف اردو میں لکھیں:\n{t}", 350)
+    return {"conceptual":conceptual,"mcq":mcq,"short_answer":short_answer}
 
 
 # ── PDF generator ─────────────────────────────────────────────────────────────
@@ -1847,7 +1837,18 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
 
-# ── Inject active theme overrides ─────────────────────────────────────────────
+# ── Inject active theme ───────────────────────────────────────────────────────
+_theme_val = st.session_state.theme  # "dark" or "light"
+# Set data-theme on body so the JS enforcer applies the right background
+st.markdown(f"""<script>
+(function(){{
+    document.body.setAttribute('data-theme', '{_theme_val}');
+    // also force bg immediately
+    document.body.style.setProperty('background',
+        '{("#f0f2ff" if _theme_val == "light" else "#02030d")}', 'important');
+}})();
+</script>""", unsafe_allow_html=True)
+
 theme_css = get_theme_css()
 if theme_css:
     st.markdown(theme_css, unsafe_allow_html=True)
