@@ -27,7 +27,7 @@ st.set_page_config(
     page_title="AI Notes Summarizer",
     page_icon="🧠",
     layout="wide",
-    initial_sidebar_state="expanded",
+   initial_sidebar_state="auto",
 )
 
 # ── Cosmic UI CSS + JS ────────────────────────────────────────────────────────
@@ -1074,7 +1074,11 @@ section[data-testid="stSidebar"] > div {
    HIDE SIDEBAR COLLAPSE ARROW — PERMANENTLY
 ════════════════════════════════════════════ */
 /* Keep collapse button visible on mobile so users can toggle sidebar */
-[data-testid="stSidebarCollapseButton"]         { display: none !important; }
+[data-testid="stSidebarCollapseButton"] { display: none !important; }
+@media screen and (max-width: 768px) {
+    [data-testid="stSidebarCollapseButton"] { display: flex !important; visibility: visible !important; }
+    [data-testid="collapsedControl"] { display: flex !important; visibility: visible !important; }
+}
 .st-emotion-cache-1rtdyuf, .st-emotion-cache-pkbazv { display: none !important; }
 
 /* ════════════════════════════════════════════
