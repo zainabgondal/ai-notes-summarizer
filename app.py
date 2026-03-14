@@ -27,7 +27,7 @@ st.set_page_config(
     page_title="AI Notes Summarizer",
     page_icon="🧠",
     layout="wide",
-    initial_sidebar_state="auto",
+    initial_sidebar_state="expanded",
 )
 
 # ── Cosmic UI CSS + JS ────────────────────────────────────────────────────────
@@ -1071,57 +1071,14 @@ section[data-testid="stSidebar"] > div {
 /* old stAlert + expander replaced below */
 
 /* ════════════════════════════════════════════
-   SIDEBAR TOGGLE BUTTON
-   — hidden on desktop (stays open)
-   — VISIBLE on mobile (needed to open sidebar)
+   HIDE SIDEBAR COLLAPSE ARROW — PERMANENTLY
 ════════════════════════════════════════════ */
-
-/* Desktop: hide the arrow (sidebar always open) */
-@media screen and (min-width: 769px) {
-    [data-testid="collapsedControl"]                { display: none !important; }
-    [data-testid="stSidebarCollapseButton"]         { display: none !important; }
-    [data-testid="stSidebarNavCollapseIcon"]        { display: none !important; }
-    button[data-testid="baseButton-headerNoPadding"]{ display: none !important; }
-    .st-emotion-cache-1rtdyuf, .st-emotion-cache-pkbazv { display: none !important; }
-}
-
-/* Mobile: SHOW the toggle button — styled nicely */
-@media screen and (max-width: 768px) {
-    [data-testid="collapsedControl"] {
-        display: flex !important;
-        visibility: visible !important;
-        position: fixed !important;
-        top: 10px !important;
-        left: 10px !important;
-        z-index: 9999 !important;
-        background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
-        border-radius: 10px !important;
-        padding: 6px 10px !important;
-        box-shadow: 0 4px 16px rgba(99,102,241,0.5) !important;
-        border: none !important;
-    }
-    [data-testid="collapsedControl"] svg {
-        color: white !important;
-        fill: white !important;
-        width: 20px !important;
-        height: 20px !important;
-    }
-    [data-testid="stSidebarCollapseButton"] {
-        display: flex !important;
-        visibility: visible !important;
-    }
-    [data-testid="stSidebarCollapseButton"] button {
-        background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
-        border-radius: 10px !important;
-        border: none !important;
-        color: white !important;
-        box-shadow: 0 4px 16px rgba(99,102,241,0.5) !important;
-    }
-    [data-testid="stSidebarCollapseButton"] svg {
-        color: white !important;
-        fill: white !important;
-    }
-}
+[data-testid="collapsedControl"]                { display: none !important; visibility: hidden !important; }
+[data-testid="stSidebarCollapseButton"]         { display: none !important; visibility: hidden !important; }
+[data-testid="stSidebarNavCollapseIcon"]        { display: none !important; visibility: hidden !important; }
+button[data-testid="baseButton-headerNoPadding"]{ display: none !important; visibility: hidden !important; }
+section[data-testid="stSidebar"] > div:first-child button { display: none !important; }
+.st-emotion-cache-1rtdyuf, .st-emotion-cache-pkbazv { display: none !important; }
 
 /* ════════════════════════════════════════════
    SIDEBAR — MINIMAL, NEVER SCROLLS SEPARATELY
@@ -1784,31 +1741,6 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-
-# ── Mobile hint — only shows on small screens ────────────────────────────────
-st.markdown("""
-<style>
-.mobile-hint {
-    display: none;
-    background: linear-gradient(135deg,rgba(99,102,241,0.15),rgba(139,92,246,0.1));
-    border: 1px solid rgba(139,92,246,0.3);
-    border-radius: 12px;
-    padding: 0.6rem 1rem;
-    font-size: 0.8rem;
-    color: #c4b5fd;
-    font-weight: 600;
-    margin-bottom: 0.8rem;
-    align-items: center;
-    gap: 8px;
-}
-@media screen and (max-width: 768px) {
-    .mobile-hint { display: flex !important; }
-}
-</style>
-<div class="mobile-hint">
-    ☰ &nbsp;Tap the <strong style="color:#a78bfa;">purple button</strong> (top-left) to open settings &amp; input options
-</div>
-""", unsafe_allow_html=True)
 
 # ── Hero ──────────────────────────────────────────────────────────────────────
 st.markdown("""
