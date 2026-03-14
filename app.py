@@ -20,56 +20,176 @@ from question_generator import generate_all_questions
 from flashcard_generator import generate_flashcards
 
 # ── Session state defaults ────────────────────────────────────────────────────
-if "theme"    not in st.session_state: st.session_state.theme    = "cosmic"
+if "theme"    not in st.session_state: st.session_state.theme    = "dark"
 if "language" not in st.session_state: st.session_state.language = "English"
 
-# ── Theme definitions ─────────────────────────────────────────────────────────
+# ── Only 2 themes ─────────────────────────────────────────────────────────────
 THEMES = {
-    "cosmic":  {"emoji":"🌌","name":"Cosmic",  "p1":"#3730a3","p2":"#6d28d9","p3":"#9333ea","a":"99,102,241","b":"139,92,246","c":"168,85,247","bg":"#02030d","orbit":"88,28,220"},
-    "ocean":   {"emoji":"🌊","name":"Ocean",   "p1":"#0c4a6e","p2":"#0369a1","p3":"#0ea5e9","a":"14,165,233","b":"6,182,212", "c":"56,189,248", "bg":"#020810","orbit":"14,165,233"},
-    "emerald": {"emoji":"🌿","name":"Emerald", "p1":"#064e3b","p2":"#047857","p3":"#10b981","a":"16,185,129","b":"5,150,105", "c":"52,211,153", "bg":"#020e08","orbit":"16,185,129"},
-    "solar":   {"emoji":"🔥","name":"Solar",   "p1":"#78350f","p2":"#b45309","p3":"#f59e0b","a":"245,158,11","b":"217,119,6", "c":"251,146,60", "bg":"#0d0800","orbit":"245,158,11"},
-    "cherry":  {"emoji":"🌸","name":"Cherry",  "p1":"#831843","p2":"#be185d","p3":"#ec4899","a":"236,72,153","b":"219,39,119","c":"244,114,182","bg":"#0d0208","orbit":"236,72,153"},
+    "dark":  {"emoji": "🌙", "name": "Dark"},
+    "light": {"emoji": "☀️", "name": "Light"},
 }
 
-LANGUAGES = [
-    "English","Urdu (اردو)","Turkish (Türkçe)","Arabic (العربية)",
-    "French (Français)","Spanish (Español)","German (Deutsch)",
-    "Chinese (中文)","Japanese (日本語)","Hindi (हिंदी)",
-    "Portuguese (Português)","Italian (Italiano)","Russian (Русский)",
-    "Korean (한국어)","Bengali (বাংলা)",
-]
+# ── Only 2 languages ──────────────────────────────────────────────────────────
+LANGUAGES = ["English", "Urdu (اردو)"]
+
+# ── Light theme full CSS override ─────────────────────────────────────────────
+LIGHT_CSS = """<style>
+html, body, #root, .stApp,
+[data-testid="stAppViewContainer"],
+[data-testid="stMain"],
+[data-testid="stMainBlockContainer"] {
+    background: #f0f2ff !important;
+    background-color: #f0f2ff !important;
+}
+body::before, body::after { display: none !important; }
+canvas#cosmic-canvas { display: none !important; }
+
+/* All text dark */
+html, body, [class*="css"], [data-testid], p, span, div, label {
+    color: #1e1b4b !important;
+}
+
+/* Hero */
+.hero {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #6d28d9 100%) !important;
+    border-color: rgba(79,70,229,0.4) !important;
+    box-shadow: 0 20px 60px rgba(79,70,229,0.3) !important;
+}
+.hero-title { background: linear-gradient(135deg,#ffffff,#e9d5ff,#c4b5fd) !important;
+    -webkit-background-clip:text !important; background-clip:text !important; -webkit-text-fill-color:transparent !important; }
+.hero-sub { color: rgba(255,255,255,0.75) !important; }
+.hero-eyebrow { background: rgba(255,255,255,0.15) !important; border-color: rgba(255,255,255,0.3) !important; color: white !important; }
+.hero-author { background: rgba(255,255,255,0.2) !important; color: white !important; box-shadow: none !important; }
+
+/* Output cards — white on light bg */
+.out-card {
+    background: white !important;
+    border: 1px solid #ddd6fe !important;
+    color: #1e1b4b !important;
+    box-shadow: 0 4px 20px rgba(99,102,241,0.1) !important;
+}
+.out-card:hover { box-shadow: 0 12px 32px rgba(99,102,241,0.18) !important; }
+
+/* Stat cards */
+.stat-card {
+    background: white !important;
+    border: 1px solid #ddd6fe !important;
+    box-shadow: 0 4px 16px rgba(99,102,241,0.08) !important;
+}
+.stat-num { background: linear-gradient(135deg,#4f46e5,#7c3aed) !important;
+    -webkit-background-clip:text !important; background-clip:text !important; -webkit-text-fill-color:transparent !important; }
+.stat-lbl { color: #64748b !important; }
+
+/* Progress box */
+.prog-box { background: white !important; border-color: #ddd6fe !important; box-shadow: 0 4px 20px rgba(99,102,241,0.08) !important; }
+.prog-step.wait { color: #94a3b8 !important; }
+.prog-step.done { color: #059669 !important; }
+.prog-step.active { color: #4f46e5 !important; }
+.prog-dot.wait { background: #f1f5f9 !important; border-color: #e2e8f0 !important; color: #94a3b8 !important; }
+.prog-dot.done { background: #ecfdf5 !important; border-color: #6ee7b7 !important; color: #059669 !important; }
+.prog-dot.active { background: #eef2ff !important; border-color: #6366f1 !important; color: #4f46e5 !important; }
+
+/* Section headers */
+.sec-title { color: #1e1b4b !important; }
+.sec-icon { background: linear-gradient(135deg,#4f46e5,#7c3aed) !important; }
+
+/* Chips */
+.chip { background: #eef2ff !important; color: #4338ca !important; border-color: #c7d2fe !important; }
+.chip:hover { background: #4f46e5 !important; color: white !important; }
+
+/* Know labels */
+.know-lbl { background: linear-gradient(90deg,#4f46e5,#7c3aed) !important;
+    -webkit-background-clip:text !important; background-clip:text !important; -webkit-text-fill-color:transparent !important; }
+
+/* Flashcards */
+.fc-item { background: white !important; border-color: #ddd6fe !important; box-shadow: 0 4px 16px rgba(99,102,241,0.08) !important; }
+.fc-q { color: #1e1b4b !important; border-color: #e9d5ff !important; }
+.fc-q-lbl { color: #6d28d9 !important; }
+.fc-a { color: #475569 !important; }
+.fc-a-lbl { color: #059669 !important; }
+
+/* Success box */
+.success-box { background: linear-gradient(135deg,#ecfdf5,#d1fae5) !important; border-color: #6ee7b7 !important; color: #065f46 !important; }
+
+/* Sidebar light */
+section[data-testid="stSidebar"] {
+    background: linear-gradient(160deg,#ede9fe,#f3e8ff,#faf5ff) !important;
+    border-right: 1px solid #ddd6fe !important;
+}
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] span,
+[data-testid="stSidebar"] div,
+[data-testid="stSidebar"] label { color: #3730a3 !important; }
+
+/* Textarea light */
+.stTextArea textarea {
+    background: white !important;
+    background-color: white !important;
+    color: #1e1b4b !important;
+    border-color: #c7d2fe !important;
+}
+.stTextArea textarea:focus { border-color: #6366f1 !important; }
+.stTextArea textarea::placeholder { color: #94a3b8 !important; }
+
+/* File uploader light */
+[data-testid="stFileUploader"] section {
+    background: #faf5ff !important;
+    border-color: #c4b5fd !important;
+}
+[data-testid="stFileUploader"] span,
+[data-testid="stFileUploader"] p { color: #6d28d9 !important; }
+
+/* Tabs light */
+.stTabs [data-baseweb="tab-list"] { background: white !important; border-color: #ddd6fe !important; }
+.stTabs [data-baseweb="tab"] { color: #64748b !important; }
+.stTabs [aria-selected="true"] { background: linear-gradient(135deg,#4f46e5,#7c3aed) !important; color: white !important; }
+
+/* Buttons light */
+div[data-testid="stButton"]>button[kind="primary"] {
+    background: linear-gradient(135deg,#4f46e5,#7c3aed,#9333ea) !important;
+    color: white !important;
+}
+div[data-testid="stDownloadButton"]>button {
+    background: linear-gradient(135deg,#4f46e5,#7c3aed) !important;
+    color: white !important;
+}
+
+/* Divider */
+.div { background: linear-gradient(90deg,transparent,rgba(99,102,241,0.3),transparent) !important; }
+
+/* Footer */
+.app-footer { background: white !important; border-color: #ddd6fe !important; color: #475569 !important; }
+.app-footer strong { color: #6d28d9 !important; }
+
+/* Expander */
+[data-testid="stExpander"] { background: white !important; border-color: #ddd6fe !important; }
+[data-testid="stExpander"] summary span { color: #4f46e5 !important; }
+
+/* Scrollbar */
+::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#7c3aed,#9333ea) !important; }
+
+/* Copy btn */
+.copy-btn { background: rgba(99,102,241,0.1) !important; border-color: rgba(99,102,241,0.3) !important; color: #4f46e5 !important; }
+
+/* Sidebar text input */
+[data-testid="stSidebar"] .stTextInput input {
+    background: white !important; color: #1e1b4b !important;
+    border-color: #c7d2fe !important;
+}
+
+/* Alert/warning light */
+[data-testid="stAlert"] { background: #faf5ff !important; border-color: #ddd6fe !important; }
+[data-testid="stAlert"] p, [data-testid="stAlert"] span { color: #4c1d95 !important; }
+
+/* Code block */
+pre, code, [data-testid="stCode"] { background: #faf5ff !important; border-color: #ddd6fe !important; color: #4f46e5 !important; }
+</style>"""
 
 def get_theme_css():
-    k = st.session_state.theme
-    if k == "cosmic": return ""
-    t = THEMES[k]
-    a,b,c = t["a"],t["b"],t["c"]
-    p1,p2,p3 = t["p1"],t["p2"],t["p3"]
-    bg,orbit = t["bg"],t["orbit"]
-    return (
-        "<style>"
-        f"html,body,#root,.stApp,[data-testid='stAppViewContainer'],"
-        f"[data-testid='stMain'],[data-testid='stMainBlockContainer']{{background:{bg}!important;}}"
-        f".hero{{border-color:rgba({a},0.35)!important;}}"
-        f".hero-eyebrow{{background:linear-gradient(135deg,rgba({a},.2),rgba({b},.13))!important;border-color:rgba({b},.5)!important;color:rgb({c})!important;}}"
-        f".hero-author{{background:linear-gradient(135deg,{p1},{p2},{p3})!important;box-shadow:0 8px 35px rgba({a},.55)!important;}}"
-        f".sec-icon{{background:linear-gradient(135deg,{p1},{p2},{p3})!important;box-shadow:0 8px 24px rgba({a},.5)!important;}}"
-        f".stat-card::after{{background:linear-gradient(90deg,transparent,rgb({b}),rgb({c}),transparent)!important;}}"
-        f".stat-num{{background:linear-gradient(135deg,rgb({a}),rgb({b}),rgb({c}))!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;}}"
-        f".chip{{background:rgba({a},.1)!important;color:rgb({c})!important;border-color:rgba({a},.26)!important;}}"
-        f".prog-bar-fill{{background:linear-gradient(90deg,{p1},{p2},{p3},{p2},{p1})!important;background-size:400% 100%!important;}}"
-        f".prog-dot.active{{border-color:rgba({b},.55)!important;color:rgb({c})!important;background:rgba({a},.14)!important;}}"
-        f".stTabs [aria-selected='true']{{background:linear-gradient(135deg,{p1},{p2},{p3})!important;box-shadow:0 4px 20px rgba({a},.5)!important;}}"
-        f"div[data-testid='stButton']>button[kind='primary']{{background:linear-gradient(135deg,{p1},{p2},{p3})!important;background-size:300% 300%!important;box-shadow:0 8px 35px rgba({a},.55)!important;}}"
-        f"div[data-testid='stDownloadButton']>button{{background:linear-gradient(135deg,{p1},{p2},{p3})!important;box-shadow:0 6px 30px rgba({a},.4)!important;}}"
-        f"section[data-testid='stSidebar']{{background:radial-gradient(ellipse 120% 35% at 50% 0%,rgba({orbit},.6) 0%,transparent 50%),linear-gradient(160deg,#0d0a1f 0%,#120e2e 40%,#0a0818 100%)!important;}}"
-        f"[data-testid='stFileUploader'] section button{{background:linear-gradient(135deg,{p1},{p2})!important;}}"
-        f".fc-item{{border-color:rgba({a},.22)!important;}}"
-        f".fc-item:hover{{border-color:rgba({b},.5)!important;box-shadow:0 12px 35px rgba({a},.2)!important;}}"
-        f".copy-btn{{background:rgba({a},.15)!important;border-color:rgba({a},.3)!important;color:rgb({c})!important;}}"
-        "</style>"
-    )
+    if st.session_state.theme == "light":
+        return LIGHT_CSS
+    return ""  # dark is default — base CSS handles it
+
 
 
 st.set_page_config(
@@ -1450,40 +1570,69 @@ def _groq_call(client, system, user, max_tokens=700):
     return r.choices[0].message.content
 
 def lang_instruction(language):
-    return f" Always respond entirely in {language}. Do not use English." if language != "English" else ""
+    if language.startswith("Urdu"):
+        return (
+            " CRITICAL: You MUST write your ENTIRE response in Urdu script only (اردو). "
+            "Every word must be in Urdu. No English allowed at all."
+        )
+    return ""
 
 def get_quick_summary(client, text, language):
     if language == "English": return generate_quick_summary(client, text)
-    return _groq_call(client, f"You are an expert academic summarizer.{lang_instruction(language)}", f"Summarize these notes in 3-5 sentences:\n\n{text[:4000]}", 350)
+    if language.startswith("Urdu"):
+        return _groq_call(client,
+            "آپ ایک ماہر خلاصہ نویس ہیں۔ تمام جوابات صرف اردو میں لکھیں۔",
+            f"ان نوٹس کا 3-5 جملوں میں خلاصہ اردو میں لکھیں:\n\n{text[:4000]}", 400)
+    return _groq_call(client, f"Expert summarizer.{lang_instruction(language)}", f"Summarize in 3-5 sentences:\n\n{text[:4000]}", 400)
 
 def get_detailed_summary(client, text, language):
     if language == "English": return generate_detailed_summary(client, text)
-    return _groq_call(client, f"You are an expert academic summarizer.{lang_instruction(language)}", f"Write a detailed multi-paragraph summary covering all main topics:\n\n{text[:4000]}", 800)
+    if language.startswith("Urdu"):
+        return _groq_call(client,
+            "آپ ایک ماہر خلاصہ نویس ہیں۔ تمام جوابات صرف اردو میں لکھیں۔",
+            f"ان نوٹس کا تفصیلی خلاصہ اردو میں لکھیں، تمام اہم موضوعات شامل کریں:\n\n{text[:4000]}", 900)
+    return _groq_call(client, f"Expert summarizer.{lang_instruction(language)}", f"Detailed summary:\n\n{text[:4000]}", 900)
 
 def get_key_points(client, text, language):
     if language == "English": return generate_key_points(client, text)
-    return _groq_call(client, f"You are an expert study assistant.{lang_instruction(language)}", f"Extract 8-10 key points, each starting with '• ':\n\n{text[:4000]}", 500)
+    if language.startswith("Urdu"):
+        return _groq_call(client,
+            "آپ ایک ماہر استاد ہیں۔ تمام جوابات صرف اردو میں لکھیں۔",
+            f"ان نوٹس کے 8-10 اہم نکات اردو میں لکھیں، ہر نکتہ '• ' سے شروع ہو:\n\n{text[:4000]}", 550)
+    return _groq_call(client, f"Study assistant.{lang_instruction(language)}", f"8-10 key points starting with '• ':\n\n{text[:4000]}", 550)
 
 def get_knowledge(client, text, language):
     if language == "English": return run_full_extraction(client, text)
-    lang_note = lang_instruction(language)
-    concepts = _groq_call(client, f"Identify 5-6 important concepts.{lang_note}", f"Notes:\n{text[:3000]}", 400)
+    is_urdu = language.startswith("Urdu")
+    sys_u = "آپ ایک ماہر ہیں۔ تمام جوابات صرف اردو میں لکھیں۔"
+    notes_u = f"نوٹس:\n{text[:3000]}"
+    li = lang_instruction(language)
+    concepts    = _groq_call(client, sys_u if is_urdu else f"Identify concepts.{li}",
+                             f"5-6 اہم تصورات اردو میں بیان کریں:\n{text[:3000]}" if is_urdu else f"Notes:\n{text[:3000]}", 450)
     time.sleep(3)
-    definitions = _groq_call(client, f"List key term definitions.{lang_note}", f"Notes:\n{text[:3000]}", 400)
+    definitions = _groq_call(client, sys_u if is_urdu else f"List definitions.{li}",
+                             f"اہم اصطلاحات کی تعریف اردو میں لکھیں:\n{text[:3000]}" if is_urdu else f"Notes:\n{text[:3000]}", 450)
     time.sleep(3)
-    key_terms = _groq_call(client, f"List 10 key terms as comma-separated values ONLY.{lang_note}", f"Notes:\n{text[:3000]}", 150)
+    key_terms   = _groq_call(client, sys_u if is_urdu else f"Key terms comma-separated.{li}",
+                             f"10 اہم اصطلاحات کامہ سے الگ لکھیں (صرف اردو میں):\n{text[:3000]}" if is_urdu else f"Notes:\n{text[:3000]}", 150)
     time.sleep(3)
-    facts = _groq_call(client, f"List 5-6 important facts.{lang_note}", f"Notes:\n{text[:3000]}", 350)
+    facts       = _groq_call(client, sys_u if is_urdu else f"List facts.{li}",
+                             f"5-6 اہم حقائق اردو میں بیان کریں:\n{text[:3000]}" if is_urdu else f"Notes:\n{text[:3000]}", 400)
     return {"concepts": concepts, "definitions": definitions, "key_terms": key_terms, "important_facts": facts}
 
 def get_questions(client, text, language):
     if language == "English": return generate_all_questions(client, text)
-    lang_note = lang_instruction(language)
-    conceptual   = _groq_call(client, f"Write 5 conceptual questions.{lang_note}", f"Notes:\n{text[:3000]}", 400)
+    is_urdu = language.startswith("Urdu")
+    sys_u = "آپ ایک ماہر استاد ہیں۔ تمام جوابات صرف اردو میں لکھیں۔"
+    li = lang_instruction(language)
+    conceptual   = _groq_call(client, sys_u if is_urdu else f"Write questions.{li}",
+                              f"5 تصوراتی سوالات اردو میں لکھیں:\n{text[:3000]}" if is_urdu else f"Notes:\n{text[:3000]}", 450)
     time.sleep(3)
-    mcq          = _groq_call(client, f"Write 5 multiple-choice questions with 4 options each.{lang_note}", f"Notes:\n{text[:3000]}", 500)
+    mcq          = _groq_call(client, sys_u if is_urdu else f"Write MCQ.{li}",
+                              f"4 آپشنز کے ساتھ 5 MCQ سوالات اردو میں لکھیں:\n{text[:3000]}" if is_urdu else f"Notes:\n{text[:3000]}", 600)
     time.sleep(3)
-    short_answer = _groq_call(client, f"Write 3 short-answer questions.{lang_note}", f"Notes:\n{text[:3000]}", 300)
+    short_answer = _groq_call(client, sys_u if is_urdu else f"Write short questions.{li}",
+                              f"3 مختصر جوابی سوالات اردو میں لکھیں:\n{text[:3000]}" if is_urdu else f"Notes:\n{text[:3000]}", 350)
     return {"conceptual": conceptual, "mcq": mcq, "short_answer": short_answer}
 
 
@@ -1624,46 +1773,54 @@ with st.sidebar:
 
     st.markdown("<div style='height:0.8rem'></div>", unsafe_allow_html=True)
 
-    # ── Theme selector ────────────────────────────────────────────────────────
+    # ── Theme toggle — big clear buttons ─────────────────────────────────────
     st.markdown("""
     <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;
-                background:linear-gradient(90deg,#a78bfa,#e879f9);-webkit-background-clip:text;
-                -webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;">
-        🎨 Theme
-    </div>""", unsafe_allow_html=True)
-    theme_cols = st.columns(5)
-    for i, (tk, tv) in enumerate(THEMES.items()):
-        with theme_cols[i]:
-            active_cls = "active" if st.session_state.theme == tk else ""
-            if st.button(tv["emoji"], key=f"theme_{tk}", help=tv["name"],
-                         use_container_width=True):
-                st.session_state.theme = tk
-                st.rerun()
-    # Show active theme name
-    active_t = THEMES[st.session_state.theme]
+                color:#a78bfa;margin-bottom:8px;">🎨 Theme</div>
+    """, unsafe_allow_html=True)
+    t_col1, t_col2 = st.columns(2)
+    with t_col1:
+        dark_active  = st.session_state.theme == "dark"
+        dark_style   = "background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;border:2px solid #7c3aed;" if dark_active else "background:rgba(99,102,241,0.1);color:#a5b4fc;border:1px solid rgba(99,102,241,0.3);"
+        if st.button("🌙  Dark", key="btn_dark", use_container_width=True,
+                     help="Switch to Dark theme"):
+            st.session_state.theme = "dark"
+            st.rerun()
+    with t_col2:
+        light_active = st.session_state.theme == "light"
+        if st.button("☀️  Light", key="btn_light", use_container_width=True,
+                     help="Switch to Light theme"):
+            st.session_state.theme = "light"
+            st.rerun()
+    active_name = "🌙 Dark Mode" if st.session_state.theme == "dark" else "☀️ Light Mode"
     st.markdown(
-        f"<div style='font-size:0.65rem;color:#6366f1;font-weight:700;text-align:center;"
-        f"margin-top:2px;margin-bottom:0.7rem;'>{active_t['emoji']} {active_t['name']} Theme</div>",
+        f"<div style='font-size:0.62rem;color:#6366f1;font-weight:700;text-align:center;"
+        f"margin-top:3px;margin-bottom:0.8rem;'>Active: {active_name}</div>",
         unsafe_allow_html=True,
     )
 
-    # ── Language selector ─────────────────────────────────────────────────────
+    # ── Language selector — visible with white text ───────────────────────────
     st.markdown("""
     <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;
-                background:linear-gradient(90deg,#a78bfa,#e879f9);-webkit-background-clip:text;
-                -webkit-text-fill-color:transparent;background-clip:text;margin-bottom:5px;">
-        🌐 Output Language
-    </div>""", unsafe_allow_html=True)
-    selected_lang = st.selectbox(
-        "Language", LANGUAGES,
-        index=LANGUAGES.index(st.session_state.language) if st.session_state.language in LANGUAGES else 0,
-        label_visibility="collapsed",
-    )
-    if selected_lang != st.session_state.language:
-        st.session_state.language = selected_lang
+                color:#a78bfa;margin-bottom:6px;">🌐 Output Language</div>
+    """, unsafe_allow_html=True)
+    l_col1, l_col2 = st.columns(2)
+    with l_col1:
+        eng_active = st.session_state.language == "English"
+        if st.button("🇬🇧  English", key="btn_eng", use_container_width=True,
+                     help="Output in English"):
+            st.session_state.language = "English"
+            st.rerun()
+    with l_col2:
+        urdu_active = st.session_state.language.startswith("Urdu")
+        if st.button("🇵🇰  اردو", key="btn_urdu", use_container_width=True,
+                     help="Output in Urdu"):
+            st.session_state.language = "Urdu (اردو)"
+            st.rerun()
+    active_lang = "🇬🇧 English" if st.session_state.language == "English" else "🇵🇰 Urdu"
     st.markdown(
-        "<div style='font-size:0.68rem;color:#475569;margin-top:2px;margin-bottom:0.7rem;'>"
-        "AI will summarize &amp; answer in your chosen language 🌍</div>",
+        f"<div style='font-size:0.62rem;color:#6366f1;font-weight:700;text-align:center;"
+        f"margin-top:3px;margin-bottom:0.8rem;'>Active: {active_lang}</div>",
         unsafe_allow_html=True,
     )
 
@@ -1775,15 +1932,24 @@ with st.sidebar:
                          background:linear-gradient(135deg,#a78bfa,#f0abfc,#67e8f9);
                          -webkit-background-clip:text;-webkit-text-fill-color:transparent;
                          background-clip:text;">Zainab Gondal</span><br>
-            <span style="color:#1e293b;font-size:0.65rem;">CS Student · MUET · Pakistan</span>
+            <span style="color:#475569;font-size:0.65rem;">CS Student · MUET · Pakistan</span>
         </div>
-        <div style="margin-top:0.7rem;">
+        <div style="margin-top:0.8rem;display:flex;flex-direction:column;gap:7px;align-items:center;">
             <a href="https://zainab-notes-summarizer.streamlit.app/" target="_blank"
-               style="display:inline-flex;align-items:center;gap:4px;
+               style="display:inline-flex;align-items:center;gap:5px;
                       background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(168,85,247,0.15));
                       border:1px solid rgba(139,92,246,0.38);color:#c4b5fd;text-decoration:none;
-                      padding:5px 14px;border-radius:100px;font-size:0.68rem;font-weight:700;">
+                      padding:5px 14px;border-radius:100px;font-size:0.68rem;font-weight:700;
+                      width:fit-content;">
                 🌐 Live App
+            </a>
+            <a href="https://www.linkedin.com/in/zainab-gondal/" target="_blank"
+               style="display:inline-flex;align-items:center;gap:5px;
+                      background:linear-gradient(135deg,rgba(10,102,194,0.3),rgba(10,102,194,0.15));
+                      border:1px solid rgba(10,102,194,0.45);color:#93c5fd;text-decoration:none;
+                      padding:5px 14px;border-radius:100px;font-size:0.68rem;font-weight:700;
+                      width:fit-content;">
+                💼 Connect on LinkedIn
             </a>
         </div>
     </div>
@@ -1805,7 +1971,17 @@ st.markdown("""
         Transform raw lecture notes into structured summaries, key concepts<br>
         and study questions — intelligently, in seconds.
     </div>
-    <div class="hero-author">✨ Created by Zainab Gondal</div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;">
+        <div class="hero-author">✨ Created by Zainab Gondal</div>
+        <a href="https://www.linkedin.com/in/zainab-gondal/" target="_blank"
+           style="display:inline-flex;align-items:center;gap:7px;
+                  background:rgba(10,102,194,0.25);border:1px solid rgba(10,102,194,0.5);
+                  color:white;text-decoration:none;padding:0.5rem 1.3rem;border-radius:100px;
+                  font-size:0.82rem;font-weight:700;backdrop-filter:blur(8px);
+                  transition:all 0.2s ease;">
+            💼 Connect on LinkedIn
+        </a>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
