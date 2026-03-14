@@ -1207,67 +1207,57 @@ section[data-testid="stSidebar"] > div:first-child button { display: none !impor
 .st-emotion-cache-1rtdyuf, .st-emotion-cache-pkbazv { display: none !important; }
 
 /* ════════════════════════════════════════════
-   SIDEBAR — CLEAN, NO SEPARATE SCROLL
+   SIDEBAR — MINIMAL, NEVER SCROLLS SEPARATELY
 ════════════════════════════════════════════ */
 section[data-testid="stSidebar"] {
-    width: 280px !important;
-    min-width: 280px !important;
-    max-width: 280px !important;
+    width: 260px !important;
+    min-width: 260px !important;
+    max-width: 260px !important;
 }
-/* Let sidebar grow naturally with content — no inner scroll */
 section[data-testid="stSidebar"] > div {
-    overflow-y: visible !important;
     height: auto !important;
-}
-section[data-testid="stSidebar"] > div > div[data-testid="stVerticalBlock"] {
-    overflow: visible !important;
-    height: auto !important;
+    overflow-y: auto !important;
     padding-bottom: 1rem !important;
 }
-/* Hide any scrollbar that appears */
-section[data-testid="stSidebar"] *::-webkit-scrollbar { display: none !important; width: 0 !important; }
-
-/* ── Sidebar secondary (inactive) buttons ── */
+section[data-testid="stSidebar"] > div > div[data-testid="stVerticalBlock"] {
+    padding: 0 0.6rem 1rem !important;
+}
+/* Sidebar button styles */
+section[data-testid="stSidebar"] div[data-testid="stButton"] > button {
+    border-radius: 10px !important;
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    padding: 0.45rem 0.5rem !important;
+}
 section[data-testid="stSidebar"] div[data-testid="stButton"] > button[kind="secondary"] {
     background: rgba(99,102,241,0.08) !important;
     color: #94a3b8 !important;
     border: 1px solid rgba(99,102,241,0.2) !important;
-    border-radius: 10px !important;
-    font-weight: 600 !important;
-    font-size: 0.82rem !important;
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
 }
 section[data-testid="stSidebar"] div[data-testid="stButton"] > button[kind="secondary"]:hover {
-    background: rgba(99,102,241,0.18) !important;
+    background: rgba(99,102,241,0.15) !important;
     color: #c4b5fd !important;
     border-color: rgba(139,92,246,0.4) !important;
 }
-/* ── Sidebar primary (active) buttons ── */
 section[data-testid="stSidebar"] div[data-testid="stButton"] > button[kind="primary"] {
-    background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+    background: linear-gradient(135deg,#4f46e5,#7c3aed) !important;
     color: white !important;
     border: none !important;
-    border-radius: 10px !important;
-    font-weight: 700 !important;
-    font-size: 0.82rem !important;
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
-    box-shadow: 0 3px 12px rgba(99,102,241,0.4) !important;
+    box-shadow: 0 3px 10px rgba(99,102,241,0.4) !important;
 }
-/* ── Sidebar caption ── */
-section[data-testid="stSidebar"] [data-testid="stCaptionContainer"] p {
-    color: #475569 !important;
-    font-size: 0.68rem !important;
+/* Sidebar text */
+section[data-testid="stSidebar"] p,
+section[data-testid="stSidebar"] strong {
+    color: #c4b5fd !important;
+    font-size: 0.8rem !important;
 }
-/* ── Sidebar radio ── */
 section[data-testid="stSidebar"] [data-testid="stRadio"] label {
     color: #94a3b8 !important;
     font-size: 0.82rem !important;
     font-weight: 600 !important;
 }
-section[data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
-    color: #c4b5fd !important;
-}
-/* ── Sidebar text input ── */
+section[data-testid="stSidebar"] [data-testid="stRadio"] label:hover { color: #c4b5fd !important; }
 section[data-testid="stSidebar"] .stTextInput input {
     background: rgba(255,255,255,0.06) !important;
     border: 1.5px solid rgba(139,92,246,0.3) !important;
@@ -1275,9 +1265,9 @@ section[data-testid="stSidebar"] .stTextInput input {
     color: #e2e8f0 !important;
     font-size: 0.82rem !important;
 }
-section[data-testid="stSidebar"] .stTextInput input:focus {
-    border-color: rgba(139,92,246,0.7) !important;
-    box-shadow: 0 0 0 2px rgba(99,102,241,0.12) !important;
+section[data-testid="stSidebar"] [data-testid="stCaptionContainer"] p {
+    color: #475569 !important;
+    font-size: 0.65rem !important;
 }
 
 /* ════════════════════════════════════════════
@@ -1780,17 +1770,16 @@ def create_pdf(word_count, char_count, read_time, quick, key_points_txt,
         return None
 
 
-# ── Sidebar ─────────────────────────────────────────────────────────────────
+# ── Sidebar — ONLY controls, no scroll needed ───────────────────────────────
 with st.sidebar:
 
-    # Logo + name
     st.markdown("""
-    <div style="text-align:center;padding:1.4rem 0.5rem 1rem;
-                border-bottom:1px solid rgba(139,92,246,0.2);margin-bottom:0.8rem;">
-        <div style="width:60px;height:60px;
+    <div style="text-align:center;padding:1.5rem 0.5rem 1rem;
+                border-bottom:1px solid rgba(139,92,246,0.2);margin-bottom:1rem;">
+        <div style="width:58px;height:58px;
                     background:linear-gradient(135deg,#3730a3,#7c3aed,#a855f7,#ec4899);
                     border-radius:18px;display:flex;align-items:center;justify-content:center;
-                    margin:0 auto 0.7rem;font-size:28px;
+                    margin:0 auto 0.8rem;font-size:28px;
                     box-shadow:0 6px 24px rgba(139,92,246,0.6);">🧠</div>
         <div style="font-size:1rem;font-weight:800;
                     background:linear-gradient(135deg,#e2e8f0,#c4b5fd);
@@ -1802,125 +1791,61 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-    # ── Theme ────────────────────────────────────────────────────────────────
-    st.markdown('<p style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin:0 0 6px 0;">🎨 Theme</p>', unsafe_allow_html=True)
+    st.markdown("**🎨 Theme**")
     tc1, tc2 = st.columns(2)
     with tc1:
-        dark_active = st.session_state.theme == "dark"
-        if st.button(
-            "🌙  Dark",
-            key="btn_dark",
-            use_container_width=True,
-            type="primary" if dark_active else "secondary",
-        ):
-            st.session_state.theme = "dark"
-            st.rerun()
+        if st.button("🌙  Dark", key="btn_dark", use_container_width=True,
+                     type="primary" if st.session_state.theme == "dark" else "secondary"):
+            st.session_state.theme = "dark"; st.rerun()
     with tc2:
-        light_active = st.session_state.theme == "light"
-        if st.button(
-            "☀️  Light",
-            key="btn_light",
-            use_container_width=True,
-            type="primary" if light_active else "secondary",
-        ):
-            st.session_state.theme = "light"
-            st.rerun()
+        if st.button("☀️  Light", key="btn_light", use_container_width=True,
+                     type="primary" if st.session_state.theme == "light" else "secondary"):
+            st.session_state.theme = "light"; st.rerun()
 
-    st.markdown("<div style='height:0.6rem'></div>", unsafe_allow_html=True)
-
-    # ── Language ─────────────────────────────────────────────────────────────
-    st.markdown('<p style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin:0 0 6px 0;">🌐 Language</p>', unsafe_allow_html=True)
+    st.markdown("**🌐 Language**")
     lc1, lc2 = st.columns(2)
     with lc1:
-        eng_active = st.session_state.language == "English"
-        if st.button(
-            "🇬🇧  English",
-            key="btn_eng",
-            use_container_width=True,
-            type="primary" if eng_active else "secondary",
-        ):
-            st.session_state.language = "English"
-            st.rerun()
+        if st.button("🇬🇧  English", key="btn_eng", use_container_width=True,
+                     type="primary" if st.session_state.language == "English" else "secondary"):
+            st.session_state.language = "English"; st.rerun()
     with lc2:
-        urdu_active = st.session_state.language.startswith("Urdu")
-        if st.button(
-            "🇵🇰  اردو",
-            key="btn_urdu",
-            use_container_width=True,
-            type="primary" if urdu_active else "secondary",
-        ):
-            st.session_state.language = "Urdu (اردو)"
-            st.rerun()
+        if st.button("🇵🇰  اردو", key="btn_urdu", use_container_width=True,
+                     type="primary" if st.session_state.language.startswith("Urdu") else "secondary"):
+            st.session_state.language = "Urdu (اردو)"; st.rerun()
 
-    st.markdown("<div style='height:0.6rem'></div>", unsafe_allow_html=True)
+    st.markdown("**📥 Input Method**")
+    input_mode = st.radio("Input", ["📋 Paste Text", "📁 Upload File"],
+                          label_visibility="collapsed")
 
-    # ── API Key ───────────────────────────────────────────────────────────────
-    st.markdown('<p style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin:0 0 5px 0;">🔑 API Key (Optional)</p>', unsafe_allow_html=True)
-    visitor_key = st.text_input(
-        "API Key", type="password",
-        placeholder="gsk_... (leave empty = free)",
-        label_visibility="collapsed",
-        help="Get free key at console.groq.com",
-    )
-    st.caption("Leave empty to use for free ✅")
+    st.markdown("**🔑 API Key** *(optional)*")
+    visitor_key = st.text_input("API Key", type="password",
+                                placeholder="gsk_...  (empty = free)",
+                                label_visibility="collapsed",
+                                help="Free key at console.groq.com")
 
-    st.markdown("<div style='height:0.6rem'></div>", unsafe_allow_html=True)
-
-    # ── Input method ─────────────────────────────────────────────────────────
-    st.markdown('<p style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin:0 0 5px 0;">📥 Input Method</p>', unsafe_allow_html=True)
-    input_mode = st.radio(
-        "Input", ["📋 Paste Text", "📁 Upload File"],
-        label_visibility="collapsed",
-    )
-
-    st.markdown("<div style='height:0.6rem'></div>", unsafe_allow_html=True)
-
-    # ── Quick info ────────────────────────────────────────────────────────────
     st.markdown("""
-    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(139,92,246,0.18);
-                border-radius:12px;padding:0.7rem 0.9rem;margin-bottom:0.6rem;">
-        <div style="font-size:0.62rem;font-weight:800;color:#a78bfa;
-                    text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;">
-            ⚡ What You Get
+    <div style="margin-top:1.5rem;padding-top:0.8rem;
+                border-top:1px solid rgba(139,92,246,0.15);text-align:center;">
+        <div style="font-size:0.65rem;color:#475569;margin-bottom:0.6rem;">
+            Crafted with 💜 by <strong style="color:#a78bfa;">Zainab Gondal</strong>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 6px;">
-            <div style="font-size:0.68rem;color:#94a3b8;">⚡ Summaries</div>
-            <div style="font-size:0.68rem;color:#94a3b8;">🔬 Knowledge</div>
-            <div style="font-size:0.68rem;color:#94a3b8;">❓ Questions</div>
-            <div style="font-size:0.68rem;color:#94a3b8;">🃏 Flashcards</div>
-            <div style="font-size:0.68rem;color:#94a3b8;">🏷️ Keywords</div>
-            <div style="font-size:0.68rem;color:#94a3b8;">📄 PDF Export</div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # ── Links ─────────────────────────────────────────────────────────────────
-    st.markdown("""
-    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:0.5rem;">
         <a href="https://www.linkedin.com/in/zainabgondal/" target="_blank"
-           style="display:flex;align-items:center;gap:7px;text-decoration:none;
+           style="display:block;text-decoration:none;
                   background:rgba(10,102,194,0.15);border:1px solid rgba(10,102,194,0.35);
-                  color:#93c5fd;padding:6px 10px;border-radius:10px;
-                  font-size:0.7rem;font-weight:700;">
-            💼 Connect on LinkedIn
+                  color:#93c5fd;padding:6px;border-radius:9px;
+                  font-size:0.7rem;font-weight:700;margin-bottom:5px;text-align:center;">
+            💼 LinkedIn
         </a>
         <a href="https://github.com/zainabgondal" target="_blank"
-           style="display:flex;align-items:center;gap:7px;text-decoration:none;
+           style="display:block;text-decoration:none;
                   background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);
-                  color:#e2e8f0;padding:6px 10px;border-radius:10px;
-                  font-size:0.7rem;font-weight:700;">
+                  color:#e2e8f0;padding:6px;border-radius:9px;
+                  font-size:0.7rem;font-weight:700;text-align:center;">
             🐙 GitHub
         </a>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("""
-    <div style="text-align:center;font-size:0.62rem;color:#334155;padding-top:0.4rem;
-                border-top:1px solid rgba(139,92,246,0.12);">
-        Crafted with 💜 by <strong style="color:#a78bfa;">Zainab Gondal</strong><br>
-        CS Student · MUET · Pakistan
-    </div>
-    """, unsafe_allow_html=True)
 
 # ── Inject active theme overrides ─────────────────────────────────────────────
 theme_css = get_theme_css()
